@@ -3,6 +3,9 @@
 *.a
 *.so
 
+# Test Coverage reports
+*coverage.out
+
 # Folders
 _obj
 _test
