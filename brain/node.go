@@ -7,11 +7,13 @@ const (
 	defaultChargeDecayRate = 0.02
 )
 
+type Charge float64 // An abstract unit of electrical charge.
+
 type Node struct {
-	firingThreshold float64 // When currentCharge crosses this threshold, the node will Fire().
-	firingStrength  float64 // The node fires by charging it's output by this amount.
-	chargeDecayRate float64 // The amount currentCharge decreases by per Update().
-	currentCharge   float64 // The current electrical charge stored in the Node.
+	firingThreshold Charge  // When currentCharge crosses this threshold, the node will Fire().
+	firingStrength  Charge  // The node fires by charging it's output by this amount.
+	chargeDecayRate Charge  // The amount currentCharge decreases by per Update().
+	currentCharge   Charge  // The current electrical charge stored in the Node.
 	outputs         []*Node // An array of outputs that will get charged when this Node fires.
 }
 
@@ -24,7 +26,7 @@ func (n *Node) Fire() {
 
 // Charge up this node by strength.
 // If this node then has more charge than the firing threshold, fire.
-func (n *Node) Charge(strength float64) {
+func (n *Node) Charge(strength Charge) {
 	n.currentCharge += strength
 	for n.currentCharge >= n.firingThreshold {
 		n.Fire()
