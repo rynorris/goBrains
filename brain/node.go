@@ -16,7 +16,7 @@ type Node struct {
 // Charge up all outputs by our firingStrength.
 func (n *Node) Fire() {
     for _, out := range n.outputs {
-        out.Charge(n.firingStrength)
+        out.ChargeUp(n.firingStrength)
     }
 }
 
