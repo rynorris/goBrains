@@ -10,11 +10,18 @@ package brain
 // Chargeable defines the family of objects that participate in a neural network.
 // Objects that implement the chargable interface accept charge from other objects in the neural net.
 type Chargeable interface {
-    Charge(strength ChargeUnit)
+    ChargeUp(strength ChargeUnit)
 }
 
 // Worker defines the family of objects which can be added to the neural worker queue and are scheduled for later work.
 // Objects that implement the worker interface perform actions only during a work process.
 type Worker interface {
+    Work()
+}
+
+// ChargedWorker combines the Chargeable and Worker interfaces.
+// (is there a better way to do this?)
+type ChargedWorker interface {
+    ChargeUp(strength ChargeUnit)
     Work()
 }
