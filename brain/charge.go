@@ -1,28 +1,25 @@
 package brain
 
-// An abstract unit of electrical charge.
-type ChargeUnit float64
-
-// The fixed at which charge disperses into the environment.
+// The fixed at which ChargeCarrier disperses into the environment.
 const chargeDecayRate = 0.02
 
-// An abstract collection of electrical charge.
+// An abstract collection of electrical ChargeCarrier.
 // Used to commonise code between different kinds of
 // brain elements.
-type Charge struct {
-    currentCharge ChargeUnit
+type ChargeCarrier struct {
+	currentCharge float64
 }
 
-// Charge up this charge by strength ChargeUnits.
-func (c *Charge) ChargeUp(strength ChargeUnit) {
-    c.currentCharge += strength
+// ChargeCarrier up this ChargeCarrier by strength ChargeUnits.
+func (c *ChargeCarrier) Charge(strength float64) {
+	c.currentCharge += strength
 }
 
-// Decreases this charge by chargeDecayRate.
+// Decreases this ChargeCarrier by chargeDecayRate.
 // Should be called once per time-step.
-func (c *Charge) Decay() {
-    c.currentCharge -= chargeDecayRate
-    if c.currentCharge < 0 {
-        c.currentCharge = 0
-    }
+func (c *ChargeCarrier) Decay() {
+	c.currentCharge -= chargeDecayRate
+	if c.currentCharge < 0 {
+		c.currentCharge = 0
+	}
 }
