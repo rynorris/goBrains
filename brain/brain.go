@@ -10,7 +10,7 @@ package brain
  * outSynapses  : /\   /\
  * outputs      :o o   o o
  *
- * ChargeCarrier flows from top to bottom in the diagram.
+ * Charge flows from top to bottom in the diagram.
  *
  * Each tick, the input Nodes should be charged appropriately (by the external stimuli),
  * and then Update() called exactly once.
