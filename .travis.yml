@@ -1,0 +1,9 @@
+language: go
+
+go:
+  - 1.2
+  - tip
+
+install: go get code.google.com/p/go.tools/cmd/cover
+
+script: go test -v -cover ./...
