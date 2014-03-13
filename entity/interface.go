@@ -11,5 +11,5 @@ package entity
 type Entity interface {
 
 	// Get the size of the entity.
-	getRadius() float64
+	GetRadius() float64
 }

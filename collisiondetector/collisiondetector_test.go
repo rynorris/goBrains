@@ -11,12 +11,16 @@ type testEntity struct {
 	radius float64
 }
 
+func (te testEntity) GetRadius() float64 {
+	return te.radius
+}
+
 // Test co-ordinate handling; coords and DeltaCoords.
 func TestCoord(t *testing.T) {
-	loc = coord{0, 0}
+	loc := coord{0, 0}
 
 	// Update location and verify it.
-	deltaLoc = CoordDelta{1, 2}
+	deltaLoc := CoordDelta{1, 2}
 	loc.update(deltaLoc)
 
 	if loc.locX != 1 {
@@ -31,20 +35,20 @@ func TestCoord(t *testing.T) {
 func TestCircleHitbox(t *testing.T) {
 
 	// Update the location of the hitbox.
-	hb := circleHitbox{Coord{0, 0}, 10, testEntity{}}
+	hb := circleHitbox{coord{0, 0}, 10, testEntity{}}
 
 	move := CoordDelta{1, 2}
 	hb.update(move)
 
 	if hb.centre.locX != 1 {
-		t.Errorf("Expected x-location update to %v, got %v.", loc.locX, 1)
+		t.Errorf("Expected x-location update to %v, got %v.", hb.centre.locX, 1)
 	}
 	if hb.centre.locY != 2 {
-		t.Errorf("Expected y-location update to %v, got %v.", loc.locY, 2)
+		t.Errorf("Expected y-location update to %v, got %v.", hb.centre.locY, 2)
 	}
 
 	// Run checks on points inside and outside the hitbox.
-	hb = circleHitbox{Coord{0, 0}, 10, testEntity{}}
+	hb = circleHitbox{coord{0, 0}, 10, testEntity{}}
 
 	loc := coord{1, 2}
 	if !hb.isInside(loc) {
@@ -77,37 +81,37 @@ func TestCollisionDetection(t *testing.T) {
 
 	// Check there are two hitboxes found at the origin.
 	loc := CoordDelta{0, 0}
-	num := cm.getCollisions(loc, ent1)
-	if num != 2 {
-		t.Errorf(errorStr, 2, 2, num)
+	col := cm.getCollisions(loc, ent1)
+	if len(col) != 2 {
+		t.Errorf(errorStr, 2, 2, len(col))
 	}
 
 	// Move a hitbox and verify it's moved.
 	move := CoordDelta{10, 10}
 	cm.changeLocation(move, ent2)
 
-	num = cm.getCollisions(loc, ent1)
-	if num != 1 {
-		t.Errorf(errorStr, 3, 1, num)
+	col = cm.getCollisions(loc, ent1)
+	if len(col) != 1 {
+		t.Errorf(errorStr, 3, 1, len(col))
 	}
 
 	// Verify that we can detect the moved entity.
 	loc = CoordDelta{10, 10}
-	num = cm.getCollisions(loc, ent1)
-	if num != 1 {
-		t.Errorf(errorStr, 4, 1, num)
+	col = cm.getCollisions(loc, ent1)
+	if len(col) != 1 {
+		t.Errorf(errorStr, 4, 1, len(col))
 	}
 
 	// Reduce radius of the entity and verify we stop detecting it.
 	loc = CoordDelta{2, 0}
-	num = cm.getCollisions(loc, ent1)
-	if num != 1 {
-		t.Errorf(errorStr, 5, 1, num)
+	col = cm.getCollisions(loc, ent1)
+	if len(col) != 1 {
+		t.Errorf(errorStr, 5, 1, len(col))
 	}
 
 	cm.changeRadius(1, ent1)
-	num = cm.getCollisions(loc, ent1)
-	if num != 0 {
-		t.Error(errorStr, 6, 0, num)
+	col = cm.getCollisions(loc, ent1)
+	if len(col) != 0 {
+		t.Error(errorStr, 6, 0, len(col))
 	}
 }

@@ -7,7 +7,10 @@
 // Package collisiondetector provides all abilities to detect other entities in an environment.
 package collisiondetector
 
-import "math"
+import (
+	"github.com/DiscoViking/goBrains/entity"
+	"math"
+)
 
 // Calculation of whether a co-ordinate is within a circular hitbox.
 func (hb circleHitbox) isInside(loc coord) bool {
@@ -28,4 +31,19 @@ func (hb circleHitbox) update(move CoordDelta) {
 // Update the radius of the hitbox.
 func (hb circleHitbox) setRadius(radius float64) {
 	hb.radius = radius
+}
+
+// Get the entity owned by the hitbox.
+func (hb circleHitbox) getEntity() entity.Entity {
+	return hb.entity
+}
+
+// Get the radius of the entity.
+func (hb circleHitbox) getRadius() float64 {
+	return hb.radius
+}
+
+// Get the central co-ordinates of the entity.
+func (hb circleHitbox) getCoord() coord {
+	return hb.centre
 }

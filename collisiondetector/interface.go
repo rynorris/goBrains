@@ -34,5 +34,7 @@ type locatable interface {
 	setRadius(radius float64)
 
 	// Methods to check the properties of the hitbox.
+	getEntity() entity.Entity
+	getRadius() float64
 	getCoord() coord
 }

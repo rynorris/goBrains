@@ -22,7 +22,7 @@ type circleHitbox struct {
 	centre coord
 	radius float64
 
-	// External reference, to what the hitbox represents.
+	// External reference, to the entity that the hitbox represents.
 	entity entity.Entity
 }
 

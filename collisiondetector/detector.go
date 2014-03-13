@@ -7,16 +7,13 @@
 // Package collisiondetector provides all abilities to detect other entities in an environment.
 package collisiondetector
 
-import (
-	"github.com/DiscoViking/goBrains/entity"
-	"github.com/DiscoViking/goBrains/food"
-)
+import "github.com/DiscoViking/goBrains/entity"
 
 // Add a new entity.
 func (cm CollisionManager) addEntity(ent entity.Entity) {
 	newHitbox := circleHitbox{
 		centre: coord{0, 0},
-		radius: ent.getRadius(),
+		radius: ent.GetRadius(),
 		entity: ent,
 	}
 
@@ -36,8 +33,8 @@ func (cm CollisionManager) changeRadius(radius float64, ent entity.Entity) {
 }
 
 // Determine all entities which exist at a specific point.
-func (cm CollisionManager) getCollisions(offset CoordDelta, ent entity.Entity) []locatable {
-	collisions := make([]locatable, 0)
+func (cm CollisionManager) getCollisions(offset CoordDelta, ent entity.Entity) []entity.Entity {
+	collisions := make([]entity.Entity, 0)
 
 	searcher := cm.findHitbox(ent)
 	absLoc := searcher.getCoord()
@@ -45,7 +42,7 @@ func (cm CollisionManager) getCollisions(offset CoordDelta, ent entity.Entity) [
 
 	for _, hb := range cm.hitboxes {
 		if hb.isInside(absLoc) {
-			collisions = append(collisions, hb.entity)
+			collisions = append(collisions, hb.getEntity())
 		}
 	}
 
@@ -55,7 +52,7 @@ func (cm CollisionManager) getCollisions(offset CoordDelta, ent entity.Entity) [
 // Find the hitbox associated with an entity.
 func (cm CollisionManager) findHitbox(ent entity.Entity) locatable {
 	for _, hb := range cm.hitboxes {
-		if hb.entity == ent {
+		if hb.getEntity() == ent {
 			return hb
 		}
 	}
