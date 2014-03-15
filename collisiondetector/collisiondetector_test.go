@@ -6,17 +6,9 @@ package collisiondetector
 
 import (
 	"github.com/DiscoViking/goBrains/entity"
+	"github.com/DiscoViking/goBrains/food"
 	"testing"
 )
-
-// Dummy entity structure for testing.
-type testEntity struct {
-	radius float64
-}
-
-func (te testEntity) GetRadius() float64 {
-	return te.radius
-}
 
 // Test co-ordinate handling; coords and DeltaCoords.
 func TestCoord(t *testing.T) {
@@ -38,7 +30,7 @@ func TestCoord(t *testing.T) {
 func TestCircleHitbox(t *testing.T) {
 
 	// Update the location of the hitbox.
-	hb := circleHitbox{coord{0, 0}, 10, testEntity{}}
+	hb := circleHitbox{coord{0, 0}, 10, food.NewFood(0)}
 
 	move := CoordDelta{1, 2}
 	hb.update(move)
@@ -51,7 +43,7 @@ func TestCircleHitbox(t *testing.T) {
 	}
 
 	// Run checks on points inside and outside the hitbox.
-	hb = circleHitbox{coord{0, 0}, 10, testEntity{}}
+	hb = circleHitbox{coord{0, 0}, 10, food.NewFood(0)}
 
 	loc := coord{1, 2}
 	if !hb.isInside(loc) {
@@ -78,8 +70,10 @@ func TestCollisionDetection(t *testing.T) {
 	cm := newCollisionManager()
 
 	// Add two entities to be managed.
-	ent1 := testEntity{5}
-	ent2 := testEntity{5}
+	// These MUST be different, else we cannot determine the difference between the two.
+	// This results in hilarious test failures that are hard to debug.
+	ent1 := food.NewFood(25)
+	ent2 := food.NewFood(16)
 
 	cm.addEntity(ent1)
 	cm.addEntity(ent2)
@@ -115,7 +109,7 @@ func TestCollisionDetection(t *testing.T) {
 		cm.printDebug()
 	}
 
-	// Reduce radius of the entity and verify we stop detecting it.
+	// Reduce radius of the entity at the origin and verify we stop detecting it.
 	loc = CoordDelta{2, 0}
 	col = cm.getCollisions(loc, ent1)
 	if len(col) != 1 {
