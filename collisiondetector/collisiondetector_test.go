@@ -70,10 +70,8 @@ func TestCollisionDetection(t *testing.T) {
 	cm := newCollisionManager()
 
 	// Add two entities to be managed.
-	// These MUST be different, else we cannot determine the difference between the two.
-	// This results in hilarious test failures that are hard to debug.
 	ent1 := food.NewFood(25)
-	ent2 := food.NewFood(16)
+	ent2 := food.NewFood(25)
 
 	cm.addEntity(ent1)
 	cm.addEntity(ent2)
