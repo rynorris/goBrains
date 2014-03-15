@@ -7,10 +7,13 @@
 // Package collisiondetector provides all abilities to detect other entities in an environment.
 package collisiondetector
 
-import "github.com/DiscoViking/goBrains/entity"
+import (
+	"fmt"
+	"github.com/DiscoViking/goBrains/entity"
+)
 
 // Add a new entity.
-func (cm CollisionManager) addEntity(ent entity.Entity) {
+func (cm *CollisionManager) addEntity(ent entity.Entity) {
 	newHitbox := circleHitbox{
 		centre: coord{0, 0},
 		radius: ent.GetRadius(),
@@ -21,19 +24,19 @@ func (cm CollisionManager) addEntity(ent entity.Entity) {
 }
 
 // Update the location of an entity.
-func (cm CollisionManager) changeLocation(move CoordDelta, ent entity.Entity) {
+func (cm *CollisionManager) changeLocation(move CoordDelta, ent entity.Entity) {
 	hb := cm.findHitbox(ent)
 	hb.update(move)
 }
 
 // Update the radius of an entity.
-func (cm CollisionManager) changeRadius(radius float64, ent entity.Entity) {
+func (cm *CollisionManager) changeRadius(radius float64, ent entity.Entity) {
 	hb := cm.findHitbox(ent)
 	hb.setRadius(radius)
 }
 
 // Determine all entities which exist at a specific point.
-func (cm CollisionManager) getCollisions(offset CoordDelta, ent entity.Entity) []entity.Entity {
+func (cm *CollisionManager) getCollisions(offset CoordDelta, ent entity.Entity) []entity.Entity {
 	collisions := make([]entity.Entity, 0)
 
 	searcher := cm.findHitbox(ent)
@@ -50,13 +53,23 @@ func (cm CollisionManager) getCollisions(offset CoordDelta, ent entity.Entity) [
 }
 
 // Find the hitbox associated with an entity.
-func (cm CollisionManager) findHitbox(ent entity.Entity) locatable {
+func (cm *CollisionManager) findHitbox(ent entity.Entity) locatable {
 	for _, hb := range cm.hitboxes {
 		if hb.getEntity() == ent {
 			return hb
 		}
 	}
 	return nil
+}
+
+// Print debug information about information stored in the CollisionManager.
+func (cm *CollisionManager) printDebug() {
+	fmt.Printf("Collision Manager: %v\n", cm)
+	for ii, hb := range cm.hitboxes {
+		fmt.Printf("  Hitbox %v\n", ii)
+		hb.printDebug()
+	}
+	fmt.Printf("\n")
 }
 
 // Initialise the CollisionManager.

@@ -37,4 +37,7 @@ type locatable interface {
 	getEntity() entity.Entity
 	getRadius() float64
 	getCoord() coord
+
+	// Miscellaneous.
+	printDebug()
 }

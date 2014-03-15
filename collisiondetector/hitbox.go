@@ -8,6 +8,7 @@
 package collisiondetector
 
 import (
+	"fmt"
 	"github.com/DiscoViking/goBrains/entity"
 	"math"
 )
@@ -24,26 +25,33 @@ func (hb circleHitbox) isInside(loc coord) bool {
 }
 
 // Update the location of a hitbox.
-func (hb circleHitbox) update(move CoordDelta) {
+func (hb *circleHitbox) update(move CoordDelta) {
 	hb.centre.update(move)
 }
 
 // Update the radius of the hitbox.
-func (hb circleHitbox) setRadius(radius float64) {
+func (hb *circleHitbox) setRadius(radius float64) {
 	hb.radius = radius
 }
 
 // Get the entity owned by the hitbox.
-func (hb circleHitbox) getEntity() entity.Entity {
+func (hb *circleHitbox) getEntity() entity.Entity {
 	return hb.entity
 }
 
 // Get the radius of the entity.
-func (hb circleHitbox) getRadius() float64 {
+func (hb *circleHitbox) getRadius() float64 {
 	return hb.radius
 }
 
 // Get the central co-ordinates of the entity.
-func (hb circleHitbox) getCoord() coord {
+func (hb *circleHitbox) getCoord() coord {
 	return hb.centre
+}
+
+// Print debug information.
+func (hb *circleHitbox) printDebug() {
+	fmt.Printf("    Centre: (%v, %v)\n", hb.centre.locX, hb.centre.locY)
+	fmt.Printf("    Radius: %v\n", hb.radius)
+	fmt.Printf("    Entity: %v\n", hb.entity)
 }
