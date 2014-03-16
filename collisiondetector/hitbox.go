@@ -13,8 +13,24 @@ import (
 	"math"
 )
 
+// Get whether the hitbox is active or not.
+func (hb *circleHitbox) getActive() bool {
+	return hb.active
+}
+
+// Set whether the hitbox is active or not.
+func (hb *circleHitbox) setActive(state bool) {
+	hb.active = state
+}
+
 // Calculation of whether a co-ordinate is within a circular hitbox.
-func (hb circleHitbox) isInside(loc coord) bool {
+func (hb *circleHitbox) isInside(loc coord) bool {
+
+	// A radius of zero means that a hitbox is unhittable.
+	if hb.radius == 0 {
+		return false
+	}
+
 	diffDist := (math.Pow((hb.centre.locX-loc.locX), 2) +
 		math.Pow((hb.centre.locY-loc.locY), 2))
 
@@ -51,6 +67,7 @@ func (hb *circleHitbox) getCoord() coord {
 
 // Print debug information.
 func (hb *circleHitbox) printDebug() {
+	fmt.Printf("    Active: %v\n", hb.active)
 	fmt.Printf("    Centre: (%v, %v)\n", hb.centre.locX, hb.centre.locY)
 	fmt.Printf("    Radius: %v\n", hb.radius)
 	fmt.Printf("    Entity: %v\n", hb.entity)

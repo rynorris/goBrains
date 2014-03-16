@@ -13,30 +13,43 @@ import (
 )
 
 // Add a new entity.
-func (cm *CollisionManager) addEntity(ent entity.Entity) {
+// This is added to first empty entry in the array, else append a new entry.
+func (cm *CollisionManager) AddEntity(ent entity.Entity) {
 	newHitbox := circleHitbox{
+		active: true,
 		centre: coord{0, 0},
 		radius: ent.GetRadius(),
 		entity: ent,
 	}
 
-	cm.hitboxes = append(cm.hitboxes, &newHitbox)
+	entry := cm.findEmptyHitbox()
+	if entry == nil {
+		cm.hitboxes = append(cm.hitboxes, &newHitbox)
+	} else {
+		entry = &newHitbox
+	}
+}
+
+// Remove an entity.
+func (cm *CollisionManager) RemoveEntity(ent entity.Entity) {
+	hb := cm.findHitbox(ent)
+	hb.setActive(false)
 }
 
 // Update the location of an entity.
-func (cm *CollisionManager) changeLocation(move CoordDelta, ent entity.Entity) {
+func (cm *CollisionManager) ChangeLocation(move CoordDelta, ent entity.Entity) {
 	hb := cm.findHitbox(ent)
 	hb.update(move)
 }
 
 // Update the radius of an entity.
-func (cm *CollisionManager) changeRadius(radius float64, ent entity.Entity) {
+func (cm *CollisionManager) ChangeRadius(radius float64, ent entity.Entity) {
 	hb := cm.findHitbox(ent)
 	hb.setRadius(radius)
 }
 
 // Determine all entities which exist at a specific point.
-func (cm *CollisionManager) getCollisions(offset CoordDelta, ent entity.Entity) []entity.Entity {
+func (cm *CollisionManager) GetCollisions(offset CoordDelta, ent entity.Entity) []entity.Entity {
 	collisions := make([]entity.Entity, 0)
 
 	searcher := cm.findHitbox(ent)
@@ -55,7 +68,17 @@ func (cm *CollisionManager) getCollisions(offset CoordDelta, ent entity.Entity) 
 // Find the hitbox associated with an entity.
 func (cm *CollisionManager) findHitbox(ent entity.Entity) locatable {
 	for _, hb := range cm.hitboxes {
-		if hb.getEntity() == ent {
+		if hb.getActive() && (hb.getEntity() == ent) {
+			return hb
+		}
+	}
+	return nil
+}
+
+// Find the first unused ehitbox structure.
+func (cm *CollisionManager) findEmptyHitbox() locatable {
+	for _, hb := range cm.hitboxes {
+		if !hb.getActive() {
 			return hb
 		}
 	}
@@ -73,6 +96,6 @@ func (cm *CollisionManager) printDebug() {
 }
 
 // Initialise the CollisionManager.
-func newCollisionManager() *CollisionManager {
+func NewCollisionManager() *CollisionManager {
 	return &CollisionManager{hitboxes: make([]locatable, 0)}
 }

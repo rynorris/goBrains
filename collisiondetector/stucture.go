@@ -18,6 +18,9 @@ type coord struct {
 // They have two active values, representing the centre of the hitbox, and the radius.  It also references the entity it represents.
 type circleHitbox struct {
 
+	// Whether the hitbox is currently in use.
+	active bool
+
 	// Active values, holding state.
 	centre coord
 	radius float64
