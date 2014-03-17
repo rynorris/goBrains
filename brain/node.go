@@ -4,53 +4,40 @@ package brain
 const (
 	defaultFiringThreshold = 1.0
 	defaultFiringStrength  = 0.8
-	defaultChargeDecayRate = 0.02
 )
 
-type Charge float64 // An abstract unit of electrical charge.
-
 type Node struct {
-	firingThreshold Charge  // When currentCharge crosses this threshold, the node will Fire().
-	firingStrength  Charge  // The node fires by charging it's output by this amount.
-	chargeDecayRate Charge  // The amount currentCharge decreases by per Update().
-	currentCharge   Charge  // The current electrical charge stored in the Node.
-	outputs         []*Node // An array of outputs that will get charged when this Node fires.
+	ChargeCarrier
+	firingThreshold float64      // When currentCharge crosses this threshold, the node will Fire().
+	firingStrength  float64      // The node fires by charging it's output by this amount.
+	outputs         []Chargeable // An array of outputs that will get charged when this Node fires.
 }
 
-// Charge up all outputs by our firingStrength.
+// ChargeCarrier up all outputs by our firingStrength.
 func (n *Node) Fire() {
 	for _, out := range n.outputs {
 		out.Charge(n.firingStrength)
 	}
 }
 
-// Charge up this node by strength.
-// If this node then has more charge than the firing threshold, fire.
-func (n *Node) Charge(strength Charge) {
-	n.currentCharge += strength
+// Work is where a Node does all it's processing.
+// The Node should not affect anything outside itself anywhere EXCEPT
+// in the Work method.
+func (n *Node) Work() {
 	for n.currentCharge >= n.firingThreshold {
 		n.Fire()
 		n.currentCharge -= n.firingThreshold
 	}
-}
-
-// Decreases this node's charge by chargeDecayRate.
-// Should be called once per time-step.
-func (n *Node) Update() {
-	n.currentCharge -= n.chargeDecayRate
-	if n.currentCharge <= 0 {
-		n.currentCharge = 0
-	}
+	n.Decay()
 }
 
 // Adds a new output to this node.
-func (n *Node) AddOutput(out *Node) {
+func (n *Node) AddOutput(out Chargeable) {
 	n.outputs = append(n.outputs, out)
 }
 
 // Creates a new node with default values.
 func NewNode() *Node {
 	return &Node{firingThreshold: defaultFiringThreshold,
-		firingStrength:  defaultFiringStrength,
-		chargeDecayRate: defaultChargeDecayRate}
+		firingStrength: defaultFiringStrength}
 }
