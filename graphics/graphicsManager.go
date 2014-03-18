@@ -13,9 +13,15 @@
 
 package graphics
 
+import "time"
 import "github.com/discoviking/goBrains/entity"
 
 import "github.com/banthar/Go-SDL/sdl"
+
+const (
+    WIDTH  = 640
+    HEIGHT = 480
+)
 
 // Starts the graphics engine up.
 // Once called, pass a slice of Entities into the passed in channel
@@ -23,39 +29,44 @@ import "github.com/banthar/Go-SDL/sdl"
 // Then wait on the done channel for drawing to finish before continuing.
 func Start(data chan []entity.Entity, done chan struct{}) {
 
-	// Initialise SDL
-	if sdl.Init(sdl.INIT_EVERYTHING) != 0 {
-		panic(sdl.GetError())
-	}
+    // Initialise SDL
+    if sdl.Init(sdl.INIT_EVERYTHING) != 0 {
+        panic(sdl.GetError())
+    }
 
-	// Ensure that SDL will exit gracefully when we're done.
-	defer sdl.Quit()
+    // Ensure that SDL will exit gracefully when we're done.
+    defer sdl.Quit()
 
-	// Construct the graphics pipeline.
-	interpret := make(chan entity.Entity)
-	draw := make(chan Primitive)
+    // Construct the graphics pipeline.
+    interpret := make(chan entity.Entity)
+    draw := make(chan Primitive)
 
-	// Create the screen surface.
-	screen := sdl.SetVideoMode(640, 480, 32, sdl.RESIZABLE)
+    // Create the screen surface.
+    screen := sdl.SetVideoMode(WIDTH, HEIGHT, 32, sdl.RESIZABLE|sdl.DOUBLEBUF|sdl.HWSURFACE)
+    canvas := sdl.CreateRGBSurface(0, WIDTH, HEIGHT, 32, 0, 0, 0, 0)
+    background := sdl.MapRGB(sdl.GetVideoInfo().Vfmt, 200, 200, 200)
 
-	// Set off the interpreter and artist goroutines.
-	go Interpret(interpret, draw)
-	go Draw(draw, screen)
+    // Set off the interpreter and artist goroutines.
+    go Interpret(interpret, draw)
+    go Draw(draw, canvas)
 
-	// Main drawing loop
-	for entities := range data {
-		for _, e := range entities {
-			// Send entities to the interpreter
-			interpret <- e
-		}
+    // Main drawing loop
+    for entities := range data {
+        screen.Blit(&sdl.Rect{0, 0, WIDTH, HEIGHT}, canvas, &sdl.Rect{0, 0, WIDTH, HEIGHT})
+        screen.Flip()
+        canvas.FillRect(&sdl.Rect{0, 0, WIDTH, HEIGHT}, background)
+        for _, e := range entities {
+            // Send entities to the interpreter
+            interpret <- e
+        }
 
-		// This is pretty dangerous, since we're continuing without waiting for the artist
-		// to finish drawing the final entity to screen.
-		// I think that the worst that will happen is that one entity will be drawn a single
-		// frame behind the others, which is no great loss. However if necessary this can
-		// be fixed, it just requires a bit more synchronization rubbish and slightly ruins
-		// the cleanliness of this pipeline design.
-		screen.Flip()
-		done <- struct{}{}
-	}
+        // This is pretty dangerous, since we're continuing without waiting for the artist
+        // to finish drawing the final entity to screen.
+        // I think that the worst that will happen is that one entity will be drawn a single
+        // frame behind the others, which is no great loss. However if necessary this can
+        // be fixed, it just requires a bit more synchronization rubbish and slightly ruins
+        // the cleanliness of this pipeline design.
+        done <- struct{}{}
+        time.Sleep(8)
+    }
 }

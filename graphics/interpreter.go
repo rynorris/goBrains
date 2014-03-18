@@ -6,17 +6,23 @@
 
 package graphics
 
+import "image/color"
 import "github.com/discoviking/goBrains/entity"
+import "github.com/discoviking/goBrains/food"
 
 func Interpret(in chan entity.Entity, out chan Primitive) {
-	for e := range in {
-		switch e.type {
-		default:
-			out <- breakEntity(e)
-		}
-	}
+    for e := range in {
+        switch e := e.(type) {
+        default:
+            out <- breakEntity(e)
+        }
+    }
 }
 
 func breakEntity(e entity.Entity) Primitive {
-	return Point{10, 10, color.Black}
+    return Circle{20, 20, uint16(e.GetRadius()), color.Black}
+}
+
+func breakFood(f food.Food) Primitive {
+    return Circle{20, 20, uint16(f.GetRadius()), color.RGBA{50, 200, 50, 255}}
 }
