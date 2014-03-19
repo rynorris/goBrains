@@ -1,11 +1,11 @@
 /*
- * Interfaces for the collision detector.
+ * Interfaces for the location manager.
  *
  * These interfaces provide the mechanisms by which entities in an environment can detect other entities they are in contact with.
  */
 
-// Package collisiondetector provides all abilities to detect other entities in an environment.
-package collisiondetector
+// Package locationmanager provides all abilities to detect other entities in an environment.
+package locationmanager
 
 import "github.com/DiscoViking/goBrains/entity"
 
@@ -14,17 +14,22 @@ type Detection interface {
 
 	// Methods for querying collisions, returning the collided objects.
 	// -- Determine which hitboxes occlude a location relative to an entity
-	getCollisions(loc CoordDelta, ent entity.Entity) []entity.Entity
+	GetCollisions(loc CoordDelta, ent entity.Entity) []entity.Entity
 
 	// Methods for updating state in the detector.
 	// -- Inform the detector of a change in state
-	addEntity(ent entity.Entity)
-	changeLocation(move CoordDelta, ent entity.Entity)
-	changeRadius(radius float64, ent entity.Entity)
+	AddEntity(ent entity.Entity)
+	RemoveEntity(ent entity.Entity)
+	ChangeLocation(move CoordDelta, ent entity.Entity)
+	ChangeRadius(radius float64, ent entity.Entity)
 }
 
 // Locatable defines the ability to calculate if you can be located.
 type locatable interface {
+
+	// Get/Set whether the the interface in use or not.
+	getActive() bool
+	setActive(state bool)
 
 	// Method to check if a coordinate lies within the entity.
 	isInside(loc coord) bool
@@ -37,6 +42,7 @@ type locatable interface {
 	getEntity() entity.Entity
 	getRadius() float64
 	getCoord() coord
+	getOrient() float64
 
 	// Miscellaneous.
 	printDebug()

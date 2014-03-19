@@ -1,11 +1,11 @@
 /*
- * Structures for the collisiondetector.
+ * Structures for the locationmanager.
  *
- * These structures track properties of objects managed by the collisiondetector.
+ * These structures track properties of objects managed by the locationmanager.
  */
 
-// Package collisiondetector provides all abilities to detect other entities in an environment.
-package collisiondetector
+// Package locationmanager provides all abilities to detect other entities in an environment.
+package locationmanager
 
 import "github.com/DiscoViking/goBrains/entity"
 
@@ -18,9 +18,13 @@ type coord struct {
 // They have two active values, representing the centre of the hitbox, and the radius.  It also references the entity it represents.
 type circleHitbox struct {
 
+	// Whether the hitbox is currently in use.
+	active bool
+
 	// Active values, holding state.
-	centre coord
-	radius float64
+	centre      coord
+	orientation float64
+	radius      float64
 
 	// External reference, to the entity that the hitbox represents.
 	entity entity.Entity
@@ -28,11 +32,12 @@ type circleHitbox struct {
 
 // CoordDelta structs represent a position relative to an entity.
 type CoordDelta struct {
-	deltaX, deltaY float64
+	distance float64
+	rotation float64
 }
 
-// CollisionManager is an instance of a collision manager.
+// LocationManager is an instance of a location manager.
 // It holds all the state about entities in the environment.
-type CollisionManager struct {
+type LocationManager struct {
 	hitboxes []locatable
 }

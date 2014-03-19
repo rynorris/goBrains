@@ -1,12 +1,12 @@
 /*
- * Collisiondetector testing.
+ * LocationManager testing.
  */
 
-package collisiondetector
+package locationmanager
 
 import (
 	"github.com/DiscoViking/goBrains/entity"
-	"github.com/DiscoViking/goBrains/food"
+	"math"
 	"testing"
 )
 
@@ -15,8 +15,7 @@ func TestCoord(t *testing.T) {
 	loc := coord{0, 0}
 
 	// Update location and verify it.
-	deltaLoc := CoordDelta{1, 2}
-	loc.update(deltaLoc)
+	loc.update(1, 2)
 
 	if loc.locX != 1 {
 		t.Errorf("Expected x-location update to %v, got %v.", 1, loc.locX)
@@ -30,20 +29,46 @@ func TestCoord(t *testing.T) {
 func TestCircleHitbox(t *testing.T) {
 
 	// Update the location of the hitbox.
-	hb := circleHitbox{coord{0, 0}, 10, food.NewFood(0)}
+	hb := circleHitbox{
+		active:      true,
+		centre:      coord{0, 0},
+		orientation: 0,
+		radius:      10,
+		entity:      &entity.TestEntity{0},
+	}
 
-	move := CoordDelta{1, 2}
+	move := CoordDelta{1, 0}
 	hb.update(move)
 
 	if hb.centre.locX != 1 {
 		t.Errorf("Expected x-location update to %v, got %v.", 1, hb.centre.locX)
+		hb.printDebug()
 	}
+
+	move = CoordDelta{0, math.Pi / 2}
+	hb.update(move)
+
+	if hb.orientation != (math.Pi / 2) {
+		t.Errorf("Expected orientation update to %v, got %v.", (math.Pi / 2), hb.orientation)
+		hb.printDebug()
+	}
+
+	move = CoordDelta{2, 0}
+	hb.update(move)
+
 	if hb.centre.locY != 2 {
 		t.Errorf("Expected y-location update to %v, got %v.", 2, hb.centre.locY)
+		hb.printDebug()
 	}
 
 	// Run checks on points inside and outside the hitbox.
-	hb = circleHitbox{coord{0, 0}, 10, food.NewFood(0)}
+	hb = circleHitbox{
+		active:      true,
+		centre:      coord{0, 0},
+		orientation: (math.Pi * 2 / 6),
+		radius:      10,
+		entity:      &entity.TestEntity{0},
+	}
 
 	loc := coord{1, 2}
 	if !hb.isInside(loc) {
@@ -57,7 +82,7 @@ func TestCircleHitbox(t *testing.T) {
 }
 
 // Test basic collision detection.
-func TestCollisionDetection(t *testing.T) {
+func TestDetector(t *testing.T) {
 	errorStr := "[%v] Expected %v hitboxes, actual: %v"
 
 	// A test location find collisions here.
@@ -67,16 +92,14 @@ func TestCollisionDetection(t *testing.T) {
 	var col []entity.Entity
 
 	// Set up a new collision detector.
-	cm := newCollisionManager()
+	cm := NewLocationManager()
 
 	// Add two entities to be managed.
-	// These MUST be different, else we cannot determine the difference between the two.
-	// This results in hilarious test failures that are hard to debug.
-	ent1 := food.NewFood(25)
-	ent2 := food.NewFood(16)
+	ent1 := &entity.TestEntity{5}
+	ent2 := &entity.TestEntity{5}
 
-	cm.addEntity(ent1)
-	cm.addEntity(ent2)
+	cm.AddEntity(ent1)
+	cm.AddEntity(ent2)
 
 	if len(cm.hitboxes) != 2 {
 		t.Errorf(errorStr, 1, 2, len(cm.hitboxes))
@@ -85,25 +108,25 @@ func TestCollisionDetection(t *testing.T) {
 
 	// Check there are two hitboxes found at the origin.
 	loc = CoordDelta{0, 0}
-	col = cm.getCollisions(loc, ent1)
+	col = cm.GetCollisions(loc, ent1)
 	if len(col) != 2 {
 		t.Errorf(errorStr, 2, 2, len(col))
 		cm.printDebug()
 	}
 
 	// Move a hitbox and verify it's moved.
-	move := CoordDelta{10, 10}
-	cm.changeLocation(move, ent2)
+	move := CoordDelta{10, 0}
+	cm.ChangeLocation(move, ent2)
 
-	col = cm.getCollisions(loc, ent1)
+	col = cm.GetCollisions(loc, ent1)
 	if len(col) != 1 {
 		t.Errorf(errorStr, 3, 1, len(col))
 		cm.printDebug()
 	}
 
 	// Verify that we can detect the moved entity.
-	loc = CoordDelta{10, 10}
-	col = cm.getCollisions(loc, ent1)
+	loc = CoordDelta{10, 0}
+	col = cm.GetCollisions(loc, ent1)
 	if len(col) != 1 {
 		t.Errorf(errorStr, 4, 1, len(col))
 		cm.printDebug()
@@ -111,16 +134,49 @@ func TestCollisionDetection(t *testing.T) {
 
 	// Reduce radius of the entity at the origin and verify we stop detecting it.
 	loc = CoordDelta{2, 0}
-	col = cm.getCollisions(loc, ent1)
+	col = cm.GetCollisions(loc, ent1)
 	if len(col) != 1 {
 		t.Errorf(errorStr, 5, 1, len(col))
 		cm.printDebug()
 	}
 
-	cm.changeRadius(1, ent1)
-	col = cm.getCollisions(loc, ent1)
+	cm.ChangeRadius(1, ent1)
+	col = cm.GetCollisions(loc, ent1)
 	if len(col) != 0 {
 		t.Error(errorStr, 6, 0, len(col))
+		cm.printDebug()
+	}
+
+	// A radius reduced to zero cannot be detected at all.
+	loc = CoordDelta{0, 0}
+	col = cm.GetCollisions(loc, ent1)
+	if len(col) != 1 {
+		t.Errorf(errorStr, 5, 1, len(col))
+		cm.printDebug()
+	}
+
+	cm.ChangeRadius(0, ent1)
+	col = cm.GetCollisions(loc, ent1)
+	if len(col) != 0 {
+		t.Error(errorStr, 6, 0, len(col))
+		cm.printDebug()
+	}
+
+	// Remove the entities from the CM.
+	// This doesn't reduce the length of the internal list, as the entries are re-used.
+	cm.RemoveEntity(ent1)
+	cm.RemoveEntity(ent2)
+	if len(cm.hitboxes) != 2 {
+		t.Errorf(errorStr, 7, 2, len(cm.hitboxes))
+		cm.printDebug()
+	}
+
+	// Add a new entry.
+	// This re-uses the entries from earlier, so the list is not extended.
+	ent3 := &entity.TestEntity{5}
+	cm.AddEntity(ent3)
+	if len(cm.hitboxes) != 2 {
+		t.Errorf(errorStr, 8, 2, len(cm.hitboxes))
 		cm.printDebug()
 	}
 }
