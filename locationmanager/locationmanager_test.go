@@ -81,8 +81,37 @@ func TestCircleHitbox(t *testing.T) {
 	}
 }
 
-// Test basic collision detection.
-func TestDetector(t *testing.T) {
+// Test the location interface.
+func TestLocation(t *testing.T) {
+
+	// Set up a new location manager.
+	lm := NewLocationManager()
+
+	// The entity to query for.
+	ent := &entity.TestEntity{5}
+
+	// Query for the entity which LM does not know about.  This must fail.
+	res, locx, locy, orient := lm.GetLocation(ent)
+
+	if res {
+		t.Errorf("Lookup of unknown object succeeded; returned: (%v, %v, %v, %v))",
+			res, locx, locy, orient)
+		lm.printDebug()
+	}
+
+	// Add the entity and query for it.
+	lm.AddEntity(ent)
+	res, locx, locy, orient = lm.GetLocation(ent)
+
+	if !res || (locx != 0) || (locy != 0) || (orient != 0) {
+		t.Errorf("Lookup of known object failed; returned:x (%v, %v, %v, %v))",
+			res, locx, locy, orient)
+		lm.printDebug()
+	}
+}
+
+// Test basic collision detection interface.
+func TestDetection(t *testing.T) {
 	errorStr := "[%v] Expected %v hitboxes, actual: %v"
 
 	// A test location find collisions here.
@@ -91,7 +120,7 @@ func TestDetector(t *testing.T) {
 	// Entities at a location.
 	var col []entity.Entity
 
-	// Set up a new collision detector.
+	// Set up a new location manager.
 	cm := NewLocationManager()
 
 	// Add two entities to be managed.
