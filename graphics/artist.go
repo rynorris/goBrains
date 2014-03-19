@@ -10,7 +10,7 @@ package graphics
 import "github.com/banthar/Go-SDL/sdl"
 
 func Draw(in chan Primitive, s *sdl.Surface) {
-    for p := range in {
-        p.draw(s)
-    }
+	for p := range in {
+		p.draw(s)
+	}
 }
