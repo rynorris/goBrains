@@ -21,7 +21,8 @@ type Point struct {
 
 // Points are drawn by setting a single corresponding pixel.
 func (p Point) draw(s *sdl.Surface) {
-	safeSet(s, p.x, p.y, p.c)
+	color := sdl.ColorFromGoColor(p.c)
+	safeSet(s, p.x, p.y, color)
 }
 
 // A Rectangle is... a rectangle.
