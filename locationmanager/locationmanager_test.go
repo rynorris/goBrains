@@ -1,11 +1,12 @@
 /*
- * Collisiondetector testing.
+ * LocationManager testing.
  */
 
-package collisiondetector
+package locationmanager
 
 import (
 	"github.com/DiscoViking/goBrains/entity"
+	"math"
 	"testing"
 )
 
@@ -14,8 +15,7 @@ func TestCoord(t *testing.T) {
 	loc := coord{0, 0}
 
 	// Update location and verify it.
-	deltaLoc := CoordDelta{1, 2}
-	loc.update(deltaLoc)
+	loc.update(1, 2)
 
 	if loc.locX != 1 {
 		t.Errorf("Expected x-location update to %v, got %v.", 1, loc.locX)
@@ -29,20 +29,46 @@ func TestCoord(t *testing.T) {
 func TestCircleHitbox(t *testing.T) {
 
 	// Update the location of the hitbox.
-	hb := circleHitbox{true, coord{0, 0}, 10, &entity.TestEntity{0}}
+	hb := circleHitbox{
+		active:      true,
+		centre:      coord{0, 0},
+		orientation: 0,
+		radius:      10,
+		entity:      &entity.TestEntity{0},
+	}
 
-	move := CoordDelta{1, 2}
+	move := CoordDelta{1, 0}
 	hb.update(move)
 
 	if hb.centre.locX != 1 {
 		t.Errorf("Expected x-location update to %v, got %v.", 1, hb.centre.locX)
+		hb.printDebug()
 	}
+
+	move = CoordDelta{0, math.Pi / 2}
+	hb.update(move)
+
+	if hb.orientation != (math.Pi / 2) {
+		t.Errorf("Expected orientation update to %v, got %v.", (math.Pi / 2), hb.orientation)
+		hb.printDebug()
+	}
+
+	move = CoordDelta{2, 0}
+	hb.update(move)
+
 	if hb.centre.locY != 2 {
 		t.Errorf("Expected y-location update to %v, got %v.", 2, hb.centre.locY)
+		hb.printDebug()
 	}
 
 	// Run checks on points inside and outside the hitbox.
-	hb = circleHitbox{true, coord{0, 0}, 10, &entity.TestEntity{0}}
+	hb = circleHitbox{
+		active:      true,
+		centre:      coord{0, 0},
+		orientation: (math.Pi * 2 / 6),
+		radius:      10,
+		entity:      &entity.TestEntity{0},
+	}
 
 	loc := coord{1, 2}
 	if !hb.isInside(loc) {
@@ -66,7 +92,7 @@ func TestDetector(t *testing.T) {
 	var col []entity.Entity
 
 	// Set up a new collision detector.
-	cm := NewCollisionManager()
+	cm := NewLocationManager()
 
 	// Add two entities to be managed.
 	ent1 := &entity.TestEntity{5}
@@ -89,7 +115,7 @@ func TestDetector(t *testing.T) {
 	}
 
 	// Move a hitbox and verify it's moved.
-	move := CoordDelta{10, 10}
+	move := CoordDelta{10, 0}
 	cm.ChangeLocation(move, ent2)
 
 	col = cm.GetCollisions(loc, ent1)
@@ -99,7 +125,7 @@ func TestDetector(t *testing.T) {
 	}
 
 	// Verify that we can detect the moved entity.
-	loc = CoordDelta{10, 10}
+	loc = CoordDelta{10, 0}
 	col = cm.GetCollisions(loc, ent1)
 	if len(col) != 1 {
 		t.Errorf(errorStr, 4, 1, len(col))

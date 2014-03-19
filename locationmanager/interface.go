@@ -1,11 +1,11 @@
 /*
- * Interfaces for the collision detector.
+ * Interfaces for the location manager.
  *
  * These interfaces provide the mechanisms by which entities in an environment can detect other entities they are in contact with.
  */
 
-// Package collisiondetector provides all abilities to detect other entities in an environment.
-package collisiondetector
+// Package locationmanager provides all abilities to detect other entities in an environment.
+package locationmanager
 
 import "github.com/DiscoViking/goBrains/entity"
 
@@ -42,6 +42,7 @@ type locatable interface {
 	getEntity() entity.Entity
 	getRadius() float64
 	getCoord() coord
+	getOrient() float64
 
 	// Miscellaneous.
 	printDebug()

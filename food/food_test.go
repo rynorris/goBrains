@@ -5,7 +5,7 @@
 package food
 
 import (
-	"github.com/DiscoViking/goBrains/collisiondetector"
+	"github.com/DiscoViking/goBrains/locationmanager"
 	"math"
 	"testing"
 )
@@ -14,7 +14,7 @@ import (
 func TestFood(t *testing.T) {
 
 	var food *Food
-	cm := collisiondetector.NewCollisionManager()
+	cm := locationmanager.NewLocationManager()
 
 	testContents := []float64{
 		0, // Empty food object.
@@ -25,7 +25,7 @@ func TestFood(t *testing.T) {
 
 	for _, val := range testContents {
 		t.Log("Test food with contents:", val)
-		food = NewFood(cm, val)
+		food = New(cm, val)
 
 		// Content should be as entered.
 		checkContent(t, food, val)
@@ -37,7 +37,7 @@ func TestFood(t *testing.T) {
 		checkConsumption(t, food, val)
 
 		// Reset.
-		food = NewFood(cm, val)
+		food = New(cm, val)
 
 		// Ensure that we cannot eat more food than there is in the instance.
 		checkEmptying(t, food, val)

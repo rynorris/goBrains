@@ -4,8 +4,8 @@
  * These methods are the behaviours of hitboxes, and allow determination of whether they interact with a point or other entity.
  */
 
-// Package collisiondetector provides all abilities to detect other entities in an environment.
-package collisiondetector
+// Package locationmanager provides all abilities to detect other entities in an environment.
+package locationmanager
 
 import (
 	"fmt"
@@ -42,7 +42,10 @@ func (hb *circleHitbox) isInside(loc coord) bool {
 
 // Update the location of a hitbox.
 func (hb *circleHitbox) update(move CoordDelta) {
-	hb.centre.update(move)
+	hb.orientation += move.rotation
+	dX := move.distance * math.Cos(hb.orientation)
+	dY := move.distance * math.Sin(hb.orientation)
+	hb.centre.update(dX, dY)
 }
 
 // Update the radius of the hitbox.
@@ -65,9 +68,15 @@ func (hb *circleHitbox) getCoord() coord {
 	return hb.centre
 }
 
+// Get the orientation of the hitbox.
+func (hb *circleHitbox) getOrient() float64 {
+	return hb.orientation
+}
+
 // Print debug information.
 func (hb *circleHitbox) printDebug() {
 	fmt.Printf("    Active: %v\n", hb.active)
+	fmt.Printf("    Orient: %v\n", hb.orientation)
 	fmt.Printf("    Centre: (%v, %v)\n", hb.centre.locX, hb.centre.locY)
 	fmt.Printf("    Radius: %v\n", hb.radius)
 	fmt.Printf("    Entity: %v\n", hb.entity)

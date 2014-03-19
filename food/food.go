@@ -7,7 +7,7 @@
 package food
 
 import (
-	"github.com/DiscoViking/goBrains/collisiondetector"
+	"github.com/DiscoViking/goBrains/locationmanager"
 	"math"
 )
 
@@ -45,7 +45,7 @@ func (f *Food) Check() bool {
 }
 
 // Initialize a new food object.
-func NewFood(cm collisiondetector.Detection, foodLevel float64) *Food {
+func New(cm locationmanager.Detection, foodLevel float64) *Food {
 	newF := &Food{
 		content: foodLevel,
 		cm:      cm,
