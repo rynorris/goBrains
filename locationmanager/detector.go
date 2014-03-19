@@ -70,6 +70,20 @@ func (cm *LocationManager) GetCollisions(offset CoordDelta, ent entity.Entity) [
 	return collisions
 }
 
+// Get the location and orientation of a specific entity.
+func (cm *LocationManager) GetLocation(ent entity.Entity) (bool, float64, float64, float64) {
+	hb := cm.findHitbox(ent)
+
+	if hb == nil {
+		return false, 0, 0, 0
+	}
+
+	coordinate := hb.getCoord()
+	orientation := hb.getOrient()
+
+	return true, coordinate.locX, coordinate.locY, orientation
+}
+
 // Find the hitbox associated with an entity.
 func (cm *LocationManager) findHitbox(ent entity.Entity) locatable {
 	for _, hb := range cm.hitboxes {
@@ -80,7 +94,7 @@ func (cm *LocationManager) findHitbox(ent entity.Entity) locatable {
 	return nil
 }
 
-// Find the first unused ehitbox structure.
+// Find the first unused hitbox structure.
 func (cm *LocationManager) findEmptyHitbox() locatable {
 	for _, hb := range cm.hitboxes {
 		if !hb.getActive() {

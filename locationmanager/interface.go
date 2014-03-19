@@ -24,6 +24,16 @@ type Detection interface {
 	ChangeRadius(radius float64, ent entity.Entity)
 }
 
+// Location is the set of methods that the graphics package uses to find the location of entities.
+type Location interface {
+
+	// Retrieve location of an entity.
+	// This returns the x- and y-coordinates, as well as the orientation.
+	// The first value is a boolean for whether the lookup was successful.
+	// This will fail if the queried entity has not registered with the location manager.
+	GetLocation(ent entity.Entity) (bool, float64, float64, float64)
+}
+
 // Locatable defines the ability to calculate if you can be located.
 type locatable interface {
 
