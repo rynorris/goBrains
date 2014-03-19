@@ -11,6 +11,7 @@ import "github.com/discoviking/goBrains/entity"
 import "github.com/discoviking/goBrains/food"
 
 func Interpret(in chan entity.Entity, out chan Primitive) {
+	defer close(out)
 	for e := range in {
 		switch e := e.(type) {
 		case *food.Food:
@@ -22,10 +23,10 @@ func Interpret(in chan entity.Entity, out chan Primitive) {
 }
 
 func breakEntity(e entity.Entity, out chan Primitive) {
-	out <- Circle{20, 20, uint16(e.GetRadius()), 0, color.Black}
+	out <- Circle{100, 100, uint16(e.GetRadius()), 0, color.Black}
 }
 
 func breakFood(f *food.Food, out chan Primitive) {
-	out <- Circle{20, 20, uint16(f.GetRadius()), 0, color.RGBA{50, 200, 50, 255}}
-	out <- Circle{20, 20, uint16(f.GetRadius()), 1, color.Black}
+	out <- Circle{100, 100, uint16(f.GetRadius()) + 1, 0, color.Black}
+	out <- Circle{100, 100, uint16(f.GetRadius()), 0, color.RGBA{50, 200, 50, 255}}
 }

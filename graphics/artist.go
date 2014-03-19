@@ -9,8 +9,9 @@ package graphics
 
 import "github.com/banthar/Go-SDL/sdl"
 
-func Draw(in chan Primitive, s *sdl.Surface) {
+func Draw(in chan Primitive, s *sdl.Surface, done chan struct{}) {
 	for p := range in {
 		p.draw(s)
 	}
+	done <- struct{}{}
 }

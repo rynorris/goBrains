@@ -38,19 +38,11 @@ func Start(data chan []entity.Entity, done chan struct{}) {
 	// Ensure that SDL will exit gracefully when we're done.
 	defer sdl.Quit()
 
-	// Construct the graphics pipeline.
-	interpret := make(chan entity.Entity)
-	draw := make(chan Primitive)
-
 	// Create the screen surface.
 	fmt.Printf("Creating screen\n")
 	screen := sdl.SetVideoMode(WIDTH, HEIGHT, 32, sdl.RESIZABLE|sdl.DOUBLEBUF|sdl.SWSURFACE)
 	canvas := sdl.CreateRGBSurface(0, WIDTH, HEIGHT, 32, 0, 0, 0, 0)
 	background := sdl.MapRGB(sdl.GetVideoInfo().Vfmt, 200, 200, 200)
-
-	// Set off the interpreter and artist goroutines.
-	go Interpret(interpret, draw)
-	go Draw(draw, canvas)
 
 	fmt.Printf("Entering main loop\n")
 	// Main drawing loop
@@ -67,10 +59,26 @@ func Start(data chan []entity.Entity, done chan struct{}) {
 		}
 
 		canvas.FillRect(&sdl.Rect{0, 0, WIDTH, HEIGHT}, background)
+
+		// Construct the graphics pipeline.
+		interpret := make(chan entity.Entity)
+		draw := make(chan Primitive)
+		drawn := make(chan struct{})
+
+		// Set off the interpreter and artist goroutines.
+		go Interpret(interpret, draw)
+		go Draw(draw, canvas, drawn)
+
 		for _, e := range entities {
 			// Send entities to the interpreter
 			interpret <- e
 		}
+
+		// Close the interpret pipe. This will cause the interpreter to finish.
+		// It will then close the drawing pipe, causing the artist to finish.
+		// He will then signal to us that he is done via the drawn pipe.
+		close(interpret)
+		<-drawn
 
 		// This is pretty dangerous, since we're continuing without waiting for the artist
 		// to finish drawing the final entity to screen.
@@ -79,7 +87,6 @@ func Start(data chan []entity.Entity, done chan struct{}) {
 		// be fixed, it just requires a bit more synchronization rubbish and slightly ruins
 		// the cleanliness of this pipeline design.
 		screen.Flip()
-		sdl.Delay(8)
 		screen.Blit(nil, canvas, nil)
 		done <- struct{}{}
 	}
