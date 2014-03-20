@@ -6,13 +6,22 @@
 
 package creature
 
-import "github.com/DiscoViking/goBrains/locationmanager"
+import (
+	"github.com/DiscoViking/goBrains/brain"
+	"github.com/DiscoViking/goBrains/locationmanager"
+)
 
 // The high-level creature struct.
 type Creature struct {
 
 	// The CollisionManager that this instance is managed by.
-	cm locationmanager.Detection
+	lm locationmanager.Detection
+
+	// The nervous system of this creature.  Hopefully doing something intelligent.
+	brain brain.AcceptInput
+
+	// Brain inputs!
+	inputs []input
 
 	// The current vitality of the creature.
 	// This decrements each update.  The creature dies when this reaches zero.
@@ -25,8 +34,10 @@ type antenna struct {
 	// The host of this antenna.
 	host *Creature
 
+	// Input node that this input charges in the brain.
+	node *brain.Node
+
 	// Location of the antenna on the host.
 	// This is defined as length of the antenna and angle (in rads) from the host's direction.
-	length float64
-	arc    float64
+	location locationmanager.CoordDelta
 }

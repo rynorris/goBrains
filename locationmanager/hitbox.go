@@ -42,9 +42,9 @@ func (hb *circleHitbox) isInside(loc coord) bool {
 
 // Update the location of a hitbox.
 func (hb *circleHitbox) update(move CoordDelta) {
-	hb.orientation += move.rotation
-	dX := move.distance * math.Cos(hb.orientation)
-	dY := move.distance * math.Sin(hb.orientation)
+	hb.orientation += move.Rotation
+	dX := move.Distance * math.Cos(hb.orientation)
+	dY := move.Distance * math.Sin(hb.orientation)
 	hb.centre.update(dX, dY)
 }
 

@@ -21,18 +21,18 @@ func (c *Creature) Check() bool {
 		return false
 	}
 
-	c.cm.RemoveEntity(c)
+	c.lm.RemoveEntity(c)
 	return true
 }
 
 // Initialize a new creature object.
-func New(cm locationmanager.Detection) *Creature {
+func New(lm locationmanager.Detection) *Creature {
 	newC := &Creature{
-		cm:       cm,
+		lm:       lm,
 		vitality: 10,
 	}
 
 	// Add the new creature to the location manager.
-	cm.AddEntity(newC)
+	lm.AddEntity(newC)
 	return newC
 }

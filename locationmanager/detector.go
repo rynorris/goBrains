@@ -57,8 +57,8 @@ func (cm *LocationManager) GetCollisions(offset CoordDelta, ent entity.Entity) [
 	searcher := cm.findHitbox(ent)
 	absLoc := searcher.getCoord()
 
-	dX := offset.distance * math.Cos(searcher.getOrient())
-	dY := offset.distance * math.Sin(searcher.getOrient())
+	dX := offset.Distance * math.Cos(searcher.getOrient())
+	dY := offset.Distance * math.Sin(searcher.getOrient())
 	absLoc.update(dX, dY)
 
 	for _, hb := range cm.hitboxes {
