@@ -26,9 +26,11 @@ func (c *Creature) Check() bool {
 }
 
 // Initialize a new creature object.
-func New(lm locationmanager.Detection) *Creature {
+func NewCreature(lm locationmanager.Detection) *Creature {
 	newC := &Creature{
 		lm:       lm,
+		brain:    nil,
+		inputs:   make([]input, 0),
 		vitality: 10,
 	}
 

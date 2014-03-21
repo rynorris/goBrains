@@ -14,30 +14,37 @@ import (
 // Dummy brain for testing.
 type testBrain struct {
 	fired int
+	nodes []*brain.Node
+}
+
+func newTestBrain() *testBrain {
+	return &testBrain{
+		fired: 0,
+		nodes: make([]*brain.Node, 0),
+	}
 }
 
 func (tb *testBrain) AddInputNode(node *brain.Node) {
 	node.AddOutput(tb)
+	tb.nodes = append(tb.nodes, node)
+}
+
+func (tb *testBrain) Work() {
+	for _, node := range tb.nodes {
+		node.Work()
+	}
 }
 
 func (tb *testBrain) Charge(charge float64) {
 	tb.fired++
 }
 
-func newTestCreature() *Creature {
-	return &Creature{
-		lm:       locationmanager.NewLocationManager(),
-		brain:    nil,
-		inputs:   make([]input, 0),
-		vitality: 0,
-	}
-}
-
 // Basic antenna verification.
 func TestAntenna(t *testing.T) {
 	errorStr := "[%v] Expected test brain to have received %v firings, actually got %v."
-	creature := newTestCreature()
-	tBrain := &testBrain{0}
+	lm := locationmanager.NewLocationManager()
+	creature := NewCreature(lm)
+	tBrain := newTestBrain()
 	creature.brain = tBrain
 
 	// Add two antennae to the creature.
@@ -49,6 +56,7 @@ func TestAntenna(t *testing.T) {
 	// Trigger detection, ensure nothing detected.
 	antL.detect()
 	antR.detect()
+	tBrain.Work()
 	if tBrain.fired > 0 {
 		t.Errorf(errorStr, 1, 0, tBrain.fired)
 	}
@@ -56,20 +64,25 @@ func TestAntenna(t *testing.T) {
 	// Add something to detect.  Is it detected?
 	creature.lm.AddEntity(entity.TestEntity{100})
 	antL.detect()
+	tBrain.Work()
 	if tBrain.fired != 1 {
 		t.Errorf(errorStr, 2, 1, tBrain.fired)
 	}
 	antR.detect()
+	tBrain.Work()
 	if tBrain.fired != 2 {
 		t.Errorf(errorStr, 3, 2, tBrain.fired)
 	}
 
 	// Detection of multiple entities at once.
+	// Add another 99, for a total of 100 entities to detect.
+	tBrain.fired = 0
 	for ii := 0; ii < 99; ii++ {
 		creature.lm.AddEntity(entity.TestEntity{100})
 	}
 	antL.detect()
-	if tBrain.fired != 101 {
-		t.Errorf(errorStr, 4, 101, tBrain.fired)
+	tBrain.Work()
+	if tBrain.fired != 100 {
+		t.Errorf(errorStr, 4, 100, tBrain.fired)
 	}
 }
