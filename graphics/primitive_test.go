@@ -28,7 +28,7 @@ func TestPoint(t *testing.T) {
 	testname := "TestPoint"
 
 	// Initialise SDL
-	if sdl.Init(sdl.INIT_EVERYTHING) != 0 {
+	if sdl.Init(sdl.INIT_VIDEO) != 0 {
 		panic(sdl.GetError())
 	}
 
@@ -47,7 +47,7 @@ func TestPoint(t *testing.T) {
 
 func TestRectangle(t *testing.T) {
 	// Initialise SDL
-	if sdl.Init(sdl.INIT_EVERYTHING) != 0 {
+	if sdl.Init(sdl.INIT_VIDEO) != 0 {
 		panic(sdl.GetError())
 	}
 
@@ -78,7 +78,7 @@ func TestRectangle(t *testing.T) {
 
 func TestCircle(t *testing.T) {
 	// Initialise SDL
-	if sdl.Init(sdl.INIT_EVERYTHING) != 0 {
+	if sdl.Init(sdl.INIT_VIDEO) != 0 {
 		panic(sdl.GetError())
 	}
 
