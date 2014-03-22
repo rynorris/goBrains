@@ -4,6 +4,10 @@ go:
   - 1.2
   - tip
 
+before_install:
+  - sudo apt-get install -qq lib-sdl1.2debian
+  - sudo apt-get install -qq libsdl-image1.2-dev
+
 install: go get code.google.com/p/go.tools/cmd/cover
 
 script: go test -v -cover ./...
