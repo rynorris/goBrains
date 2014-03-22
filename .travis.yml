@@ -11,6 +11,5 @@ before_install:
 
 install: 
   - go get code.google.com/p/go.tools/cmd/cover
-  - go get github.com/banthar/Go-SDL
 
 script: go test -v -cover ./...
