@@ -4,6 +4,7 @@ import "testing"
 import "image/color"
 import "github.com/DiscoViking/goBrains/entity"
 import "github.com/DiscoViking/goBrains/food"
+import "github.com/DiscoViking/goBrains/locationmanager"
 
 // A dummy entity we use for testing the interpreter.
 type testEntity struct {
@@ -56,7 +57,9 @@ func TestInterpretFood(t *testing.T) {
 
 	go Interpret(in, out)
 
-	in <- food.NewFood(100)
+	lm := locationmanager.NewLocationManager()
+
+	in <- food.New(lm, 100)
 
 	expected := Circle{100, 100, 11, 0, color.Black}
 

@@ -2,6 +2,7 @@ package graphics
 
 import "github.com/DiscoViking/goBrains/entity"
 import "github.com/DiscoViking/goBrains/food"
+import "github.com/DiscoViking/goBrains/locationmanager"
 import "github.com/banthar/Go-SDL/sdl"
 import "testing"
 import "os"
@@ -16,9 +17,11 @@ func TestGraphicsFV(t *testing.T) {
 	data := make(chan []entity.Entity)
 	done := make(chan struct{})
 
+	lm := locationmanager.NewLocationManager()
+
 	// Create some entities
 	entities := []entity.Entity{
-		food.NewFood(1000),
+		food.New(lm, 1000),
 	}
 
 	go Start(data, done)
