@@ -26,7 +26,7 @@ import (
 
 func TestPoint(t *testing.T) {
 	// This test does not run in Travis.
-	if os.GetEnv("TRAVIS") == "true" {
+	if os.Getenv("TRAVIS") == "true" {
 		t.Log("This test does not work in the Travis VMs. Passing by default.")
 		return
 	}
@@ -53,7 +53,7 @@ func TestPoint(t *testing.T) {
 
 func TestRectangle(t *testing.T) {
 	// This test does not run in Travis.
-	if os.GetEnv("TRAVIS") == "true" {
+	if os.Getenv("TRAVIS") == "true" {
 		t.Log("This test does not work in the Travis VMs. Passing by default.")
 		return
 	}
@@ -90,7 +90,7 @@ func TestRectangle(t *testing.T) {
 
 func TestCircle(t *testing.T) {
 	// This test does not run in Travis.
-	if os.GetEnv("TRAVIS") == "true" {
+	if os.Getenv("TRAVIS") == "true" {
 		t.Log("This test does not work in the Travis VMs. Passing by default.")
 		return
 	}
