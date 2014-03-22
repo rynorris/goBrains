@@ -2,8 +2,8 @@ package graphics
 
 import "testing"
 import "image/color"
-import "github.com/discoviking/goBrains/entity"
-import "github.com/discoviking/goBrains/food"
+import "github.com/DiscoViking/goBrains/entity"
+import "github.com/DiscoViking/goBrains/food"
 
 // A dummy entity we use for testing the interpreter.
 type testEntity struct {

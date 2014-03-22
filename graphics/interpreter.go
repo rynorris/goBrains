@@ -7,8 +7,8 @@
 package graphics
 
 import "image/color"
-import "github.com/discoviking/goBrains/entity"
-import "github.com/discoviking/goBrains/food"
+import "github.com/DiscoViking/goBrains/entity"
+import "github.com/DiscoViking/goBrains/food"
 
 func Interpret(in chan entity.Entity, out chan Primitive) {
 	defer close(out)
