@@ -60,7 +60,7 @@ func (c Circle) draw(s *sdl.Surface) {
 // drawFilledCircle uses the integer midpoint circle algorithm to draw a filled
 // circle to the given surface.
 func drawFilledCircle(x0, y0 int16, r uint16, c color.Color, s *sdl.Surface) {
-	format := sdl.GetVideoInfo().Vfmt
+	format := s.Format
 	color := sdl.ColorFromGoColor(c)
 	colorVal := sdl.MapRGB(format, color.R, color.G, color.B)
 
