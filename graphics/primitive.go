@@ -34,7 +34,7 @@ type Rectangle struct {
 
 // Rectangles are drawn by directly calling FillRect on the surface.
 func (r Rectangle) draw(s *sdl.Surface) {
-	format := sdl.GetVideoInfo().Vfmt
+	format := s.Format
 	color := sdl.ColorFromGoColor(r.c)
 	colorVal := sdl.MapRGB(format, color.R, color.G, color.B)
 	s.FillRect(&sdl.Rect{r.x, r.y, r.w, r.h}, colorVal)
