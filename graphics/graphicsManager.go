@@ -14,7 +14,7 @@
 package graphics
 
 import "fmt"
-import "github.com/discoviking/goBrains/entity"
+import "github.com/DiscoViking/goBrains/entity"
 
 import "github.com/banthar/Go-SDL/sdl"
 

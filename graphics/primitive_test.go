@@ -2,7 +2,7 @@ package graphics
 
 import (
 	"github.com/banthar/Go-SDL/sdl"
-	"github.com/discoviking/goBrains/testutils"
+	"github.com/DiscoViking/goBrains/testutils"
 	"image/color"
 	"os"
 	"strconv"
