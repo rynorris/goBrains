@@ -31,7 +31,7 @@ func Start(data chan []entity.Entity, done chan struct{}) {
 
 	// Initialise SDL
 	fmt.Printf("Initialising SDL.")
-	if sdl.Init(sdl.INIT_EVERYTHING) != 0 {
+	if sdl.Init(sdl.INIT_VIDEO) != 0 {
 		panic(sdl.GetError())
 	}
 
