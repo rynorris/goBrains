@@ -80,14 +80,9 @@ func Start(data chan []entity.Entity, done chan struct{}) {
 		close(interpret)
 		<-drawn
 
-		// This is pretty dangerous, since we're continuing without waiting for the artist
-		// to finish drawing the final entity to screen.
-		// I think that the worst that will happen is that one entity will be drawn a single
-		// frame behind the others, which is no great loss. However if necessary this can
-		// be fixed, it just requires a bit more synchronization rubbish and slightly ruins
-		// the cleanliness of this pipeline design.
-		screen.Flip()
+		// Finally flip the surface to paint to the screen.
 		screen.Blit(nil, canvas, nil)
+		screen.Flip()
 		done <- struct{}{}
 	}
 }
