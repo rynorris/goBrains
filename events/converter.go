@@ -2,6 +2,12 @@ package events
 
 import "github.com/banthar/Go-SDL/sdl"
 
+var (
+	// Key Bindings
+	terminate   = sdl.K_ESCAPE
+	toggle_draw = sdl.KEY_z
+)
+
 // Listens for events from SDL, converts them into
 // game events, and pipes them down the given channel
 func Poll(out chan Event) {
@@ -20,11 +26,11 @@ func convert(e sdl.Event) Event {
 		case sdl.KEYDOWN:
 			// Key Down handling
 			switch e.Keysym {
-			case sdl.K_ESCAPE:
-				// Escape key
+			case terminate:
+				// Close the program
 				out <- BasicEvent{TERMINATE}
-			case sdl.K_z:
-				// Z key
+			case toggle_draw:
+				// Turn on/off drawing graphics
 				out <- BasicEvent{TOGGLE_DRAW}
 			}
 		}
