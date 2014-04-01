@@ -40,7 +40,7 @@ func (an *antenna) detect() {
 }
 
 // Initialise a new antenna object.
-func NewAntenna(host *Creature, antType int) *antenna {
+func newAntenna(host *Creature, antType int) *antenna {
 	thisArc := 0.0
 	if antType == AntennaLeft {
 		thisArc = arc
@@ -52,9 +52,10 @@ func NewAntenna(host *Creature, antType int) *antenna {
 	node := brain.NewNode()
 	host.brain.AddInputNode(node)
 
-	return &antenna{
+	input := inputStruct{
 		host:     host,
 		node:     node,
 		location: locationmanager.CoordDelta{length, thisArc},
 	}
+	return &antenna{input}
 }

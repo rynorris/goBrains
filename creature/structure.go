@@ -25,11 +25,11 @@ type Creature struct {
 
 	// The current vitality of the creature.
 	// This decrements each update.  The creature dies when this reaches zero.
-	vitality int
+	vitality float64
 }
 
-// An antenna belonging to a creature.
-type antenna struct {
+// A generic input structure for an input belonging to a creature.
+type inputStruct struct {
 
 	// The host of this antenna.
 	host *Creature
@@ -37,7 +37,16 @@ type antenna struct {
 	// Input node that this input charges in the brain.
 	node *brain.Node
 
-	// Location of the antenna on the host.
-	// This is defined as length of the antenna and angle (in rads) from the host's direction.
+	// Location of the input on the host.
 	location locationmanager.CoordDelta
+}
+
+// Basic creature detection.
+type antenna struct {
+	inputStruct
+}
+
+// Basic creature food consumption.
+type mouth struct {
+	inputStruct
 }

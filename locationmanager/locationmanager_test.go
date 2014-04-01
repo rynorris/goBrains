@@ -29,7 +29,7 @@ func TestCoord(t *testing.T) {
 func TestCircleHitbox(t *testing.T) {
 
 	// Update the location of the hitbox.
-	hb := circleHitbox{
+	hb := &circleHitbox{
 		active:      true,
 		centre:      coord{0, 0},
 		orientation: 0,
@@ -62,7 +62,7 @@ func TestCircleHitbox(t *testing.T) {
 	}
 
 	// Run checks on points inside and outside the hitbox.
-	hb = circleHitbox{
+	hb = &circleHitbox{
 		active:      true,
 		centre:      coord{0, 0},
 		orientation: (math.Pi * 2 / 6),
@@ -96,7 +96,7 @@ func TestLocation(t *testing.T) {
 	if res {
 		t.Errorf("Lookup of unknown object succeeded; returned: (%v, %v, %v, %v))",
 			res, locx, locy, orient)
-		lm.printDebug()
+		lm.PrintDebug()
 	}
 
 	// Add the entity and query for it.
@@ -106,7 +106,7 @@ func TestLocation(t *testing.T) {
 	if !res || (locx != 0) || (locy != 0) || (orient != 0) {
 		t.Errorf("Lookup of known object failed; returned:x (%v, %v, %v, %v))",
 			res, locx, locy, orient)
-		lm.printDebug()
+		lm.PrintDebug()
 	}
 }
 
@@ -132,7 +132,7 @@ func TestDetection(t *testing.T) {
 
 	if len(cm.hitboxes) != 2 {
 		t.Errorf(errorStr, 1, 2, len(cm.hitboxes))
-		cm.printDebug()
+		cm.PrintDebug()
 	}
 
 	// Check there are two hitboxes found at the origin.
@@ -140,7 +140,7 @@ func TestDetection(t *testing.T) {
 	col = cm.GetCollisions(loc, ent1)
 	if len(col) != 2 {
 		t.Errorf(errorStr, 2, 2, len(col))
-		cm.printDebug()
+		cm.PrintDebug()
 	}
 
 	// Move a hitbox and verify it's moved.
@@ -150,7 +150,7 @@ func TestDetection(t *testing.T) {
 	col = cm.GetCollisions(loc, ent1)
 	if len(col) != 1 {
 		t.Errorf(errorStr, 3, 1, len(col))
-		cm.printDebug()
+		cm.PrintDebug()
 	}
 
 	// Verify that we can detect the moved entity.
@@ -158,7 +158,7 @@ func TestDetection(t *testing.T) {
 	col = cm.GetCollisions(loc, ent1)
 	if len(col) != 1 {
 		t.Errorf(errorStr, 4, 1, len(col))
-		cm.printDebug()
+		cm.PrintDebug()
 	}
 
 	// Reduce radius of the entity at the origin and verify we stop detecting it.
@@ -166,14 +166,14 @@ func TestDetection(t *testing.T) {
 	col = cm.GetCollisions(loc, ent1)
 	if len(col) != 1 {
 		t.Errorf(errorStr, 5, 1, len(col))
-		cm.printDebug()
+		cm.PrintDebug()
 	}
 
 	cm.ChangeRadius(1, ent1)
 	col = cm.GetCollisions(loc, ent1)
 	if len(col) != 0 {
 		t.Error(errorStr, 6, 0, len(col))
-		cm.printDebug()
+		cm.PrintDebug()
 	}
 
 	// A radius reduced to zero cannot be detected at all.
@@ -181,14 +181,14 @@ func TestDetection(t *testing.T) {
 	col = cm.GetCollisions(loc, ent1)
 	if len(col) != 1 {
 		t.Errorf(errorStr, 5, 1, len(col))
-		cm.printDebug()
+		cm.PrintDebug()
 	}
 
 	cm.ChangeRadius(0, ent1)
 	col = cm.GetCollisions(loc, ent1)
 	if len(col) != 0 {
 		t.Error(errorStr, 6, 0, len(col))
-		cm.printDebug()
+		cm.PrintDebug()
 	}
 
 	// Remove the entities from the CM.
@@ -197,15 +197,23 @@ func TestDetection(t *testing.T) {
 	cm.RemoveEntity(ent2)
 	if len(cm.hitboxes) != 2 {
 		t.Errorf(errorStr, 7, 2, len(cm.hitboxes))
-		cm.printDebug()
+		cm.PrintDebug()
 	}
 
 	// Add a new entry.
 	// This re-uses the entries from earlier, so the list is not extended.
-	ent3 := &entity.TestEntity{5}
-	cm.AddEntity(ent3)
+	cm.AddEntity(ent1)
 	if len(cm.hitboxes) != 2 {
 		t.Errorf(errorStr, 8, 2, len(cm.hitboxes))
-		cm.printDebug()
+		cm.PrintDebug()
+	}
+
+	// Extend the list again.
+	ent3 := &entity.TestEntity{5}
+	cm.AddEntity(ent2)
+	cm.AddEntity(ent3)
+	if len(cm.hitboxes) != 3 {
+		t.Errorf(errorStr, 9, 3, len(cm.hitboxes))
+		cm.PrintDebug()
 	}
 }

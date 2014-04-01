@@ -13,6 +13,11 @@ func (c *Creature) GetRadius() float64 {
 	return 0
 }
 
+// Creatures cannot consume each other.
+func (c *Creature) Consume() float64 {
+	return 0
+}
+
 // Attempt to tear down a creature.
 // Call this at the end of each cycle, to remove it from the collision manager.
 // Returns a boolean for whether the teardown occured.

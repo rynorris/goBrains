@@ -44,6 +44,11 @@ func (f *Food) Check() bool {
 	return true
 }
 
+// Content checking.  This is provided for testing purposes.
+func (f *Food) GetContent() float64 {
+	return f.content
+}
+
 // Initialize a new food object.
 func New(cm locationmanager.Detection, foodLevel float64) *Food {
 	newF := &Food{

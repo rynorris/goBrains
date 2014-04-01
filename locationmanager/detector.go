@@ -105,7 +105,7 @@ func (cm *LocationManager) findEmptyHitbox() locatable {
 }
 
 // Print debug information about information stored in the LocationManager.
-func (cm *LocationManager) printDebug() {
+func (cm *LocationManager) PrintDebug() {
 	fmt.Printf("Location Manager: %v\n", cm)
 	for ii, hb := range cm.hitboxes {
 		fmt.Printf("  Hitbox %v\n", ii)
