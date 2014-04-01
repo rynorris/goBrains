@@ -28,6 +28,7 @@ func (cm *LocationManager) AddEntity(ent entity.Entity) {
 	if entry == nil {
 		cm.hitboxes = append(cm.hitboxes, &newHitbox)
 	} else {
+		entry.setActive(true)
 		entry = &newHitbox
 	}
 }
