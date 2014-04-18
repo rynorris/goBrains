@@ -96,9 +96,9 @@ func (cm *LocationManager) findHitbox(ent entity.Entity) locatable {
 // Replace the first unused hitbox structure.  Return a boolean for whether the operation was successful.
 func (cm *LocationManager) replaceEmptyHitbox(loc locatable) bool {
 	for ii := range cm.hitboxes{
-		hb := &cm.hitboxes[ii]
+		hb := cm.hitboxes[ii]
 		if !hb.getActive() {
-			hb = loc
+			cm.hitboxes[ii] = loc
 			return true
 		}
 	}

@@ -150,8 +150,6 @@ func TestMouth(t *testing.T) {
 		muchFood[ii] = food.New(lm, 10)
 	}
 
-	lm.PrintDebug()
-
 	mot.detect()
 	for ii := 0; ii < 100; ii++ {
 		if muchFood[ii].GetContent() != 9 {
