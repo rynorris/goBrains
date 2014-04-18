@@ -10,6 +10,26 @@ import (
 	"testing"
 )
 
+// Verify that the number of hitboxes found were as expected.
+func HitboxCheck(t *testing.T, expected, actual int) {
+	if expected != actual {
+		t.Errorf("Expected %v hitboxes, actual: %v",
+			expected,
+			actual)
+	}
+}
+
+// Verify that the entries in the location manager are as expected.
+func StoreCheck(t *testing.T, lm *LocationManager, entries int, actives int) {
+	if (entries != len(lm.hitboxes)) || (actives != lm.NumberOwned()) {
+		t.Errorf("Expected %v entries in LM (%v active), found %v entries (%v active).",
+			entries,
+			actives,
+			len(lm.hitboxes),
+			lm.NumberOwned())
+	}
+}
+
 // Test co-ordinate handling; coords and DeltaCoords.
 func TestCoord(t *testing.T) {
 	loc := coord{0, 0}
@@ -112,7 +132,6 @@ func TestLocation(t *testing.T) {
 
 // Test basic collision detection interface.
 func TestDetection(t *testing.T) {
-	errorStr := "[%v] Expected %v hitboxes, actual: %v"
 
 	// A test location find collisions here.
 	var loc CoordDelta
@@ -130,76 +149,42 @@ func TestDetection(t *testing.T) {
 	cm.AddEntity(ent1)
 	cm.AddEntity(ent2)
 
-	if len(cm.hitboxes) != 2 {
-		t.Errorf(errorStr, 1, 2, len(cm.hitboxes))
-		cm.PrintDebug()
-	}
+	HitboxCheck(t, 2, len(cm.hitboxes))
 
 	// Check there are two hitboxes found at the origin.
 	loc = CoordDelta{0, 0}
 	col = cm.GetCollisions(loc, ent1)
-	if len(col) != 2 {
-		t.Errorf(errorStr, 2, 2, len(col))
-		cm.PrintDebug()
-	}
+	HitboxCheck(t, 2, len(col))
 
 	// Move a hitbox and verify it's moved.
 	move := CoordDelta{10, 0}
 	cm.ChangeLocation(move, ent2)
 
 	col = cm.GetCollisions(loc, ent1)
-	if len(col) != 1 {
-		t.Errorf(errorStr, 3, 1, len(col))
-		cm.PrintDebug()
-	}
+	HitboxCheck(t, 1, len(col))
 
 	// Verify that we can detect the moved entity.
 	loc = CoordDelta{10, 0}
 	col = cm.GetCollisions(loc, ent1)
-	if len(col) != 1 {
-		t.Errorf(errorStr, 4, 1, len(col))
-		cm.PrintDebug()
-	}
+	HitboxCheck(t, 1, len(col))
 
 	// Reduce radius of the entity at the origin and verify we stop detecting it.
 	loc = CoordDelta{2, 0}
 	col = cm.GetCollisions(loc, ent1)
-	if len(col) != 1 {
-		t.Errorf(errorStr, 5, 1, len(col))
-		cm.PrintDebug()
-	}
+	HitboxCheck(t, 1, len(col))
 
 	cm.ChangeRadius(1, ent1)
 	col = cm.GetCollisions(loc, ent1)
-	if len(col) != 0 {
-		t.Error(errorStr, 6, 0, len(col))
-		cm.PrintDebug()
-	}
+	HitboxCheck(t, 0, len(col))
 
 	// A radius reduced to zero cannot be detected at all.
 	loc = CoordDelta{0, 0}
 	col = cm.GetCollisions(loc, ent1)
-	if len(col) != 1 {
-		t.Errorf(errorStr, 5, 1, len(col))
-		cm.PrintDebug()
-	}
+	HitboxCheck(t, 1, len(col))
 
 	cm.ChangeRadius(0, ent1)
 	col = cm.GetCollisions(loc, ent1)
-	if len(col) != 0 {
-		t.Error(errorStr, 6, 0, len(col))
-		cm.PrintDebug()
-	}
-}
-
-func StoreCheck(t *testing.T, lm *LocationManager, entries int, actives int) {
-	if (entries != len(lm.hitboxes)) || (actives != lm.NumberOwned()) {
-		t.Errorf("[%v] Expected %v entries in LM (%v active), found %v entries (%v active).",
-			entries,
-			actives,
-			len(lm.hitboxes),
-			lm.NumberOwned())
-	}
+	HitboxCheck(t, 0, len(col))
 }
 
 // Test object storage within LocationManager.

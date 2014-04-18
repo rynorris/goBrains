@@ -24,7 +24,7 @@ const (
 	// Length of the antenna.
 	length = 10.0
 
-	// Charge incremented when per detected thing.
+	// Charge incremented per detected thing.
 	charge = 1.0
 )
 
@@ -33,7 +33,7 @@ func (an *antenna) detect() {
 	blips := an.host.lm.GetCollisions(an.location, an.host)
 
 	// The antenna detects all objects collided with.
-	// This does not actually do any checking on what the entity is - we have already detected it!
+	// This does not actually do any checking on what the entity is - we just detect it!
 	for ii := 0; ii < len(blips); ii++ {
 		an.node.Charge(charge)
 	}
@@ -53,9 +53,9 @@ func newAntenna(host *Creature, antType int) *antenna {
 	host.brain.AddInputNode(node)
 
 	input := inputStruct{
-		host:     host,
-		node:     node,
-		location: locationmanager.CoordDelta{length, thisArc},
+		putStruct: putStruct{host: host},
+		node:      node,
+		location:  locationmanager.CoordDelta{length, thisArc},
 	}
 	return &antenna{input}
 }

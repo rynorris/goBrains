@@ -14,20 +14,40 @@ import (
 
 // Dummy brain for testing.
 type testBrain struct {
-	fired int
-	nodes []*brain.Node
+	fired   int
+	nodes   []*brain.Node
+	outputs []brain.ChargedWorker
+}
+
+// Verify that a movement structure is as expected for a booster.
+func CheckMove(t *testing.T, tb *booster, actual velocity, expected float64) {
+	if (tb.btype == BoosterLinear) && (actual.move != expected) {
+		t.Errorf("Expected linear velocity %v, got %v",
+			expected,
+			actual.move)
+	}
+	if (tb.btype == BoosterAngular) && (actual.rotate != expected) {
+		t.Errorf("Expected rotational velocity %v, got %v",
+			expected,
+			actual.rotate)
+	}
 }
 
 func newTestBrain() *testBrain {
 	return &testBrain{
-		fired: 0,
-		nodes: make([]*brain.Node, 0),
+		fired:   0,
+		nodes:   make([]*brain.Node, 0),
+		outputs: make([]brain.ChargedWorker, 0),
 	}
 }
 
 func (tb *testBrain) AddInputNode(node *brain.Node) {
 	node.AddOutput(tb)
 	tb.nodes = append(tb.nodes, node)
+}
+
+func (tb *testBrain) AddOutput(oput brain.ChargedWorker) {
+	tb.outputs = append(tb.outputs, oput)
 }
 
 func (tb *testBrain) Work() {
@@ -164,6 +184,55 @@ func TestMouth(t *testing.T) {
 	}
 }
 
+// Booster behaviour verification.
+func TestBoosters(t *testing.T) {
+	host := NewCreature(locationmanager.NewLocationManager())
+	tBrain := newTestBrain()
+	host.brain = tBrain
+
+	linBoost := newLinearBooster(host)
+	angBoost := newAngularBooster(host)
+
+	testBoosters := []*booster{
+		linBoost,
+		angBoost,
+	}
+
+	for _, testBooster := range testBoosters {
+
+		// Reset host velocity.
+		host.movement = velocity{0, 0}
+
+		// Trigger the booster with no charge.  No velocity as a result.
+		testBooster.Work()
+		CheckMove(t, testBooster, host.movement, 0.0)
+
+		// Add change.  Check that this results in movement after the work phase.
+		testBooster.Charge(0.1)
+		CheckMove(t, testBooster, host.movement, 0.0)
+
+		testBooster.Work()
+		CheckMove(t, testBooster, host.movement, 0.1)
+
+		// Ensure that the charge has definitely depleted after use.
+		testBooster.Work()
+		CheckMove(t, testBooster, host.movement, 0.1)
+	}
+
+	// Test that activating both boosters at once works.
+	host.movement = velocity{0, 0}
+	for _, testBooster := range testBoosters {
+		testBooster.Charge(0.1)
+	}
+	for _, testBooster := range testBoosters {
+		testBooster.Work()
+	}
+	for _, testBooster := range testBoosters {
+		CheckMove(t, testBooster, host.movement, 0.1)
+	}
+
+}
+
 // High-level creature verification.
 func TestCreature(t *testing.T) {
 	errorStrLm := "[%v] Expected %v entities in LM, found %v."
@@ -183,8 +252,8 @@ func TestCreature(t *testing.T) {
 	// It should be alive and happy and not immediately keel over dead.
 	// This will impede our testing somewhat.
 	if creature.Check() {
-        t.Errorf(errorStrDead, 3, "alive", "dead")
-        return
+		t.Errorf(errorStrDead, 3, "alive", "dead")
+		return
 	}
 
 	// If the creature runs out of vitality it will die.

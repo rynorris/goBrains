@@ -8,6 +8,13 @@ package creature
 
 import "github.com/DiscoViking/goBrains/locationmanager"
 
+// Fixed values.
+const (
+	// Maximum velocities.
+	MaxLinearVel  = 5.0
+	MaxAngularVel = 0.1
+)
+
 // Creatures always report a radius of zero, as they cannot be detected.
 func (c *Creature) GetRadius() float64 {
 	return 0
@@ -18,16 +25,20 @@ func (c *Creature) Consume() float64 {
 	return 0
 }
 
-// Attempt to tear down a creature.
-// Call this at the end of each cycle, to remove it from the collision manager.
-// Returns a boolean for whether the teardown occured.
+// Check the status of the creature and update LM appropriately.
+// Returns a boolean for whether teardown occured.
 func (c *Creature) Check() bool {
-	if c.vitality > 0 {
-		return false
+	if c.vitality == 0 {
+		c.lm.RemoveEntity(c)
+		return true
 	}
 
-	c.lm.RemoveEntity(c)
-	return true
+	// Update LM with the distance we are moving this check.
+	c.lm.ChangeLocation(locationmanager.CoordDelta{c.movement.move,
+		c.movement.rotate},
+		c)
+
+	return false
 }
 
 // Initialize a new creature object.

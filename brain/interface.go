@@ -7,6 +7,12 @@
 // Package brain provides a real-time neural net framework.
 package brain
 
+// BrainExternal defines the high-level methods that creatures can use to interact with its' brain.
+type BrainExternal interface {
+	AcceptInput
+	AddOutput(output ChargedWorker)
+}
+
 // AcceptInput defines the interface that creature inputs interact with to stimulate the brain.
 // This is a simple interface that registers the input node.
 type AcceptInput interface {
