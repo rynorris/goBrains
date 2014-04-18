@@ -190,30 +190,46 @@ func TestDetection(t *testing.T) {
 		t.Error(errorStr, 6, 0, len(col))
 		cm.PrintDebug()
 	}
+}
+
+func StoreCheck(t *testing.T, lm *LocationManager, entries int, actives int) {
+	if (entries != len(lm.hitboxes)) || (actives != lm.NumberOwned()) {
+		t.Errorf("[%v] Expected %v entries in LM (%v active), found %v entries (%v active).",
+			entries,
+			actives,
+			len(lm.hitboxes),
+			lm.NumberOwned())
+	}
+}
+
+// Test object storage within LocationManager.
+func TestStorage(t *testing.T) {
+	// Set up a new location manager.
+	cm := NewLocationManager()
+
+	// Add two entities to be managed.
+	ent1 := &entity.TestEntity{5}
+	ent2 := &entity.TestEntity{5}
+
+	cm.AddEntity(ent1)
+	cm.AddEntity(ent2)
+
+	StoreCheck(t, cm, 2, 2)
 
 	// Remove the entities from the CM.
 	// This doesn't reduce the length of the internal list, as the entries are re-used.
 	cm.RemoveEntity(ent1)
 	cm.RemoveEntity(ent2)
-	if len(cm.hitboxes) != 2 {
-		t.Errorf(errorStr, 7, 2, len(cm.hitboxes))
-		cm.PrintDebug()
-	}
+	StoreCheck(t, cm, 2, 0)
 
 	// Add a new entry.
 	// This re-uses the entries from earlier, so the list is not extended.
 	cm.AddEntity(ent1)
-	if len(cm.hitboxes) != 2 {
-		t.Errorf(errorStr, 8, 2, len(cm.hitboxes))
-		cm.PrintDebug()
-	}
+	StoreCheck(t, cm, 2, 1)
 
 	// Extend the list again.
 	ent3 := &entity.TestEntity{5}
 	cm.AddEntity(ent2)
 	cm.AddEntity(ent3)
-	if len(cm.hitboxes) != 3 {
-		t.Errorf(errorStr, 9, 3, len(cm.hitboxes))
-		cm.PrintDebug()
-	}
+	StoreCheck(t, cm, 3, 3)
 }

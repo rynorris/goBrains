@@ -58,11 +58,6 @@ func (hb *circleHitbox) getEntity() entity.Entity {
 	return hb.entity
 }
 
-// Get the radius of the entity.
-func (hb *circleHitbox) getRadius() float64 {
-	return hb.radius
-}
-
 // Get the central co-ordinates of the entity.
 func (hb *circleHitbox) getCoord() coord {
 	return hb.centre

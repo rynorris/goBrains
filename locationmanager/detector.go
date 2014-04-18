@@ -105,6 +105,17 @@ func (cm *LocationManager) replaceEmptyHitbox(loc locatable) bool {
 	return false
 }
 
+// Returns the number of hitboxes currently owned by the LocationManager.
+func (cm *LocationManager) NumberOwned() int {
+	ii := 0
+	for _, hb := range cm.hitboxes {
+		if hb.getActive() {
+			ii++
+		}
+	}
+	return ii
+}
+
 // Print debug information about information stored in the LocationManager.
 func (cm *LocationManager) PrintDebug() {
 	fmt.Printf("Location Manager: %v\n", cm)

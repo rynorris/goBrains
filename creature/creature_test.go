@@ -163,3 +163,48 @@ func TestMouth(t *testing.T) {
 		lm.PrintDebug()
 	}
 }
+
+// High-level creature verification.
+func TestCreature(t *testing.T) {
+	errorStrLm := "[%v] Expected %v entities in LM, found %v."
+	errorStrDead := "[%v] Creature expected %v, actually %v."
+
+	lm := locationmanager.NewLocationManager()
+	if lm.NumberOwned() != 0 {
+		t.Errorf(errorStrLm, 1, 0, lm.NumberOwned())
+	}
+
+	// The new creature should have registered with the LM.
+	creature := NewCreature(lm)
+	if lm.NumberOwned() != 1 {
+		t.Errorf(errorStrLm, 2, 1, lm.NumberOwned())
+	}
+
+	// It should be alive and happy and not immediately keel over dead.
+	// This will impede our testing somewhat.
+	if creature.Check() {
+        t.Errorf(errorStrDead, 3, "alive", "dead")
+        return
+	}
+
+	// If the creature runs out of vitality it will die.
+	// This should also remove it from LM.
+	creature.vitality = 0
+	if !creature.Check() {
+		t.Errorf(errorStrDead, 4, "dead", "alive")
+	}
+	if lm.NumberOwned() != 0 {
+		t.Errorf(errorStrDead, 5, 0, lm.NumberOwned())
+	}
+}
+
+// Cannibalism.  AKA. Hot creature-on-creature action.
+func TestCannibalism(t *testing.T) {
+	lm := locationmanager.NewLocationManager()
+	creature := NewCreature(lm)
+
+	// Creatures cannot eat other creatures (yet).  Attempts to eat other creatures result in a no-op.
+	if creature.Consume() != 0 {
+		t.Errorf("Creature successfully eaten.")
+	}
+}
