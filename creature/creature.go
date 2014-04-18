@@ -28,12 +28,17 @@ func (c *Creature) Consume() float64 {
 // Check the status of the creature and update LM appropriately.
 // Returns a boolean for whether teardown occured.
 func (c *Creature) Check() bool {
-	if c.vitality > 0 {
-		return false
+	if c.vitality == 0 {
+		c.lm.RemoveEntity(c)
+		return true
 	}
 
-	c.lm.RemoveEntity(c)
-	return true
+	// Update LM with the distance we are moving this check.
+	c.lm.ChangeLocation(locationmanager.CoordDelta{c.movement.move,
+		c.movement.rotate},
+		c)
+
+	return false
 }
 
 // Initialize a new creature object.
