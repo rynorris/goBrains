@@ -24,9 +24,9 @@ func (mt *mouth) detect() {
 // This is at the front of the creature.
 func newMouth(host *Creature) *mouth {
 	input := inputStruct{
-		host:     host,
-		node:     nil,
-		location: locationmanager.CoordDelta{host.GetRadius(), 0.0},
+		putStruct: putStruct{host: host},
+		node:      nil,
+		location:  locationmanager.CoordDelta{host.GetRadius(), 0.0},
 	}
 	return &mouth{input}
 }
