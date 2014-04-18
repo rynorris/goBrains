@@ -30,6 +30,12 @@ func TestFood(t *testing.T) {
 		// Content should be as entered.
 		checkContent(t, food, val)
 
+		// Food should not immediately disappear unless it has zero content.
+		// If it does disappear, then abort this test.
+		if (val != 0) && (!checkCheck(t, food, false)) {
+			return
+		}
+
 		// Radius is the square root of the content.
 		checkRadius(t, food, math.Sqrt(val))
 
@@ -41,14 +47,33 @@ func TestFood(t *testing.T) {
 
 		// Ensure that we cannot eat more food than there is in the instance.
 		checkEmptying(t, food, val)
+
+		// Food should disappear once finished.
+		checkCheck(t, food, true)
 	}
 }
 
-// Content checking.
+// Content checking.  Verify that the appropriate function used by external tests also works.
 func checkContent(t *testing.T, food *Food, content float64) {
 	if food.content != content {
 		t.Errorf("Expected content of %v, found %v.", food.content, content)
 	}
+	if food.content != food.GetContent() {
+		t.Errorf("Different results from direct and indirect content queries: %v/%v",
+			food.content,
+			food.GetContent(),
+			)
+	}
+}
+
+// Checking the check function.  Poor naming conventions bite badly.
+// Return whether the food still exists after the check.
+func checkCheck(t *testing.T, food *Food, result bool) bool {
+	if !(result == food.Check()) {
+		t.Errorf("Expected check result of %v, got %v.", result, !result)
+		return false
+	}
+	return true
 }
 
 // Radius checking.

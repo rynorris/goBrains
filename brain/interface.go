@@ -7,6 +7,12 @@
 // Package brain provides a real-time neural net framework.
 package brain
 
+// AcceptInput defines the interface that creature inputs interact with to stimulate the brain.
+// This is a simple interface that registers the input node.
+type AcceptInput interface {
+	AddInputNode(input *Node)
+}
+
 // Chargeable defines the family of objects that participate in a neural network.
 // Objects that implement the chargable interface accept ChargeCarrier from other objects in the neural net.
 type Chargeable interface {

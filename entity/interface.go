@@ -12,4 +12,12 @@ type Entity interface {
 
 	// Get the size of the entity.
 	GetRadius() float64
+
+	// Query the state of the entity.
+	// Returns a boolean for if it is being torn down on this check.
+	Check() bool
+
+	// Attempt to consume the enitity.
+	// Returns the amount consumed.
+	Consume() float64
 }

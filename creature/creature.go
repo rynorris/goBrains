@@ -13,6 +13,11 @@ func (c *Creature) GetRadius() float64 {
 	return 0
 }
 
+// Creatures cannot consume each other.
+func (c *Creature) Consume() float64 {
+	return 0
+}
+
 // Attempt to tear down a creature.
 // Call this at the end of each cycle, to remove it from the collision manager.
 // Returns a boolean for whether the teardown occured.
@@ -21,18 +26,20 @@ func (c *Creature) Check() bool {
 		return false
 	}
 
-	c.cm.RemoveEntity(c)
+	c.lm.RemoveEntity(c)
 	return true
 }
 
 // Initialize a new creature object.
-func New(cm locationmanager.Detection) *Creature {
+func NewCreature(lm locationmanager.Detection) *Creature {
 	newC := &Creature{
-		cm:       cm,
+		lm:       lm,
+		brain:    nil,
+		inputs:   make([]input, 0),
 		vitality: 10,
 	}
 
 	// Add the new creature to the location manager.
-	cm.AddEntity(newC)
+	lm.AddEntity(newC)
 	return newC
 }

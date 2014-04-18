@@ -5,3 +5,10 @@
  */
 
 package creature
+
+// Interface exposed by input objects.
+type input interface {
+
+	// Activate an input, supplying environmental information to the brain.
+	detect()
+}

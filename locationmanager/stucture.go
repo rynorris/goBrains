@@ -32,8 +32,8 @@ type circleHitbox struct {
 
 // CoordDelta structs represent a position relative to an entity.
 type CoordDelta struct {
-	distance float64
-	rotation float64
+	Distance float64
+	Rotation float64
 }
 
 // LocationManager is an instance of a location manager.

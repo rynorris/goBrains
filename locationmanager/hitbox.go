@@ -42,9 +42,9 @@ func (hb *circleHitbox) isInside(loc coord) bool {
 
 // Update the location of a hitbox.
 func (hb *circleHitbox) update(move CoordDelta) {
-	hb.orientation += move.rotation
-	dX := move.distance * math.Cos(hb.orientation)
-	dY := move.distance * math.Sin(hb.orientation)
+	hb.orientation += move.Rotation
+	dX := move.Distance * math.Cos(hb.orientation)
+	dY := move.Distance * math.Sin(hb.orientation)
 	hb.centre.update(dX, dY)
 }
 
@@ -56,11 +56,6 @@ func (hb *circleHitbox) setRadius(radius float64) {
 // Get the entity owned by the hitbox.
 func (hb *circleHitbox) getEntity() entity.Entity {
 	return hb.entity
-}
-
-// Get the radius of the entity.
-func (hb *circleHitbox) getRadius() float64 {
-	return hb.radius
 }
 
 // Get the central co-ordinates of the entity.

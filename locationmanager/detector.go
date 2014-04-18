@@ -24,11 +24,10 @@ func (cm *LocationManager) AddEntity(ent entity.Entity) {
 		entity:      ent,
 	}
 
-	entry := cm.findEmptyHitbox()
-	if entry == nil {
+	inserted := cm.replaceEmptyHitbox(&newHitbox)
+
+	if !inserted {
 		cm.hitboxes = append(cm.hitboxes, &newHitbox)
-	} else {
-		entry = &newHitbox
 	}
 }
 
@@ -57,8 +56,8 @@ func (cm *LocationManager) GetCollisions(offset CoordDelta, ent entity.Entity) [
 	searcher := cm.findHitbox(ent)
 	absLoc := searcher.getCoord()
 
-	dX := offset.distance * math.Cos(searcher.getOrient())
-	dY := offset.distance * math.Sin(searcher.getOrient())
+	dX := offset.Distance * math.Cos(searcher.getOrient())
+	dY := offset.Distance * math.Sin(searcher.getOrient())
 	absLoc.update(dX, dY)
 
 	for _, hb := range cm.hitboxes {
@@ -94,18 +93,31 @@ func (cm *LocationManager) findHitbox(ent entity.Entity) locatable {
 	return nil
 }
 
-// Find the first unused hitbox structure.
-func (cm *LocationManager) findEmptyHitbox() locatable {
-	for _, hb := range cm.hitboxes {
+// Replace the first unused hitbox structure.  Return a boolean for whether the operation was successful.
+func (cm *LocationManager) replaceEmptyHitbox(loc locatable) bool {
+	for ii := range cm.hitboxes{
+		hb := cm.hitboxes[ii]
 		if !hb.getActive() {
-			return hb
+			cm.hitboxes[ii] = loc
+			return true
 		}
 	}
-	return nil
+	return false
+}
+
+// Returns the number of hitboxes currently owned by the LocationManager.
+func (cm *LocationManager) NumberOwned() int {
+	ii := 0
+	for _, hb := range cm.hitboxes {
+		if hb.getActive() {
+			ii++
+		}
+	}
+	return ii
 }
 
 // Print debug information about information stored in the LocationManager.
-func (cm *LocationManager) printDebug() {
+func (cm *LocationManager) PrintDebug() {
 	fmt.Printf("Location Manager: %v\n", cm)
 	for ii, hb := range cm.hitboxes {
 		fmt.Printf("  Hitbox %v\n", ii)
