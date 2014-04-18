@@ -24,12 +24,10 @@ func (cm *LocationManager) AddEntity(ent entity.Entity) {
 		entity:      ent,
 	}
 
-	entry := cm.findEmptyHitbox()
-	if entry == nil {
+	inserted := cm.replaceEmptyHitbox(&newHitbox)
+
+	if !inserted {
 		cm.hitboxes = append(cm.hitboxes, &newHitbox)
-	} else {
-		entry.setActive(true)
-		entry = &newHitbox
 	}
 }
 
@@ -95,14 +93,16 @@ func (cm *LocationManager) findHitbox(ent entity.Entity) locatable {
 	return nil
 }
 
-// Find the first unused hitbox structure.
-func (cm *LocationManager) findEmptyHitbox() locatable {
-	for _, hb := range cm.hitboxes {
+// Replace the first unused hitbox structure.  Return a boolean for whether the operation was successful.
+func (cm *LocationManager) replaceEmptyHitbox(loc locatable) bool {
+	for ii := range cm.hitboxes{
+		hb := &cm.hitboxes[ii]
 		if !hb.getActive() {
-			return hb
+			hb = loc
+			return true
 		}
 	}
-	return nil
+	return false
 }
 
 // Print debug information about information stored in the LocationManager.
