@@ -20,13 +20,16 @@ func (mt *mouth) detect() {
 	}
 }
 
-// Create a new mouth.
+// Add a new mouth to a creature.
 // This is at the front of the creature.
-func newMouth(host *Creature) *mouth {
+func AddMouth(host *Creature) *mouth {
 	input := inputStruct{
 		putStruct: putStruct{host: host},
 		node:      nil,
 		location:  locationmanager.CoordDelta{host.GetRadius(), 0.0},
 	}
-	return &mouth{input}
+    m := &mouth{input}
+
+    host.inputs = append(host.inputs, m)
+	return m
 }

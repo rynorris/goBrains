@@ -5,19 +5,12 @@
 package creature
 
 import (
-	"github.com/DiscoViking/goBrains/brain"
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/food"
+	"github.com/DiscoViking/goBrains/genetics"
 	"github.com/DiscoViking/goBrains/locationmanager"
 	"testing"
 )
-
-// Dummy brain for testing.
-type testBrain struct {
-	fired   int
-	nodes   []*brain.Node
-	outputs []brain.ChargedWorker
-}
 
 // Verify that a movement structure is as expected for a booster.
 func CheckMove(t *testing.T, tb *booster, actual velocity, expected float64) {
@@ -33,31 +26,19 @@ func CheckMove(t *testing.T, tb *booster, actual velocity, expected float64) {
 	}
 }
 
-func newTestBrain() *testBrain {
-	return &testBrain{
-		fired:   0,
-		nodes:   make([]*brain.Node, 0),
-		outputs: make([]brain.ChargedWorker, 0),
+// Verify that DNA matches the creature.
+func checkDnaLen(t *testing.T, c *Creature) {
+	gn := c.brain.GenesNeeded()
+	cv := c.dna.GetValues()
+	ga := 0
+	for jj := range cv {
+		jj = jj
+		ga++
 	}
-}
 
-func (tb *testBrain) AddInputNode(node *brain.Node) {
-	node.AddOutput(tb)
-	tb.nodes = append(tb.nodes, node)
-}
-
-func (tb *testBrain) AddOutput(oput brain.ChargedWorker) {
-	tb.outputs = append(tb.outputs, oput)
-}
-
-func (tb *testBrain) Work() {
-	for _, node := range tb.nodes {
-		node.Work()
+	if gn != ga {
+		t.Errorf("Mismatch of DNA with creature.  Expected %v, actual %v", gn, ga)
 	}
-}
-
-func (tb *testBrain) Charge(charge float64) {
-	tb.fired++
 }
 
 // Basic antenna verification.
@@ -69,8 +50,8 @@ func TestAntenna(t *testing.T) {
 	creature.brain = tBrain
 
 	// Add two antennae to the creature.
-	antL := newAntenna(creature, AntennaLeft)
-	antR := newAntenna(creature, AntennaRight)
+	antL := AddAntenna(creature, AntennaLeft)
+	antR := AddAntenna(creature, AntennaRight)
 	creature.inputs = append(creature.inputs, antL)
 	creature.inputs = append(creature.inputs, antR)
 
@@ -83,7 +64,7 @@ func TestAntenna(t *testing.T) {
 	}
 
 	// Add something to detect.  Is it detected?
-	creature.lm.AddEntity(entity.TestEntity{100})
+	creature.lm.AddEntity(&entity.TestEntity{100})
 	antL.detect()
 	tBrain.Work()
 	if tBrain.fired != 1 {
@@ -99,7 +80,7 @@ func TestAntenna(t *testing.T) {
 	// Add another 99, for a total of 100 entities to detect.
 	tBrain.fired = 0
 	for ii := 0; ii < 99; ii++ {
-		creature.lm.AddEntity(entity.TestEntity{100})
+		creature.lm.AddEntity(&entity.TestEntity{100})
 	}
 	antL.detect()
 	tBrain.Work()
@@ -114,8 +95,7 @@ func TestMouth(t *testing.T) {
 	errorStrFood := "[%v] Expected food content of %v, actually got %v."
 	lm := locationmanager.NewLocationManager()
 	creature := NewCreature(lm)
-	mot := newMouth(creature)
-	creature.inputs = append(creature.inputs, mot)
+	mot := AddMouth(creature)
 
 	// This should be as expected, or this test will most definitely fail.
 	if creature.vitality != 10 {
@@ -190,8 +170,7 @@ func TestBoosters(t *testing.T) {
 	tBrain := newTestBrain()
 	host.brain = tBrain
 
-	linBoost := newLinearBooster(host)
-	angBoost := newAngularBooster(host)
+	linBoost, angBoost := AddBoosters(host)
 
 	testBoosters := []*booster{
 		linBoost,
@@ -244,7 +223,7 @@ func TestCreature(t *testing.T) {
 	}
 
 	// The new creature should have registered with the LM.
-	creature := NewCreature(lm)
+	creature := NewSimple(lm)
 	if lm.NumberOwned() != 1 {
 		t.Errorf(errorStrLm, 2, 1, lm.NumberOwned())
 	}
@@ -263,17 +242,67 @@ func TestCreature(t *testing.T) {
 		t.Errorf(errorStrDead, 4, "dead", "alive")
 	}
 	if lm.NumberOwned() != 0 {
-		t.Errorf(errorStrDead, 5, 0, lm.NumberOwned())
+		t.Errorf(errorStrLm, 5, 0, lm.NumberOwned())
 	}
 }
 
 // Cannibalism.  AKA. Hot creature-on-creature action.
 func TestCannibalism(t *testing.T) {
 	lm := locationmanager.NewLocationManager()
-	creature := NewCreature(lm)
+	creature := NewSimple(lm)
 
-	// Creatures cannot eat other creatures (yet).  Attempts to eat other creatures result in a no-op.
+	// Creatures cannot eat other creatures (yet).  Attempts to eat other creatures results in a no-op.
 	if creature.Consume() != 0 {
 		t.Errorf("Creature successfully eaten.")
 	}
+}
+
+// Creaturesmakecreatures.  <Insert unsuitable joke here.>
+func TestBreeding(t *testing.T) {
+	lm := locationmanager.NewLocationManager()
+	mother := NewSimple(lm)
+	father := NewSimple(lm)
+	newChild := false
+
+	// New child should be a mixture of the parents.
+	// Test twice, as there is a small but finite chance it's a clone.
+	for i := 0; i < 2; i++ {
+		child := mother.Breed(father)
+		if !genetics.CompareSequence(mother.dna, child.dna) {
+			newChild = true
+		}
+		if !genetics.CompareSequence(father.dna, child.dna) {
+			newChild = true
+		}
+	}
+
+	if !newChild {
+		t.Errorf("Child was a clone of it's parent.")
+	}
+}
+
+// Test the cloning facilities.
+func TestCloning(t *testing.T) {
+	lm := locationmanager.NewLocationManager()
+	original := NewSimple(lm)
+	clone := original.Clone()
+
+	if !genetics.CompareSequence(original.dna, clone.dna) {
+		t.Errorf("Clone does not match original creature.")
+	}
+}
+
+// Test random DNA generation works.
+func TestPrepare(t *testing.T) {
+	var c *Creature
+	lm := locationmanager.NewLocationManager()
+
+	// Verify that an empty creature has the correct DNA.
+	c = NewCreature(lm)
+	c.Prepare()
+	checkDnaLen(t, c)
+
+	// Verify that a simple creature has the correct DNA.
+	c = NewSimple(lm)
+	checkDnaLen(t, c)
 }

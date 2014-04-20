@@ -8,6 +8,7 @@ package creature
 
 import (
 	"github.com/DiscoViking/goBrains/brain"
+	"github.com/DiscoViking/goBrains/genetics"
 	"github.com/DiscoViking/goBrains/locationmanager"
 )
 
@@ -16,6 +17,9 @@ type Creature struct {
 
 	// The CollisionManager that this instance is managed by.
 	lm locationmanager.Detection
+
+	// The genetic fingerprint of this creature.
+	dna *genetics.Dna
 
 	// The nervous system of this creature.  Hopefully doing something intelligent.
 	brain brain.BrainExternal

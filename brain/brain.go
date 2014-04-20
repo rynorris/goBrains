@@ -1,5 +1,7 @@
 package brain
 
+import "github.com/DiscoViking/goBrains/genetics"
+
 /*
  * The Brain is composed of inputs, central nodes, outputs and synapses.
  * They are arranged as such:
@@ -53,6 +55,26 @@ func NewBrain(numCentralNodes int) *Brain {
 	}
 
 	return &b
+}
+
+// Restore a set of synapses.
+func (b *Brain) restoreSynapses(c chan float64, syns []*Synapse) {
+	for _, syn := range syns {
+		syn.permittivity = <-c
+	}
+}
+
+// Start-of-day function fo querying how much genetic information is required for this brain.
+func (b *Brain) GenesNeeded() int {
+	return len(b.inSynapses) + len(b.outSynapses)
+}
+
+// Restore a brain using genetic information.
+// This can only occur if the structure matches that of the information.
+func (b *Brain) Restore(d *genetics.Dna) {
+	c := d.GetValues()
+	b.restoreSynapses(c, b.inSynapses)
+	b.restoreSynapses(c, b.outSynapses)
 }
 
 // Adds an input node to the brain.
