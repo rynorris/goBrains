@@ -1,9 +1,11 @@
 package brain
 
-import "testing"
-import "math"
-
-import "../testutils"
+import (
+	"../testutils"
+	"github.com/DiscoViking/goBrains/genes"
+	"math"
+	"testing"
+)
 
 type testOutput struct {
 	ChargeCarrier
@@ -11,12 +13,50 @@ type testOutput struct {
 
 func (o *testOutput) Work() {}
 
+func setupTestBrain() *Brain {
+	b := NewBrain(4)
+	in := NewNode()
+	b.AddInputNode(in)
+	out := testOutput{}
+	b.AddOutput(&out)
+	return b
+}
+
+func verifyPerimittivity(t *testing.T, syns []*Synapse, val float64) {
+	for _, jj := range syns {
+		// Due to loss of precision on compression, check to 6 decimal places only.
+		if int(math.Pow(jj.permittivity, 6)) != int(math.Pow(val, 6)) {
+			t.Errorf("Expected permittivity %v, got %v.", val, jj.permittivity)
+		}
+	}
+}
+
 func TestBrainNew(t *testing.T) {
 	b := NewBrain(5)
 
 	if len(b.centralNodes) != 5 {
 		t.Errorf("Created a brain with 5 central nodes. It only had %v", len(b.centralNodes))
 	}
+}
+
+func TestBrainRestore(t *testing.T) {
+
+	// Generate a new brain, and some DNA to match it.
+	b := setupTestBrain()
+	d := genes.NewDna()
+	for i := 0; i < len(b.inSynapses); i++ {
+		d.AddGene(genes.NewGene(0.77))
+	}
+	for i := 0; i < len(b.outSynapses); i++ {
+		d.AddGene(genes.NewGene(-0.55))
+	}
+
+	// Inject the data into the brain.
+	b.Restore(d)
+
+	// Verify the inject.
+	verifyPerimittivity(t, b.inSynapses, 0.77)
+	verifyPerimittivity(t, b.outSynapses, -0.55)
 }
 
 func TestBrainPropogation(t *testing.T) {
