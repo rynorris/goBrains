@@ -44,6 +44,14 @@ func TestBrainRestore(t *testing.T) {
 	// Generate a new brain, and some DNA to match it.
 	b := setupTestBrain()
 	d := genetics.NewDna()
+
+	gn := b.GenesNeeded()
+	if gn != (len(b.inSynapses) + len(b.outSynapses)) {
+		t.Errorf("Genes requested does not match that expected.  Expected: %v; actual: %v",
+			(len(b.inSynapses) + len(b.outSynapses)),
+			gn)
+	}
+
 	for i := 0; i < len(b.inSynapses); i++ {
 		d.AddGene(genetics.NewGene(0.77))
 	}

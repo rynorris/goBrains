@@ -46,12 +46,9 @@ func newGenBooster(host *Creature, btype int) *booster {
 	return &newBoost
 }
 
-// Initialize a new linear booster.
-func newLinearBooster(host *Creature) *booster {
-	return newGenBooster(host, BoosterLinear)
-}
-
-// Initialize a new angular booster.
-func newAngularBooster(host *Creature) *booster {
-	return newGenBooster(host, BoosterAngular)
+// Add a standard set of boosters to a host; one angular and one linear.
+func AddBoosters(host *Creature) (*booster, *booster) {
+	l := newGenBooster(host, BoosterLinear)
+	a := newGenBooster(host, BoosterAngular)
+	return l, a
 }

@@ -6,7 +6,11 @@
 
 package creature
 
-import "github.com/DiscoViking/goBrains/locationmanager"
+import (
+	"github.com/DiscoViking/goBrains/brain"
+	"github.com/DiscoViking/goBrains/genetics"
+	"github.com/DiscoViking/goBrains/locationmanager"
+)
 
 // Fixed values.
 const (
@@ -41,11 +45,50 @@ func (c *Creature) Check() bool {
 	return false
 }
 
+// Breed a new creature from two existing ones.
+func (cx *Creature) Breed(cy *Creature) *Creature {
+	newC := NewCreature(cx.lm)
+	newC.dna = cx.dna.Breed(cy.dna)
+	newC.brain.Restore(newC.dna)
+	return newC
+}
+
+// Clone an existing creature.
+func (c *Creature) Clone() *Creature {
+	newC := NewCreature(c.lm)
+	newC.dna = c.dna.Clone()
+	newC.brain.Restore(newC.dna)
+	return newC
+}
+
+// Generates a new random DNA string for a creature and injects it into the brain.
+// Must be called AFTER all outputs and inputs have been added.
+func (c *Creature) Prepare() {
+	n := c.brain.GenesNeeded()
+	c.dna = genetics.NewDna()
+	for i := 0; i < n; i++ {
+		c.dna.AddGene(genetics.NewRandomGene())
+	}
+	c.brain.Restore(c.dna)
+}
+
+// Generate a basic creature.
+func NewSimple(lm locationmanager.Detection) *Creature {
+	c := NewCreature(lm)
+	AddMouth(c)
+	AddAntenna(c, AntennaLeft)
+	AddAntenna(c, AntennaRight)
+	AddBoosters(c)
+	c.Prepare()
+	return c
+}
+
 // Initialize a new creature object.
 func NewCreature(lm locationmanager.Detection) *Creature {
 	newC := &Creature{
 		lm:       lm,
-		brain:    nil,
+		dna:      genetics.NewDna(),
+		brain:    brain.NewBrain(5),
 		inputs:   make([]input, 0),
 		vitality: 10,
 	}

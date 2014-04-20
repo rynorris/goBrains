@@ -39,8 +39,8 @@ func (an *antenna) detect() {
 	}
 }
 
-// Initialise a new antenna object.
-func newAntenna(host *Creature, antType int) *antenna {
+// Add a new antenna object to a creature.
+func AddAntenna(host *Creature, antType int) *antenna {
 	thisArc := 0.0
 	if antType == AntennaLeft {
 		thisArc = arc
@@ -57,5 +57,10 @@ func newAntenna(host *Creature, antType int) *antenna {
 		node:      node,
 		location:  locationmanager.CoordDelta{length, thisArc},
 	}
-	return &antenna{input}
+	a := &antenna{input}
+
+	// Add the antenna to host's list of inputs.
+	host.inputs = append(host.inputs, a)
+
+	return a
 }

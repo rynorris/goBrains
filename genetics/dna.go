@@ -51,6 +51,15 @@ func (dx *Dna) Breed(dy *Dna) *Dna {
 	return dn
 }
 
+// Cloning, like breeding but with less parents and more science.
+func (d *Dna) Clone() *Dna {
+	dn := NewDna()
+	for i := 0; i < len(d.sequence); i++ {
+		dn.AddGene(NewGene(d.sequence[i].Unpack()))
+	}
+	return dn
+}
+
 // Add a gene to the genetic sequence.
 func (d *Dna) AddGene(g *gene) {
 	d.sequence = append(d.sequence, g)

@@ -26,6 +26,17 @@ func VerifyRepack(t *testing.T, value, expected float64) {
 	}
 }
 
+// Test random gene generation.
+func TestRandomGenes(t *testing.T) {
+	for i := 0; i < 100; i++ {
+		d1 := NewRandomGene()
+		d2 := NewRandomGene()
+		if d1.value == d2.value {
+			t.Errorf("Two random genes matched.")
+		}
+	}
+}
+
 // Verify that values are consistent across unpacking and repacking.
 func TestRepacking(t *testing.T) {
 	VerifyRepack(t, 0.0, 0.0)

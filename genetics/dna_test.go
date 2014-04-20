@@ -11,6 +11,15 @@ import (
 	"testing"
 )
 
+// Generate a reasonable-length DNA sequence.
+func NewTestDna() *Dna {
+	d := NewDna()
+	for _, jj := range []float64{0.0, 0.1, -0.2, 0.3, -0.4, 0.5, -0.6, 0.7, -0.9, 1.0, -1.0} {
+		d.AddGene(NewGene(jj))
+	}
+	return d
+}
+
 // Retreive the sequence in a DNA object.
 func Retrieve(d *Dna) []float64 {
 	c := d.GetValues()
@@ -62,21 +71,6 @@ func VerifySequence(t *testing.T, seq []float64) {
 	Compare(t, res, seq)
 }
 
-// Compare two sequences.
-func CompareSequence(dx, dy *Dna) bool {
-	if len(dx.sequence) != len(dy.sequence) {
-		return false
-	}
-
-	for i := 0; i < len(dx.sequence); i++ {
-		if dx.sequence[i].value != dy.sequence[i].value {
-			return false
-		}
-	}
-
-	return true
-}
-
 func TestSequences(t *testing.T) {
 	VerifySequence(t, []float64{})
 	VerifySequence(t, []float64{0.0})
@@ -85,11 +79,7 @@ func TestSequences(t *testing.T) {
 
 // Do some basic kick-the-tires testing of generating new DNA sequences.
 func TestBreeding(t *testing.T) {
-	d := NewDna()
-
-	for _, jj := range []float64{0.0, 0.1, -0.2, 0.3, -0.4, 0.5, -0.6, 0.7, -0.9, 1.0, -1.0} {
-		d.AddGene(NewGene(jj))
-	}
+	d := NewTestDna()
 
 	// Inbreed a few generations.
 	// Verify that at least one generation has no change, and that one shows a mutation.
@@ -111,6 +101,15 @@ func TestBreeding(t *testing.T) {
 	}
 	if !mutated {
 		t.Errorf("Breeding failed to produce a mutated child.")
+	}
+}
+
+// Ensure that cloning produces identical DNA.
+func TestCloning(t *testing.T) {
+	d := NewTestDna()
+	newD := d.Clone()
+	if !CompareSequence(d, newD) {
+		t.Errorf("Cloning produced a non-identical sequence.")
 	}
 }
 

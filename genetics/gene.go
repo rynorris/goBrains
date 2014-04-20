@@ -56,6 +56,18 @@ func (g *gene) Copy() *gene {
 	return ng
 }
 
+// Generate a new random gene.
+func NewRandomGene() *gene {
+	val := rand.Float64()
+
+	// This value may be negative, but rand only generates positive numbers.
+	if rand.Intn(1) == 0 {
+		val = -1 * val
+	}
+
+	return NewGene(val)
+}
+
 func NewGene(value float64) *gene {
 	g := gene{0.0}
 	g.Pack(value)

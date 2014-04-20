@@ -35,6 +35,10 @@ func (tb *testBrain) AddOutput(oput brain.ChargedWorker) {
 	tb.outputs = append(tb.outputs, oput)
 }
 
+func (tb *testBrain) GenesNeeded() int {
+	return 0
+}
+
 func (tb *testBrain) Work() {
 	for _, node := range tb.nodes {
 		node.Work()
