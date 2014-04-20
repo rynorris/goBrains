@@ -6,15 +6,15 @@
 
 package genes
 
-import (
-	"bytes"
-	"encoding/binary"
-	"log"
-)
+import "math/rand"
 
 const (
+
+	// Length of a gene, in bytes.
+	GENELEN = 4
+
 	// A gene contains four bytes for a signed integer.
-	MAXGENEVAL = (32767.0)
+	MAXGENEVAL = (2147483647.0)
 )
 
 // Pack a value into a gene.
@@ -26,24 +26,38 @@ func (g *gene) Pack(value float64) {
 		value = -1
 	}
 
-	intVal := int64(value * MAXGENEVAL)
-	binary.PutVarint(g.value, intVal)
+	g.value = int32(value * MAXGENEVAL)
 }
 
 // Unpack a value from a gene.
 // This converts the unsigned integer back into a floating point number in the correct range.
 func (g *gene) Unpack() float64 {
-	rdr := bytes.NewReader(g.value)
-	val, err := binary.ReadVarint(rdr)
-	if (val == 0) && (err != nil) {
-		log.Fatal(err)
+	return (float64(g.value) / MAXGENEVAL)
+}
+
+// Generate a new gene from an existing one, with mutations.
+func (g *gene) Copy() *gene {
+	ng := NewGene(0.0)
+	ng.value = g.value
+
+	// Generate a map of mutations to make.  0.05% chance mutation per bit.
+	mutateMap := int32(0)
+
+	for i := 0; i < (GENELEN * 8); i++ {
+		g.value <<= 1
+		if rand.Intn(499) == 34 {
+			g.value |= 1
+		}
 	}
 
-	return (float64(val) / MAXGENEVAL)
+	// Apply the mutations to the new gene.
+	ng.value ^= mutateMap
+
+	return ng
 }
 
 func NewGene(value float64) *gene {
-	g := gene{(make([]byte, 4))}
+	g := gene{0.0}
 	g.Pack(value)
 	return &g
 }

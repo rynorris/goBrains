@@ -6,11 +6,7 @@
 
 package genes
 
-// Add a value to the genetic sequence.
-func (d *Dna) AddValue(value float64) {
-	g := NewGene(value)
-	d.sequence = append(d.sequence, g)
-}
+import "math/rand"
 
 // Channel over which we retrieve values from a sequence of DNA.
 func (d *Dna) GetValues() chan float64 {
@@ -24,6 +20,40 @@ func (d *Dna) GetValues() chan float64 {
 	}()
 
 	return c
+}
+
+// Breed with an external DNA strand to produce a child sequence.
+// Simulate genetic recombination, rather than randomly picking genes from each.
+func (dx *Dna) Breed(dy *Dna) *Dna {
+	if len(dx.sequence) != len(dy.sequence) {
+		// Attempt to breed two sequences which are not compatible.  Abort.
+		return nil
+	}
+
+	dn := NewDna()
+	active := dx
+	other := dy
+
+	// Equal bias to start with the mother or father sequence.
+	if rand.Intn(1) == 0 {
+		active, other = other, active
+	}
+
+	for i := 0; i < len(dx.sequence); i++ {
+		dn.AddGene(active.sequence[i].Copy())
+
+		// Perform on average once per sequence a recombination switch.
+		if rand.Intn(len(dx.sequence)) == 0 {
+			active, other = other, active
+		}
+	}
+
+	return dn
+}
+
+// Add a gene to the genetic sequence.
+func (d *Dna) AddGene(g *gene) {
+	d.sequence = append(d.sequence, g)
 }
 
 // Generate a new sequence of DNA.

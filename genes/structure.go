@@ -9,7 +9,7 @@ package genes
 // A single unit of genetic information.
 // This contains a single signed integer.
 type gene struct {
-	value []byte
+	value int32
 }
 
 // A full sequence of genetic information.

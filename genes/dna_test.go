@@ -50,7 +50,7 @@ func VerifySequence(t *testing.T, seq []float64) {
 
 	// Pack values.
 	for _, jj := range seq {
-		d.AddValue(jj)
+		d.AddGene(NewGene(jj))
 	}
 
 	// Unpack values and compare.
@@ -62,8 +62,72 @@ func VerifySequence(t *testing.T, seq []float64) {
 	Compare(t, res, seq)
 }
 
+// Compare two sequences.
+func CompareSequence(dx, dy *Dna) bool {
+	if len(dx.sequence) != len(dy.sequence) {
+		return false
+	}
+
+	for i := 0; i < len(dx.sequence); i++ {
+		if dx.sequence[i].value != dy.sequence[i].value {
+			return false
+		}
+	}
+
+	return true
+}
+
 func TestSequences(t *testing.T) {
 	VerifySequence(t, []float64{})
 	VerifySequence(t, []float64{0.0})
 	VerifySequence(t, []float64{0.0, 0.1, -0.2, 0.3, -0.4, 0.5, -0.6, 0.7, -0.9, 1.0, -1.0})
+}
+
+// Do some basic kick-the-tires testing of generating new DNA sequences.
+func TestBreeding(t *testing.T) {
+	d := NewDna()
+
+	for _, jj := range []float64{0.0, 0.1, -0.2, 0.3, -0.4, 0.5, -0.6, 0.7, -0.9, 1.0, -1.0} {
+		d.AddGene(NewGene(jj))
+	}
+
+	// Inbreed a few generations.
+	// Verify that at least one generation has no change, and that one shows a mutation.
+	identical := false
+	mutated := false
+
+	for i := 0; i < 100; i++ {
+		nd := d.Breed(d)
+		if CompareSequence(d, nd) {
+			identical = true
+		} else {
+			mutated = true
+		}
+		nd = d
+	}
+
+	if !identical {
+		t.Errorf("Breeding failed to produce an identical child.")
+	}
+	if !mutated {
+		t.Errorf("Breeding failed to produce a mutated child.")
+	}
+}
+
+// Test that we cannot breed two different-length sequences.
+func TestBadBreeding(t *testing.T) {
+	da := NewDna()
+	db := NewDna()
+
+	for i := 0; i < 5; i++ {
+		da.AddGene(NewGene(0.0))
+		db.AddGene(NewGene(0.0))
+	}
+
+	da.AddGene(NewGene(0.0))
+
+	dn := da.Breed(db)
+	if dn != nil {
+		t.Errorf("Successfully bred two incompatible sequences.")
+	}
 }

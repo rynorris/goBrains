@@ -26,6 +26,7 @@ func VerifyRepack(t *testing.T, value, expected float64) {
 	}
 }
 
+// Verify that values are consistent across unpacking and repacking.
 func TestRepacking(t *testing.T) {
 	VerifyRepack(t, 0.0, 0.0)
 	VerifyRepack(t, 0.45, 0.45)
@@ -34,4 +35,28 @@ func TestRepacking(t *testing.T) {
 	VerifyRepack(t, -1.0, -1.0)
 	VerifyRepack(t, 100.0, 1.0)
 	VerifyRepack(t, -100.0, -1.0)
+}
+
+// Verify behaviour on gene copies.
+// We should see a mixture of identical copies and mutated copies.
+func TestCopy(t *testing.T) {
+	g := NewGene(77)
+	identical := false
+	mutated := false
+
+	for i := 0; i < 100; i++ {
+		ng := g.Copy()
+		if ng.value == g.value {
+			identical = true
+		} else {
+			mutated = true
+		}
+	}
+
+	if !identical {
+		t.Errorf("No identical child genes were produced by the copy process.")
+	}
+	if !mutated {
+		t.Errorf("No mutated child genes were produced by the copy process.")
+	}
 }
