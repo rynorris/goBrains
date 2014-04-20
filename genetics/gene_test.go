@@ -4,7 +4,7 @@
  * Ensuring your genes are stable since 1989.
  */
 
-package genes
+package genetics
 
 import (
 	"math"

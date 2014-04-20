@@ -4,7 +4,7 @@
  * The magic that happens when genes get together.
  */
 
-package genes
+package genetics
 
 import "math/rand"
 

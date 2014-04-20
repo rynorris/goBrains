@@ -4,7 +4,7 @@
  * For all your storing-genetic-information needs.
  */
 
-package genes
+package genetics
 
 // A single unit of genetic information.
 // This contains a single signed integer.

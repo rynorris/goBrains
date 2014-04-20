@@ -5,19 +5,11 @@
 package creature
 
 import (
-	"github.com/DiscoViking/goBrains/brain"
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/food"
 	"github.com/DiscoViking/goBrains/locationmanager"
 	"testing"
 )
-
-// Dummy brain for testing.
-type testBrain struct {
-	fired   int
-	nodes   []*brain.Node
-	outputs []brain.ChargedWorker
-}
 
 // Verify that a movement structure is as expected for a booster.
 func CheckMove(t *testing.T, tb *booster, actual velocity, expected float64) {
@@ -31,33 +23,6 @@ func CheckMove(t *testing.T, tb *booster, actual velocity, expected float64) {
 			expected,
 			actual.rotate)
 	}
-}
-
-func newTestBrain() *testBrain {
-	return &testBrain{
-		fired:   0,
-		nodes:   make([]*brain.Node, 0),
-		outputs: make([]brain.ChargedWorker, 0),
-	}
-}
-
-func (tb *testBrain) AddInputNode(node *brain.Node) {
-	node.AddOutput(tb)
-	tb.nodes = append(tb.nodes, node)
-}
-
-func (tb *testBrain) AddOutput(oput brain.ChargedWorker) {
-	tb.outputs = append(tb.outputs, oput)
-}
-
-func (tb *testBrain) Work() {
-	for _, node := range tb.nodes {
-		node.Work()
-	}
-}
-
-func (tb *testBrain) Charge(charge float64) {
-	tb.fired++
 }
 
 // Basic antenna verification.
@@ -83,7 +48,7 @@ func TestAntenna(t *testing.T) {
 	}
 
 	// Add something to detect.  Is it detected?
-	creature.lm.AddEntity(entity.TestEntity{100})
+	creature.lm.AddEntity(&entity.TestEntity{100})
 	antL.detect()
 	tBrain.Work()
 	if tBrain.fired != 1 {
@@ -99,7 +64,7 @@ func TestAntenna(t *testing.T) {
 	// Add another 99, for a total of 100 entities to detect.
 	tBrain.fired = 0
 	for ii := 0; ii < 99; ii++ {
-		creature.lm.AddEntity(entity.TestEntity{100})
+		creature.lm.AddEntity(&entity.TestEntity{100})
 	}
 	antL.detect()
 	tBrain.Work()
@@ -263,7 +228,7 @@ func TestCreature(t *testing.T) {
 		t.Errorf(errorStrDead, 4, "dead", "alive")
 	}
 	if lm.NumberOwned() != 0 {
-		t.Errorf(errorStrDead, 5, 0, lm.NumberOwned())
+		t.Errorf(errorStrLm, 5, 0, lm.NumberOwned())
 	}
 }
 

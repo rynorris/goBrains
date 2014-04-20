@@ -4,7 +4,7 @@
  * Because while it may not look that way, you probably do want all of those genes.
  */
 
-package genes
+package genetics
 
 import (
 	"math"

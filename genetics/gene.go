@@ -4,7 +4,7 @@
  * Playing about with single units of genetic information.
  */
 
-package genes
+package genetics
 
 import "math/rand"
 

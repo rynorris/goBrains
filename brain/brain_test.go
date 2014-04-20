@@ -2,7 +2,7 @@ package brain
 
 import (
 	"../testutils"
-	"github.com/DiscoViking/goBrains/genes"
+	"github.com/DiscoViking/goBrains/genetics"
 	"math"
 	"testing"
 )
@@ -43,12 +43,12 @@ func TestBrainRestore(t *testing.T) {
 
 	// Generate a new brain, and some DNA to match it.
 	b := setupTestBrain()
-	d := genes.NewDna()
+	d := genetics.NewDna()
 	for i := 0; i < len(b.inSynapses); i++ {
-		d.AddGene(genes.NewGene(0.77))
+		d.AddGene(genetics.NewGene(0.77))
 	}
 	for i := 0; i < len(b.outSynapses); i++ {
-		d.AddGene(genes.NewGene(-0.55))
+		d.AddGene(genetics.NewGene(-0.55))
 	}
 
 	// Inject the data into the brain.

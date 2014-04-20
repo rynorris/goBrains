@@ -1,7 +1,7 @@
 package brain
 
 import (
-	"github.com/DiscoViking/goBrains/genes"
+	"github.com/DiscoViking/goBrains/genetics"
 	"log"
 )
 
@@ -73,7 +73,7 @@ func (b *Brain) restoreSynapses(c chan float64, syns []*Synapse) {
 
 // Restore a brain using genetic information.
 // This can only occur if the structure matches that of the information.
-func (b *Brain) Restore(d *genes.Dna) {
+func (b *Brain) Restore(d *genetics.Dna) {
 	c := d.GetValues()
 	b.restoreSynapses(c, b.inSynapses)
 	b.restoreSynapses(c, b.outSynapses)
