@@ -32,7 +32,7 @@ func (b *booster) Work() {
 }
 
 // Initialize a new generic booster object.
-func newGenBooster(host *Creature, btype int) *booster {
+func (host *Creature) newGenBooster(btype int) *booster {
 
 	newBoost := booster{
 		putStruct: putStruct{host: host},
@@ -47,8 +47,8 @@ func newGenBooster(host *Creature, btype int) *booster {
 }
 
 // Add a standard set of boosters to a host; one angular and one linear.
-func AddBoosters(host *Creature) (*booster, *booster) {
-	l := newGenBooster(host, BoosterLinear)
-	a := newGenBooster(host, BoosterAngular)
+func (host *Creature) AddBoosters() (*booster, *booster) {
+	l := host.newGenBooster(BoosterLinear)
+	a := host.newGenBooster(BoosterAngular)
 	return l, a
 }

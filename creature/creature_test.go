@@ -45,13 +45,13 @@ func checkDnaLen(t *testing.T, c *Creature) {
 func TestAntenna(t *testing.T) {
 	errorStr := "[%v] Expected test brain to have received %v firings, actually got %v."
 	lm := locationmanager.NewLocationManager()
-	creature := NewCreature(lm)
+	creature := New(lm)
 	tBrain := newTestBrain()
 	creature.brain = tBrain
 
 	// Add two antennae to the creature.
-	antL := AddAntenna(creature, AntennaLeft)
-	antR := AddAntenna(creature, AntennaRight)
+	antL := creature.AddAntenna(AntennaLeft)
+	antR := creature.AddAntenna(AntennaRight)
 	creature.inputs = append(creature.inputs, antL)
 	creature.inputs = append(creature.inputs, antR)
 
@@ -94,8 +94,8 @@ func TestMouth(t *testing.T) {
 	errorStrHost := "[%v] Expected host vitality of %v, actually got %v."
 	errorStrFood := "[%v] Expected food content of %v, actually got %v."
 	lm := locationmanager.NewLocationManager()
-	creature := NewCreature(lm)
-	mot := AddMouth(creature)
+	creature := New(lm)
+	mot := creature.AddMouth()
 
 	// This should be as expected, or this test will most definitely fail.
 	if creature.vitality != 10 {
@@ -166,11 +166,11 @@ func TestMouth(t *testing.T) {
 
 // Booster behaviour verification.
 func TestBoosters(t *testing.T) {
-	host := NewCreature(locationmanager.NewLocationManager())
+	host := New(locationmanager.NewLocationManager())
 	tBrain := newTestBrain()
 	host.brain = tBrain
 
-	linBoost, angBoost := AddBoosters(host)
+	linBoost, angBoost := host.AddBoosters()
 
 	testBoosters := []*booster{
 		linBoost,
@@ -298,7 +298,7 @@ func TestPrepare(t *testing.T) {
 	lm := locationmanager.NewLocationManager()
 
 	// Verify that an empty creature has the correct DNA.
-	c = NewCreature(lm)
+	c = New(lm)
 	c.Prepare()
 	checkDnaLen(t, c)
 

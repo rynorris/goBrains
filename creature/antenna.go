@@ -40,7 +40,7 @@ func (an *antenna) detect() {
 }
 
 // Add a new antenna object to a creature.
-func AddAntenna(host *Creature, antType int) *antenna {
+func (host *Creature) AddAntenna(antType int) *antenna {
 	thisArc := 0.0
 	if antType == AntennaLeft {
 		thisArc = arc

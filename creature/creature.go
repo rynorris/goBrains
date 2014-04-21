@@ -47,7 +47,7 @@ func (c *Creature) Check() bool {
 
 // Breed a new creature from two existing ones.
 func (cx *Creature) Breed(cy *Creature) *Creature {
-	newC := NewCreature(cx.lm)
+	newC := New(cx.lm)
 	newC.dna = cx.dna.Breed(cy.dna)
 	newC.brain.Restore(newC.dna)
 	return newC
@@ -55,7 +55,7 @@ func (cx *Creature) Breed(cy *Creature) *Creature {
 
 // Clone an existing creature.
 func (c *Creature) Clone() *Creature {
-	newC := NewCreature(c.lm)
+	newC := New(c.lm)
 	newC.dna = c.dna.Clone()
 	newC.brain.Restore(newC.dna)
 	return newC
@@ -74,17 +74,17 @@ func (c *Creature) Prepare() {
 
 // Generate a basic creature.
 func NewSimple(lm locationmanager.Detection) *Creature {
-	c := NewCreature(lm)
-	AddMouth(c)
-	AddAntenna(c, AntennaLeft)
-	AddAntenna(c, AntennaRight)
-	AddBoosters(c)
+	c := New(lm)
+	c.AddMouth()
+	c.AddAntenna(AntennaLeft)
+	c.AddAntenna(AntennaRight)
+	c.AddBoosters()
 	c.Prepare()
 	return c
 }
 
 // Initialize a new creature object.
-func NewCreature(lm locationmanager.Detection) *Creature {
+func New(lm locationmanager.Detection) *Creature {
 	newC := &Creature{
 		lm:       lm,
 		dna:      genetics.NewDna(),
