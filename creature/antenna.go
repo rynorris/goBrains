@@ -25,7 +25,7 @@ const (
 	length = 10.0
 
 	// Charge incremented per detected thing.
-	charge = 1.0
+	chargeAntenna = 1.0
 )
 
 // The antenna twitches, and attempts to detect nearby food.
@@ -35,12 +35,12 @@ func (an *antenna) detect() {
 	// The antenna detects all objects collided with.
 	// This does not actually do any checking on what the entity is - we just detect it!
 	for ii := 0; ii < len(blips); ii++ {
-		an.node.Charge(charge)
+		an.node.Charge(chargeAntenna)
 	}
 }
 
 // Add a new antenna object to a creature.
-func AddAntenna(host *Creature, antType int) *antenna {
+func (host *Creature) AddAntenna(antType int) *antenna {
 	thisArc := 0.0
 	if antType == AntennaLeft {
 		thisArc = arc

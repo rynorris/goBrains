@@ -75,6 +75,10 @@ type outputStruct struct {
 	charge float64
 }
 
+type pulser struct {
+	inputStruct
+}
+
 type antenna struct {
 	inputStruct
 }
@@ -84,10 +88,7 @@ type mouth struct {
 }
 
 type booster struct {
-	putStruct
-
-	// Charge held by the booster.
-	charge float64
+	outputStruct
 
 	// Type of booster.
 	btype int
