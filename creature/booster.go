@@ -35,15 +35,18 @@ func (b *booster) Work() {
 func (host *Creature) newGenBooster(btype int) *booster {
 
 	newBoost := booster{
-		putStruct: putStruct{host: host},
-		charge:    0,
-		btype:     btype,
+		outputStruct: outputStruct{
+			putStruct: putStruct{host: host},
+			charge:    0,
+		},
+		btype: btype,
 	}
+	b := &newBoost
 
 	// Link the output to the hosts' brain.
-	host.brain.AddOutput(&newBoost)
+	host.brain.AddOutput(b)
 
-	return &newBoost
+	return b
 }
 
 // Add a standard set of boosters to a host; one angular and one linear.

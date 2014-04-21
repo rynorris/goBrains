@@ -52,8 +52,6 @@ func TestAntenna(t *testing.T) {
 	// Add two antennae to the creature.
 	antL := creature.AddAntenna(AntennaLeft)
 	antR := creature.AddAntenna(AntennaRight)
-	creature.inputs = append(creature.inputs, antL)
-	creature.inputs = append(creature.inputs, antR)
 
 	// Trigger detection, ensure nothing detected.
 	antL.detect()

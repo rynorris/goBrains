@@ -75,6 +75,7 @@ func (c *Creature) Prepare() {
 // Generate a basic creature.
 func NewSimple(lm locationmanager.Detection) *Creature {
 	c := New(lm)
+	c.AddPulser()
 	c.AddMouth()
 	c.AddAntenna(AntennaLeft)
 	c.AddAntenna(AntennaRight)
