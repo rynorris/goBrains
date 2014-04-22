@@ -2,9 +2,9 @@ package brain
 
 import "testing"
 
-const delta = 0.0001
+import "../testutils"
 
-func TestNew(t *testing.T) {
+func TestNodeNew(t *testing.T) {
 	n := NewNode()
 
 	if n.firingThreshold != defaultFiringThreshold {
@@ -15,61 +15,44 @@ func TestNew(t *testing.T) {
 		t.Errorf("Default firingStrength was %v, expected %v.", n.firingStrength, defaultFiringStrength)
 	}
 
-	if n.chargeDecayRate != defaultChargeDecayRate {
-		t.Errorf("Default chargeDecayRate was %v, expected %v.", n.chargeDecayRate, defaultChargeDecayRate)
-	}
-
 	if n.currentCharge != 0 {
 		t.Errorf("Default currentCharge was %v, expected 0.", n.currentCharge)
 	}
 }
 
-func TestCharge(t *testing.T) {
+func TestNodeUpdate(t *testing.T) {
 	n := NewNode()
-	n.Charge(0.5)
-
-	if n.currentCharge-0.5 > delta {
-		t.Errorf("After charging by 0.5, charge was %v instead of 0.5!", n.currentCharge)
-	}
-
-	n.Charge(0.7)
-	if n.currentCharge-0.2 > delta {
-		t.Errorf("Charge should have wrapped to 0.2. Got %v instead.", n.currentCharge)
-	}
-}
-
-func TestUpdate(t *testing.T) {
-	n := NewNode()
-	n.Update()
+	n.Work()
 	if n.currentCharge > 0 {
-		t.Errorf("Charge should still be 0 after update. Got %v instead.", n.currentCharge)
+		t.Errorf("ChargeCarrier should still be 0 after update. Got %v instead.", n.currentCharge)
 	}
 
 	n.Charge(0.5)
-	n.Update()
-	if n.currentCharge-0.48 > delta {
-		t.Errorf("Charge should be 0.48 after update. Got %v instead.", n.currentCharge)
+	n.Work()
+	if !testutils.FloatsAreEqual(n.currentCharge, 0.48) {
+		t.Errorf("ChargeCarrier should be 0.48 after update. Got %v instead.", n.currentCharge)
 	}
 }
 
-func TestFire(t *testing.T) {
+func TestNodeFire(t *testing.T) {
 	n := NewNode()
 	m := NewNode()
 	n.AddOutput(m)
 
 	n.Fire()
-	if m.currentCharge-0.8 > delta {
-		t.Errorf("m should have 0.8 charge after n fires. Got %v instead.", m.currentCharge)
+	if !testutils.FloatsAreEqual(m.currentCharge, 0.8) {
+		t.Errorf("m should have 0.8 ChargeCarrier after n fires. Got %v instead.", m.currentCharge)
 	}
 }
 
-func TestOutput(t *testing.T) {
+func TestNodeOutput(t *testing.T) {
 	n := NewNode()
 	m := NewNode()
 	n.AddOutput(m)
 
 	n.Charge(1.2)
-	if m.currentCharge-0.8 > delta {
-		t.Errorf("m should have 0.8 charge after n fires. Got %v instead.", m.currentCharge)
+	n.Work()
+	if !testutils.FloatsAreEqual(m.currentCharge, 0.8) {
+		t.Errorf("m should have 0.8 ChargeCarrier after n fires. Got %v instead.", m.currentCharge)
 	}
 }
