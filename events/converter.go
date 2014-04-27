@@ -10,18 +10,8 @@ var (
 	}
 )
 
-// Listens for events from SDL, converts them into
-// game events, and pipes them down the given channel
-func Poll(out chan Event) {
-	for {
-		if e := convert(sdl.WaitEvent()); e.GetType() != NONE {
-			out <- e
-		}
-	}
-}
-
 // Converts SDL Events into game events.
-func convert(e sdl.Event) Event {
+func Convert(e sdl.Event) Event {
 	switch e := e.(type) {
 	case sdl.KeyboardEvent:
 		// Keyboard event handling.

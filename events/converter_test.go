@@ -21,7 +21,7 @@ func TestConvertKeyboard(t *testing.T) {
 	}
 
 	for in, out := range tests {
-		if got := convert(in); got != out {
+		if got := Convert(in); got != out {
 			t.Errorf("Input: %v, Expected: %v, Got: %v", in, out, got)
 		}
 	}

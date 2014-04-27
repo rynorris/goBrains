@@ -17,12 +17,12 @@ type Event interface {
 // A basic event.
 // Contains just an event code, and no additional data.
 type BasicEvent struct {
-	eventType EventType
+	EventType EventType
 }
 
 // GetType returns the event type code for the given event.
 func (e BasicEvent) GetType() EventType {
-	return e.eventType
+	return e.EventType
 }
 
 // An event with an associated location.

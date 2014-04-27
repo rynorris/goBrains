@@ -16,7 +16,6 @@
 package graphics
 
 import (
-	"github.com/DiscoViking/goBrains/testutils"
 	"github.com/banthar/Go-SDL/sdl"
 	"image/color"
 	"os"
@@ -48,7 +47,7 @@ func TestPoint(t *testing.T) {
 
 	s.SaveBMP("test_output/" + testname + "_got.bmp")
 
-	compareOutput(testname, t)
+	CompareOutput(testname, t)
 }
 
 func TestRectangle(t *testing.T) {
@@ -82,7 +81,7 @@ func TestRectangle(t *testing.T) {
 
 		s.SaveBMP("test_output/" + testname + "_got.bmp")
 
-		compareOutput(testname, t)
+		CompareOutput(testname, t)
 
 		ii++
 	}
@@ -121,22 +120,8 @@ func TestCircle(t *testing.T) {
 
 		s.SaveBMP("test_output/" + testname + "_got.bmp")
 
-		compareOutput(testname, t)
+		CompareOutput(testname, t)
 
 		ii++
-	}
-}
-
-func compareOutput(testname string, t *testing.T) {
-	match, err := testutils.FilesAreEqual(
-		"test_output/"+testname+"_got.bmp",
-		"test_output/"+testname+"_exp.bmp")
-	if err != nil {
-		t.Errorf(err.Error())
-	} else if !match {
-		t.Errorf(testname + ": Expected and actual outputs differ. Check files manually.")
-	} else {
-		//Pass, so remove _got file so we dont clog the output directory.
-		os.Remove("test_output/" + testname + "_got.bmp")
 	}
 }

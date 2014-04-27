@@ -15,6 +15,8 @@ package graphics
 
 import "fmt"
 import "github.com/DiscoViking/goBrains/entity"
+import "github.com/DiscoViking/goBrains/graphics"
+import "github.com/DiscoViking/goBrains/events"
 
 import "github.com/banthar/Go-SDL/sdl"
 
@@ -38,6 +40,9 @@ func Start(data chan []entity.Entity, done chan struct{}) {
 	// Ensure that SDL will exit gracefully when we're done.
 	defer sdl.Quit()
 
+	// Create the channel we will use to communicate with the event manager
+	handle := make(chan events.Event)
+
 	// Create the screen surface.
 	fmt.Printf("Creating screen\n")
 	screen := sdl.SetVideoMode(WIDTH, HEIGHT, 32, sdl.RESIZABLE|sdl.DOUBLEBUF|sdl.SWSURFACE)
@@ -48,6 +53,7 @@ func Start(data chan []entity.Entity, done chan struct{}) {
 	// Main drawing loop
 	time := uint32(0)
 	frame := 0
+	// We loop every time we are passed in an array of entities to draw.
 	for entities := range data {
 		frame = (frame + 1) % 100
 		if frame == 0 {
@@ -62,12 +68,12 @@ func Start(data chan []entity.Entity, done chan struct{}) {
 
 		// Construct the graphics pipeline.
 		interpret := make(chan entity.Entity)
-		draw := make(chan Primitive)
+		draw := make(chan graphics.Primitive)
 		drawn := make(chan struct{})
 
 		// Set off the interpreter and artist goroutines.
-		go Interpret(interpret, draw)
-		go Draw(draw, canvas, drawn)
+		go graphics.Interpret(interpret, draw)
+		go graphics.Draw(draw, canvas, drawn)
 
 		for _, e := range entities {
 			// Send entities to the interpreter
@@ -78,6 +84,17 @@ func Start(data chan []entity.Entity, done chan struct{}) {
 		// It will then close the drawing pipe, causing the artist to finish.
 		// He will then signal to us that he is done via the drawn pipe.
 		close(interpret)
+
+		// Whilst the drawing is potentially still going, pull any events off the SDL
+		// event queue and send them to the event manager.
+		for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
+			ev := events.Convert(e)
+			if ev.GetType() != events.NONE {
+				handle <- ev
+			}
+		}
+
+		// Now wait to be told all drawing is complete before blitting to the screen
 		<-drawn
 
 		// Finally flip the surface to paint to the screen.
