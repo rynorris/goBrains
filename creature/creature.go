@@ -37,6 +37,14 @@ func (c *Creature) Check() bool {
 		return true
 	}
 
+	// Get all our inputs to charge appropriately.
+	for _, in := range c.inputs {
+		in.detect()
+	}
+
+	// Update the brain one cycle.
+	c.brain.Work()
+
 	// Update LM with the distance we are moving this check.
 	c.lm.ChangeLocation(locationmanager.CoordDelta{c.movement.move,
 		c.movement.rotate},

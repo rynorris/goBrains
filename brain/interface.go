@@ -15,6 +15,7 @@ type BrainExternal interface {
 	AddOutput(output ChargedWorker)
 	Restore(d *genetics.Dna)
 	GenesNeeded() int
+	Work()
 }
 
 // AcceptInput defines the interface that creature inputs interact with to stimulate the brain.
