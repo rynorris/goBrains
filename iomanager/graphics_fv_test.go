@@ -1,5 +1,6 @@
 package graphics
 
+import "github.com/DiscoViking/goBrains/graphics"
 import "github.com/DiscoViking/goBrains/entity"
 import "github.com/DiscoViking/goBrains/food"
 import "github.com/DiscoViking/goBrains/locationmanager"
@@ -34,5 +35,5 @@ func TestGraphicsFV(t *testing.T) {
 	s := sdl.GetVideoSurface()
 	s.SaveBMP("test_output/TestGraphicsFV_got.bmp")
 
-	compareOutput("TestGraphicsFV", t)
+	graphics.CompareOutput("TestGraphicsFV", t)
 }
