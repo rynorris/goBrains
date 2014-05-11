@@ -44,9 +44,9 @@ func (g *gene) Copy() *gene {
 	mutateMap := int32(0)
 
 	for i := 0; i < (GENELEN * 8); i++ {
-		g.value <<= 1
+		mutateMap <<= 1
 		if rand.Intn(499) == 34 {
-			g.value |= 1
+			mutateMap |= 1
 		}
 	}
 
@@ -61,7 +61,7 @@ func NewRandomGene() *gene {
 	val := rand.Float64()
 
 	// This value may be negative, but rand only generates positive numbers.
-	if rand.Intn(1) == 0 {
+	if rand.Intn(2) == 0 {
 		val = -1 * val
 	}
 

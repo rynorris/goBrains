@@ -1,6 +1,7 @@
 package entitymanager
 
 import (
+	"fmt"
 	"math/rand"
 
 	"github.com/DiscoViking/goBrains/creature"
@@ -10,7 +11,7 @@ import (
 // spawnFood creates a new blob of food in a random location
 // and adds it to the food list.
 func (m *em) spawnFood() {
-	f := food.New(m.lm, 100)
+	f := food.New(m.lm, 1000)
 	m.food[f] = struct{}{}
 }
 
@@ -34,6 +35,8 @@ func (m *em) breedRandom() {
 	if ix2 < ix1 {
 		ix1, ix2 = ix2, ix1
 	}
+
+	fmt.Printf("%v, %v\n", ix1, ix2)
 
 	// Resolve indices into creatures.
 	// Because of the random nature of iterating over a map,

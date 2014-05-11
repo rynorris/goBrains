@@ -13,11 +13,15 @@
 
 package iomanager
 
-import "fmt"
-import "github.com/DiscoViking/goBrains/entity"
-import "github.com/DiscoViking/goBrains/graphics"
+import (
+	"fmt"
 
-import "github.com/banthar/Go-SDL/sdl"
+	"github.com/DiscoViking/goBrains/entity"
+	"github.com/DiscoViking/goBrains/graphics"
+	"github.com/DiscoViking/goBrains/locationmanager"
+
+	"github.com/banthar/Go-SDL/sdl"
+)
 
 const (
 	WIDTH  = 640
@@ -28,11 +32,11 @@ const (
 // Once called, pass a slice of Entities into the passed in channel
 // once per frame for drawing.
 // Then wait on the done channel for drawing to finish before continuing.
-func Start(data chan []entity.Entity, done chan struct{}, handle chan sdl.Event) {
-	go mainLoop(data, done, handle)
+func Start(lm locationmanager.Location, data chan []entity.Entity, done chan struct{}, handle chan sdl.Event) {
+	go mainLoop(lm, data, done, handle)
 }
 
-func mainLoop(data chan []entity.Entity, done chan struct{}, handle chan sdl.Event) {
+func mainLoop(lm locationmanager.Location, data chan []entity.Entity, done chan struct{}, handle chan sdl.Event) {
 
 	// Initialise SDL
 	fmt.Printf("Initialising SDL.")
@@ -62,7 +66,7 @@ func mainLoop(data chan []entity.Entity, done chan struct{}, handle chan sdl.Eve
 			dt := newTime - time
 			time = newTime
 			fps := 100000 / float32(dt)
-			fmt.Printf("Dt: %v, FPS: %v\n", dt, fps)
+			fmt.Printf("Dt: %v, FPS: %v, Entities: %v\n", dt, fps, len(entities))
 		}
 
 		canvas.FillRect(&sdl.Rect{0, 0, WIDTH, HEIGHT}, background)
@@ -73,7 +77,7 @@ func mainLoop(data chan []entity.Entity, done chan struct{}, handle chan sdl.Eve
 		drawn := make(chan struct{})
 
 		// Set off the interpreter and artist goroutines.
-		go graphics.Interpret(interpret, draw)
+		go graphics.Interpret(lm, interpret, draw)
 		go graphics.Draw(draw, canvas, drawn)
 
 		for _, e := range entities {

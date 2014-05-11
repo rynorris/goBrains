@@ -32,7 +32,7 @@ func (c *Creature) Consume() float64 {
 // Check the status of the creature and update LM appropriately.
 // Returns a boolean for whether teardown occured.
 func (c *Creature) Check() bool {
-	if c.vitality == 0 {
+	if c.vitality <= 0 {
 		c.lm.RemoveEntity(c)
 		return true
 	}
@@ -50,12 +50,31 @@ func (c *Creature) Check() bool {
 		c.movement.rotate},
 		c)
 
+	// HACK DO THIS PROPERLY LATER
+	c.movement.move -= 0.01
+
+	if c.movement.move > 1 {
+		c.movement.move = 1
+	} else if c.movement.move < 0 {
+		c.movement.move = 0
+	}
+	c.movement.rotate *= 0.9
+	if c.movement.rotate > 1 {
+		c.movement.rotate = 1
+	} else if c.movement.rotate < -1 {
+		c.movement.rotate = -1
+	}
+	c.vitality -= 0.1
+	if c.vitality > 200 {
+		c.vitality = 200
+	}
+
 	return false
 }
 
 // Breed a new creature from two existing ones.
 func (cx *Creature) Breed(cy *Creature) *Creature {
-	newC := New(cx.lm)
+	newC := NewSimple(cx.lm)
 	newC.dna = cx.dna.Breed(cy.dna)
 	newC.brain.Restore(newC.dna)
 	return newC
@@ -63,7 +82,7 @@ func (cx *Creature) Breed(cy *Creature) *Creature {
 
 // Clone an existing creature.
 func (c *Creature) Clone() *Creature {
-	newC := New(c.lm)
+	newC := NewSimple(c.lm)
 	newC.dna = c.dna.Clone()
 	newC.brain.Restore(newC.dna)
 	return newC
@@ -99,7 +118,7 @@ func New(lm locationmanager.Detection) *Creature {
 		dna:      genetics.NewDna(),
 		brain:    brain.NewBrain(5),
 		inputs:   make([]input, 0),
-		vitality: 10,
+		vitality: 200,
 	}
 
 	// Add the new creature to the location manager.

@@ -7,6 +7,7 @@ var (
 	keyDownBindings = map[uint32]EventType{
 		sdl.K_z:      TOGGLE_DRAW,
 		sdl.K_ESCAPE: TERMINATE,
+		sdl.K_x:      TOGGLE_FRAME_LIMIT,
 	}
 )
 

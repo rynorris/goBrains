@@ -7,26 +7,38 @@
 package graphics
 
 import "image/color"
-import "github.com/DiscoViking/goBrains/entity"
+
+import (
+	"github.com/DiscoViking/goBrains/entity"
+	"github.com/DiscoViking/goBrains/locationmanager"
+)
 import "github.com/DiscoViking/goBrains/food"
 
-func Interpret(in chan entity.Entity, out chan Primitive) {
+func Interpret(lm locationmanager.Location, in chan entity.Entity, out chan Primitive) {
 	defer close(out)
 	for e := range in {
 		switch e := e.(type) {
 		case *food.Food:
-			breakFood(e, out)
+			breakFood(lm, e, out)
 		default:
-			breakEntity(e, out)
+			breakEntity(lm, e, out)
 		}
 	}
 }
 
-func breakEntity(e entity.Entity, out chan Primitive) {
-	out <- Circle{100, 100, uint16(e.GetRadius()), 0, color.Black}
+func breakEntity(lm locationmanager.Location, e entity.Entity, out chan Primitive) {
+	ok, x, y, _ := lm.GetLocation(e)
+	if !ok {
+		return
+	}
+
+	out <- Circle{int16(x), int16(y), uint16(10), 0, color.Black}
 }
 
-func breakFood(f *food.Food, out chan Primitive) {
-	out <- Circle{100, 100, uint16(f.GetRadius()) + 1, 0, color.Black}
-	out <- Circle{100, 100, uint16(f.GetRadius()), 0, color.RGBA{50, 200, 50, 255}}
+func breakFood(lm locationmanager.Location, f *food.Food, out chan Primitive) {
+	ok, x, y, _ := lm.GetLocation(f)
+	if !ok {
+		return
+	}
+	out <- Circle{int16(x), int16(y), uint16(f.GetRadius()), 0, color.RGBA{50, 200, 50, 255}}
 }
