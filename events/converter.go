@@ -13,7 +13,7 @@ var (
 // Converts SDL Events into game events.
 func convert(e sdl.Event) Event {
 	switch e := e.(type) {
-	case sdl.KeyboardEvent:
+	case *sdl.KeyboardEvent:
 		// Keyboard event handling.
 		switch e.Type {
 		case sdl.KEYDOWN:
@@ -23,11 +23,14 @@ func convert(e sdl.Event) Event {
 			}
 		}
 	}
-	return BasicEvent{NONE}
+	return nil
 }
 
 // Handle converts an SDL event to a game event, and
 // broadcasts them to anyone listening on the global channel.
 func Handle(e sdl.Event) {
-	Global.Broadcast(Convert(e))
+	ev := convert(e)
+	if ev != nil {
+		Global.Broadcast(ev)
+	}
 }

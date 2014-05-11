@@ -11,12 +11,11 @@
  * to the screen.
  */
 
-package graphics
+package iomanager
 
 import "fmt"
 import "github.com/DiscoViking/goBrains/entity"
 import "github.com/DiscoViking/goBrains/graphics"
-import "github.com/DiscoViking/goBrains/events"
 
 import "github.com/banthar/Go-SDL/sdl"
 
@@ -29,7 +28,11 @@ const (
 // Once called, pass a slice of Entities into the passed in channel
 // once per frame for drawing.
 // Then wait on the done channel for drawing to finish before continuing.
-func Start(data chan []entity.Entity, done chan struct{}, handle chan events.Event) {
+func Start(data chan []entity.Entity, done chan struct{}, handle chan sdl.Event) {
+	go mainLoop(data, done, handle)
+}
+
+func mainLoop(data chan []entity.Entity, done chan struct{}, handle chan sdl.Event) {
 
 	// Initialise SDL
 	fmt.Printf("Initialising SDL.")
@@ -50,6 +53,7 @@ func Start(data chan []entity.Entity, done chan struct{}, handle chan events.Eve
 	// Main drawing loop
 	time := uint32(0)
 	frame := 0
+
 	// We loop every time we are passed in an array of entities to draw.
 	for entities := range data {
 		frame = (frame + 1) % 100
@@ -85,10 +89,7 @@ func Start(data chan []entity.Entity, done chan struct{}, handle chan events.Eve
 		// Whilst the drawing is potentially still going, pull any events off the SDL
 		// event queue and send them to the event manager.
 		for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
-			ev := events.Convert(e)
-			if ev.GetType() != events.NONE {
-				handle <- ev
-			}
+			handle <- e
 		}
 
 		// Now wait to be told all drawing is complete before blitting to the screen
