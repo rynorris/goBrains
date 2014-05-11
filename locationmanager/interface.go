@@ -34,6 +34,11 @@ type Location interface {
 	GetLocation(ent entity.Entity) (bool, float64, float64, float64)
 }
 
+type LM interface {
+	Detection
+	Location
+}
+
 // Locatable defines the ability to calculate if you can be located.
 type locatable interface {
 

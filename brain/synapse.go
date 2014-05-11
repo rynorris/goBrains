@@ -34,7 +34,9 @@ func (s *Synapse) Work() {
 		s.currentCharge = synapseMaxCharge
 	}
 
-	s.output.Charge(s.currentCharge * s.permittivity * synapseOutputScale)
+	if s.currentCharge != 0 {
+		s.output.Charge(s.currentCharge * s.permittivity * synapseOutputScale)
+	}
 	s.Decay()
 }
 

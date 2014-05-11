@@ -3,22 +3,23 @@ package main
 import (
 	"flag"
 	"log"
+	"math/rand"
 	"os"
 	"runtime/pprof"
 	"time"
 
 	"github.com/DiscoViking/goBrains/entity"
+	"github.com/DiscoViking/goBrains/entitymanager"
 	"github.com/DiscoViking/goBrains/events"
-	"github.com/DiscoViking/goBrains/food"
 	"github.com/DiscoViking/goBrains/iomanager"
-	"github.com/DiscoViking/goBrains/locationmanager"
 	"github.com/banthar/Go-SDL/sdl"
 )
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 var (
-	drawing = true
-	running = true
+	drawing   = true
+	running   = true
+	rateLimit = true
 )
 
 func main() {
@@ -32,21 +33,19 @@ func main() {
 		defer pprof.StopCPUProfile()
 	}
 
+	rand.Seed(time.Now().UnixNano())
+
 	data := make(chan []entity.Entity)
 	done := make(chan struct{})
 	event := make(chan sdl.Event)
 	defer close(event)
 	defer close(data)
+	defer close(done)
 
-	events.Global.Register(events.TERMINATE,
-		func(e events.Event) { running = false; close(done) })
+	em := entitymanager.New()
+	em.Reset()
 
-	lm := locationmanager.NewLocationManager()
-
-	entities := make([]entity.Entity, 0, 100)
-	entities = append(entities, food.New(lm, 1000))
-
-	iomanager.Start(data, done, event)
+	iomanager.Start(em.LocationManager(), data, done, event)
 
 	go func() {
 		for e := range event {
@@ -55,11 +54,25 @@ func main() {
 
 	}()
 
+	timer := time.Tick(16 * time.Millisecond)
+
+	events.Global.Register(events.TERMINATE,
+		func(e events.Event) { running = false })
+	events.Global.Register(events.TOGGLE_DRAW,
+		func(e events.Event) { drawing = !drawing })
+	events.Global.Register(events.TOGGLE_FRAME_LIMIT,
+		func(e events.Event) { rateLimit = !rateLimit })
+
 	for running {
+		em.Spin()
 		if drawing {
-			data <- entities
-			<-done
+			data <- em.Entities()
+		} else {
+			data <- []entity.Entity{}
 		}
-		time.Sleep(12 * time.Millisecond)
+		<-done
+		if rateLimit {
+			<-timer
+		}
 	}
 }

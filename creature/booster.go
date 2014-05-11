@@ -24,7 +24,7 @@ func (b *booster) Work() {
 	if b.btype == BoosterLinear {
 		b.host.movement.move += b.charge
 	} else if b.btype == BoosterAngular {
-		b.host.movement.rotate += b.charge
+		b.host.movement.rotate += b.charge * 0.1
 	}
 
 	// Reset charge now it has been used.

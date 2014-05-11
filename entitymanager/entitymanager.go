@@ -17,9 +17,13 @@ import (
 type em struct {
 	creatures      entityList
 	food           entityList
-	lm             locationmanager.Detection
+	lm             locationmanager.LM
 	breeding_timer int
 	food_timer     int
+}
+
+func (m *em) LocationManager() locationmanager.LM {
+	return m.lm
 }
 
 // New returns a new em instance.
@@ -56,7 +60,7 @@ func (m *em) Reset() {
 		delete(m.food, f)
 	}
 	for i := 0; i < initial_food; i++ {
-		f := food.New(m.lm, 100)
+		f := food.New(m.lm, 1000)
 		m.food[f] = struct{}{}
 	}
 }
@@ -89,5 +93,5 @@ func (m *em) Spin() {
 // Entities returns a slice containing all the entities
 // in the simulation.
 func (m *em) Entities() []entity.Entity {
-	return append(m.creatures.Slice(), m.food.Slice()...)
+	return append(m.food.Slice(), m.creatures.Slice()...)
 }

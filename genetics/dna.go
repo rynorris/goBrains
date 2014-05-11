@@ -35,7 +35,7 @@ func (dx *Dna) Breed(dy *Dna) *Dna {
 	other := dy
 
 	// Equal bias to start with the mother or father sequence.
-	if rand.Intn(1) == 0 {
+	if rand.Intn(2) == 0 {
 		active, other = other, active
 	}
 

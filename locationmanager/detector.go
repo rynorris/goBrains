@@ -9,8 +9,10 @@ package locationmanager
 
 import (
 	"fmt"
-	"github.com/DiscoViking/goBrains/entity"
 	"math"
+	"math/rand"
+
+	"github.com/DiscoViking/goBrains/entity"
 )
 
 // Add a new entity.
@@ -18,7 +20,7 @@ import (
 func (cm *LocationManager) AddEntity(ent entity.Entity) {
 	newHitbox := circleHitbox{
 		active:      true,
-		centre:      coord{0, 0},
+		centre:      coord{rand.Float64() * 500, rand.Float64() * 400},
 		orientation: 0,
 		radius:      ent.GetRadius(),
 		entity:      ent,
@@ -95,7 +97,7 @@ func (cm *LocationManager) findHitbox(ent entity.Entity) locatable {
 
 // Replace the first unused hitbox structure.  Return a boolean for whether the operation was successful.
 func (cm *LocationManager) replaceEmptyHitbox(loc locatable) bool {
-	for ii := range cm.hitboxes{
+	for ii := range cm.hitboxes {
 		hb := cm.hitboxes[ii]
 		if !hb.getActive() {
 			cm.hitboxes[ii] = loc
