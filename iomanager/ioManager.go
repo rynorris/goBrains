@@ -29,7 +29,7 @@ const (
 // Once called, pass a slice of Entities into the passed in channel
 // once per frame for drawing.
 // Then wait on the done channel for drawing to finish before continuing.
-func Start(data chan []entity.Entity, done chan struct{}) {
+func Start(data chan []entity.Entity, done chan struct{}, handle chan events.Event) {
 
 	// Initialise SDL
 	fmt.Printf("Initialising SDL.")
@@ -39,9 +39,6 @@ func Start(data chan []entity.Entity, done chan struct{}) {
 
 	// Ensure that SDL will exit gracefully when we're done.
 	defer sdl.Quit()
-
-	// Create the channel we will use to communicate with the event manager
-	handle := make(chan events.Event)
 
 	// Create the screen surface.
 	fmt.Printf("Creating screen\n")

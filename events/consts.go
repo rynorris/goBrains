@@ -8,3 +8,7 @@ const (
 	TOGGLE_DRAW = 2
 	SELECT      = 3
 )
+
+var (
+	Global Handler = NewHandler()
+)
