@@ -2,44 +2,30 @@ package entitymanager
 
 import "testing"
 
-func TestStart(t *testing.T) {
-	t.Logf("Starting up EM.")
-	Start()
-	if len(Creatures) != initial_creatures {
-		t.Errorf("Expected %v creatures, got %v.", initial_creatures, len(Creatures))
-	}
-}
-
-func TestBreedRandom(t *testing.T) {
-	Start()
-
-	t.Log("Breeding new creature.")
-	breedRandom()
-	if len(Creatures) != initial_creatures+1 {
-		t.Errorf("Expected %v creatures, got %v.", initial_creatures+1, len(Creatures))
-	}
-
-	t.Log("Breeding new creature.")
-	breedRandom()
-	if len(Creatures) != initial_creatures+2 {
-		t.Errorf("Expected %v creatures, got %v.", initial_creatures+2, len(Creatures))
+func TestReset(t *testing.T) {
+	t.Logf("m.Reseting up EM.")
+	m := New()
+	m.Reset()
+	if len(m.creatures) != initial_creatures {
+		t.Errorf("Expected %v creatures, got %v.", initial_creatures, len(m.creatures))
 	}
 }
 
 func TestSpin(t *testing.T) {
-	Start()
+	m := New()
+	m.Reset()
 
-	t.Log("Spinning one cycle. Number of creatures shouldn't change.")
-	Spin()
-	if len(Creatures) != initial_creatures {
-		t.Errorf("Expected %v creatures, got %v.", initial_creatures, len(Creatures))
+	t.Log("m.Spinning one cycle. Number of creatures shouldn't change.")
+	m.Spin()
+	if len(m.creatures) != initial_creatures {
+		t.Errorf("Expected %v creatures, got %v.", initial_creatures, len(m.creatures))
 	}
 
 	t.Logf("Fast forwarding %v cycles.", breeding_rate)
 	for i := 0; i < breeding_rate; i++ {
-		Spin()
+		m.Spin()
 	}
-	if len(Creatures) != initial_creatures+1 {
-		t.Errorf("Expected %v creatures, got %v.", initial_creatures+1, len(Creatures))
+	if len(m.creatures) != initial_creatures+1 {
+		t.Errorf("Expected %v creatures, got %v.", initial_creatures+1, len(m.creatures))
 	}
 }
