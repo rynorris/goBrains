@@ -41,7 +41,7 @@ func main() {
 	events.Global.Register(events.TERMINATE,
 		func(e events.Event) { running = false; close(done) })
 
-	lm := locationmanager.NewLocationManager()
+	lm := locationmanager.New()
 
 	entities := make([]entity.Entity, 0, 100)
 	entities = append(entities, food.New(lm, 1000))

@@ -27,7 +27,7 @@ func New() *em {
 	return &em{
 		creatures:      map[entity.Entity]struct{}{},
 		food:           map[entity.Entity]struct{}{},
-		lm:             locationmanager.NewLocationManager(),
+		lm:             locationmanager.New(),
 		breeding_timer: 0,
 		food_timer:     0,
 	}
@@ -40,7 +40,7 @@ func (m *em) Reset() {
 	m.breeding_timer = 0
 
 	// Construct LM.
-	m.lm = locationmanager.NewLocationManager()
+	m.lm = locationmanager.New()
 
 	// Reset creatures.
 	for c, _ := range m.creatures {
