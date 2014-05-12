@@ -7,6 +7,7 @@
 package creature
 
 import (
+	"github.com/DiscoViking/goBrains/brain"
 	"github.com/DiscoViking/goBrains/locationmanager"
 )
 
@@ -23,9 +24,12 @@ func (mt *mouth) detect() {
 // Add a new mouth to a creature.
 // This is at the front of the creature.
 func (host *Creature) AddMouth() *mouth {
+	node := brain.NewNode()
+	host.brain.AddInputNode(node)
+
 	input := inputStruct{
 		putStruct: putStruct{host: host},
-		node:      nil,
+		node:      node,
 		location:  locationmanager.CoordDelta{host.GetRadius(), 0.0},
 	}
 	m := &mouth{input}

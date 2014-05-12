@@ -63,16 +63,26 @@ func main() {
 	events.Global.Register(events.TOGGLE_FRAME_LIMIT,
 		func(e events.Event) { rateLimit = !rateLimit })
 
-	for running {
-		em.Spin()
+	drawFunc := func() {
 		if drawing {
 			data <- em.Entities()
 		} else {
 			data <- []entity.Entity{}
 		}
 		<-done
+	}
+
+	for running {
+		em.Spin()
 		if rateLimit {
 			<-timer
+			drawFunc()
+		} else {
+			select {
+			case <-timer:
+				drawFunc()
+			default:
+			}
 		}
 	}
 }

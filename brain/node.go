@@ -2,8 +2,8 @@
 package brain
 
 const (
-	defaultFiringThreshold = 1.0
-	defaultFiringStrength  = 0.8
+	defaultFiringThreshold = 1.5
+	defaultFiringStrength  = 1.0
 )
 
 type Node struct {

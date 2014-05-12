@@ -3,7 +3,7 @@ package brain
 // The proportion of a Synapse's ChargeCarrier which it will attempt to convey
 // to it's output each time it does work.
 // Note: the actual conveyed ChargeCarrier will be further modified by permittivity.
-const synapseOutputScale = 0.1
+const synapseOutputScale = 0.10
 
 // The maximum ChargeCarrier a synapse can hold. If it is charged beyond this limit
 // any extra ChargeCarrier is lost.
