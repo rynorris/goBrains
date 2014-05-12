@@ -11,10 +11,11 @@
  * to the screen.
  */
 
-package graphics
+package iomanager
 
 import "fmt"
 import "github.com/DiscoViking/goBrains/entity"
+import "github.com/DiscoViking/goBrains/graphics"
 
 import "github.com/banthar/Go-SDL/sdl"
 
@@ -27,7 +28,11 @@ const (
 // Once called, pass a slice of Entities into the passed in channel
 // once per frame for drawing.
 // Then wait on the done channel for drawing to finish before continuing.
-func Start(data chan []entity.Entity, done chan struct{}) {
+func Start(data chan []entity.Entity, done chan struct{}, handle chan sdl.Event) {
+	go mainLoop(data, done, handle)
+}
+
+func mainLoop(data chan []entity.Entity, done chan struct{}, handle chan sdl.Event) {
 
 	// Initialise SDL
 	fmt.Printf("Initialising SDL.")
@@ -48,6 +53,8 @@ func Start(data chan []entity.Entity, done chan struct{}) {
 	// Main drawing loop
 	time := uint32(0)
 	frame := 0
+
+	// We loop every time we are passed in an array of entities to draw.
 	for entities := range data {
 		frame = (frame + 1) % 100
 		if frame == 0 {
@@ -62,12 +69,12 @@ func Start(data chan []entity.Entity, done chan struct{}) {
 
 		// Construct the graphics pipeline.
 		interpret := make(chan entity.Entity)
-		draw := make(chan Primitive)
+		draw := make(chan graphics.Primitive)
 		drawn := make(chan struct{})
 
 		// Set off the interpreter and artist goroutines.
-		go Interpret(interpret, draw)
-		go Draw(draw, canvas, drawn)
+		go graphics.Interpret(interpret, draw)
+		go graphics.Draw(draw, canvas, drawn)
 
 		for _, e := range entities {
 			// Send entities to the interpreter
@@ -78,6 +85,14 @@ func Start(data chan []entity.Entity, done chan struct{}) {
 		// It will then close the drawing pipe, causing the artist to finish.
 		// He will then signal to us that he is done via the drawn pipe.
 		close(interpret)
+
+		// Whilst the drawing is potentially still going, pull any events off the SDL
+		// event queue and send them to the event manager.
+		for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
+			handle <- e
+		}
+
+		// Now wait to be told all drawing is complete before blitting to the screen
 		<-drawn
 
 		// Finally flip the surface to paint to the screen.

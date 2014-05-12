@@ -1,10 +1,11 @@
 package brain
 
 import (
-	"../testutils"
-	"github.com/DiscoViking/goBrains/genetics"
 	"math"
 	"testing"
+
+	"../testutils"
+	"github.com/DiscoViking/goBrains/genetics"
 )
 
 type testOutput struct {
@@ -89,7 +90,7 @@ func TestBrainPropogation(t *testing.T) {
 	in.Charge(defaultFiringThreshold)
 
 	// Cause the brain to update, propogating ChargeCarrier.
-	b.Update()
+	b.Work()
 
 	// Check propogation to synapses
 	// They should have been charged defaultFiringStrength by the input, and then
@@ -117,7 +118,7 @@ func TestBrainPropogation(t *testing.T) {
 	loopsToFire := int(math.Ceil(1.0/(float64(synapseMaxCharge)*0.1-chargeDecayRate))) - 1
 	for i := 0; i < loopsToFire; i++ {
 		in.Charge(defaultFiringThreshold)
-		b.Update()
+		b.Work()
 	}
 
 	// Check propogation to synapses

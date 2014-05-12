@@ -1,11 +1,17 @@
-package graphics
+package iomanager
 
-import "github.com/DiscoViking/goBrains/entity"
-import "github.com/DiscoViking/goBrains/food"
-import "github.com/DiscoViking/goBrains/locationmanager"
-import "github.com/banthar/Go-SDL/sdl"
-import "testing"
-import "os"
+import (
+	"fmt"
+	"os"
+	"testing"
+
+	"github.com/DiscoViking/goBrains/entity"
+	"github.com/DiscoViking/goBrains/events"
+	"github.com/DiscoViking/goBrains/food"
+	"github.com/DiscoViking/goBrains/graphics"
+	"github.com/DiscoViking/goBrains/locationmanager"
+	"github.com/banthar/Go-SDL/sdl"
+)
 
 func TestGraphicsFV(t *testing.T) {
 	// This test does not run in Travis.
@@ -16,6 +22,17 @@ func TestGraphicsFV(t *testing.T) {
 
 	data := make(chan []entity.Entity)
 	done := make(chan struct{})
+	event := make(chan sdl.Event)
+
+	events.Global.Register(events.TERMINATE,
+		func(events.Event) { close(data) })
+
+	go func() {
+		for e := range event {
+			fmt.Println("Got event!")
+			events.Handle(e)
+		}
+	}()
 
 	lm := locationmanager.NewLocationManager()
 
@@ -24,7 +41,7 @@ func TestGraphicsFV(t *testing.T) {
 		food.New(lm, 1000),
 	}
 
-	go Start(data, done)
+	go Start(data, done, event)
 
 	// Get graphicsManager to draw them to the screen
 	data <- entities
@@ -34,5 +51,5 @@ func TestGraphicsFV(t *testing.T) {
 	s := sdl.GetVideoSurface()
 	s.SaveBMP("test_output/TestGraphicsFV_got.bmp")
 
-	compareOutput("TestGraphicsFV", t)
+	graphics.CompareOutput("TestGraphicsFV", t)
 }

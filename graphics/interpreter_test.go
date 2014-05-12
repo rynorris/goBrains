@@ -15,6 +15,9 @@ func (t testEntity) GetRadius() float64 {
 	return 10
 }
 
+func (t testEntity) Check() bool      { return false }
+func (t testEntity) Consume() float64 { return 0 }
+
 // Test that the interpreter does what we expect when it's given an
 // entity it doesn't recognise.
 func TestInterpretDefault(t *testing.T) {

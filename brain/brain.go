@@ -27,7 +27,7 @@ type Brain struct {
 
 // Updates all the nodes in the brain.
 // Should be called exactly once per tick.
-func (b *Brain) Update() {
+func (b *Brain) Work() {
 	for _, node := range b.inputNodes {
 		node.Work()
 	}
