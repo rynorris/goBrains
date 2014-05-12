@@ -19,6 +19,7 @@ type Detection interface {
 	// Methods for updating state in the detector.
 	// -- Inform the detector of a change in state
 	AddEntity(ent entity.Entity)
+	AddEntAtLocation(ent entity.Entity, comb Combination)
 	RemoveEntity(ent entity.Entity)
 	ChangeLocation(move CoordDelta, ent entity.Entity)
 	ChangeRadius(radius float64, ent entity.Entity)
@@ -31,7 +32,7 @@ type Location interface {
 	// This returns the x- and y-coordinates, as well as the orientation.
 	// The first value is a boolean for whether the lookup was successful.
 	// This will fail if the queried entity has not registered with the location manager.
-	GetLocation(ent entity.Entity) (bool, float64, float64, float64)
+	GetLocation(ent entity.Entity) (bool, Combination)
 }
 
 // Locatable defines the ability to calculate if you can be located.
@@ -45,7 +46,7 @@ type locatable interface {
 	isInside(loc coord) bool
 
 	// Methods to update the properties of the hitbox.
-	update(move CoordDelta)
+	update(move CoordDelta, max coord)
 	setRadius(radius float64)
 
 	// Methods to check the properties of the hitbox.

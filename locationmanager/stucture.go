@@ -36,8 +36,21 @@ type CoordDelta struct {
 	Rotation float64
 }
 
+// Combination represents a combination position of x, y and an orientation.
+type Combination struct {
+	x, y, orient float64
+}
+
 // LocationManager is an instance of a location manager.
 // It holds all the state about entities in the environment.
 type LocationManager struct {
+
+	// Special spawning behaviour.
+	spawnOrigin bool
+
+	// The hitboxes know by LM.
 	hitboxes []locatable
+
+	// The maximum point that objects can exist at in LM.
+	maxPoint coord
 }

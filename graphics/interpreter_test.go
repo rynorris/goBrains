@@ -60,7 +60,7 @@ func TestInterpretFood(t *testing.T) {
 
 	go Interpret(in, out)
 
-	lm := locationmanager.NewLocationManager()
+	lm := locationmanager.New()
 
 	in <- food.New(lm, 100)
 

@@ -11,15 +11,34 @@ import (
 	"fmt"
 	"github.com/DiscoViking/goBrains/entity"
 	"math"
+	"math/rand"
 )
 
-// Add a new entity.
+const (
+	TANKSIZEX = 1280.0
+	TANKSIZEY = 960.0
+)
+
+// Add a new entity to a random position in the tank.
 // This is added to first empty entry in the array, else append a new entry.
 func (cm *LocationManager) AddEntity(ent entity.Entity) {
+	comb := Combination{0.0, 0.0, 0.0}
+	if !cm.spawnOrigin {
+		comb = Combination{
+			x:      (rand.Float64() * cm.maxPoint.locX),
+			y:      (rand.Float64() * cm.maxPoint.locY),
+			orient: (rand.Float64() * 2 * math.Pi),
+		}
+	}
+	cm.AddEntAtLocation(ent, comb)
+}
+
+// Add an entity at a specific position and orientation.
+func (cm *LocationManager) AddEntAtLocation(ent entity.Entity, comb Combination) {
 	newHitbox := circleHitbox{
 		active:      true,
-		centre:      coord{0, 0},
-		orientation: 0,
+		centre:      coord{comb.x, comb.y},
+		orientation: comb.orient,
 		radius:      ent.GetRadius(),
 		entity:      ent,
 	}
@@ -40,7 +59,7 @@ func (cm *LocationManager) RemoveEntity(ent entity.Entity) {
 // Update the location of an entity.
 func (cm *LocationManager) ChangeLocation(move CoordDelta, ent entity.Entity) {
 	hb := cm.findHitbox(ent)
-	hb.update(move)
+	hb.update(move, cm.maxPoint)
 }
 
 // Update the radius of an entity.
@@ -70,17 +89,17 @@ func (cm *LocationManager) GetCollisions(offset CoordDelta, ent entity.Entity) [
 }
 
 // Get the location and orientation of a specific entity.
-func (cm *LocationManager) GetLocation(ent entity.Entity) (bool, float64, float64, float64) {
+func (cm *LocationManager) GetLocation(ent entity.Entity) (bool, Combination) {
 	hb := cm.findHitbox(ent)
 
 	if hb == nil {
-		return false, 0, 0, 0
+		return false, Combination{0, 0, 0}
 	}
 
 	coordinate := hb.getCoord()
 	orientation := hb.getOrient()
 
-	return true, coordinate.locX, coordinate.locY, orientation
+	return true, Combination{coordinate.locX, coordinate.locY, orientation}
 }
 
 // Find the hitbox associated with an entity.
@@ -95,7 +114,7 @@ func (cm *LocationManager) findHitbox(ent entity.Entity) locatable {
 
 // Replace the first unused hitbox structure.  Return a boolean for whether the operation was successful.
 func (cm *LocationManager) replaceEmptyHitbox(loc locatable) bool {
-	for ii := range cm.hitboxes{
+	for ii := range cm.hitboxes {
 		hb := cm.hitboxes[ii]
 		if !hb.getActive() {
 			cm.hitboxes[ii] = loc
@@ -126,7 +145,23 @@ func (cm *LocationManager) PrintDebug() {
 	fmt.Printf("\n")
 }
 
+// Set LM to spawn all new entities at the origin.  For testing purposes.
+func (lm *LocationManager) StartAtOrigin() {
+	lm.spawnOrigin = true
+}
+
 // Initialise the LocationManager.
-func NewLocationManager() *LocationManager {
-	return &LocationManager{hitboxes: make([]locatable, 0)}
+// Accepts the x- and y-sizes of the tank the creatures' live in.
+func NewLocationManager(x, y float64) *LocationManager {
+	return &LocationManager{
+		spawnOrigin: false,
+		hitboxes:    make([]locatable, 0),
+		maxPoint:    coord{x, y},
+	}
+}
+
+// Initialize a default locationmanager.
+func New() *LocationManager {
+	lm := NewLocationManager(TANKSIZEX, TANKSIZEY)
+	return lm
 }

@@ -44,7 +44,8 @@ func checkDnaLen(t *testing.T, c *Creature) {
 // Basic antenna verification.
 func TestAntenna(t *testing.T) {
 	errorStr := "[%v] Expected test brain to have received %v firings, actually got %v."
-	lm := locationmanager.NewLocationManager()
+	lm := locationmanager.New()
+	lm.StartAtOrigin()
 	creature := New(lm)
 	tBrain := newTestBrain()
 	creature.brain = tBrain
@@ -91,7 +92,8 @@ func TestAntenna(t *testing.T) {
 func TestMouth(t *testing.T) {
 	errorStrHost := "[%v] Expected host vitality of %v, actually got %v."
 	errorStrFood := "[%v] Expected food content of %v, actually got %v."
-	lm := locationmanager.NewLocationManager()
+	lm := locationmanager.New()
+	lm.StartAtOrigin()
 	creature := New(lm)
 	mot := creature.AddMouth()
 
@@ -164,7 +166,7 @@ func TestMouth(t *testing.T) {
 
 // Booster behaviour verification.
 func TestBoosters(t *testing.T) {
-	host := New(locationmanager.NewLocationManager())
+	host := New(locationmanager.New())
 	tBrain := newTestBrain()
 	host.brain = tBrain
 
@@ -215,7 +217,7 @@ func TestCreature(t *testing.T) {
 	errorStrLm := "[%v] Expected %v entities in LM, found %v."
 	errorStrDead := "[%v] Creature expected %v, actually %v."
 
-	lm := locationmanager.NewLocationManager()
+	lm := locationmanager.New()
 	if lm.NumberOwned() != 0 {
 		t.Errorf(errorStrLm, 1, 0, lm.NumberOwned())
 	}
@@ -246,7 +248,7 @@ func TestCreature(t *testing.T) {
 
 // Cannibalism.  AKA. Hot creature-on-creature action.
 func TestCannibalism(t *testing.T) {
-	lm := locationmanager.NewLocationManager()
+	lm := locationmanager.New()
 	creature := NewSimple(lm)
 
 	// Creatures cannot eat other creatures (yet).  Attempts to eat other creatures results in a no-op.
@@ -257,7 +259,7 @@ func TestCannibalism(t *testing.T) {
 
 // Creaturesmakecreatures.  <Insert unsuitable joke here.>
 func TestBreeding(t *testing.T) {
-	lm := locationmanager.NewLocationManager()
+	lm := locationmanager.New()
 	mother := NewSimple(lm)
 	father := NewSimple(lm)
 	newChild := false
@@ -281,7 +283,7 @@ func TestBreeding(t *testing.T) {
 
 // Test the cloning facilities.
 func TestCloning(t *testing.T) {
-	lm := locationmanager.NewLocationManager()
+	lm := locationmanager.New()
 	original := NewSimple(lm)
 	clone := original.Clone()
 
@@ -293,7 +295,7 @@ func TestCloning(t *testing.T) {
 // Test random DNA generation works.
 func TestPrepare(t *testing.T) {
 	var c *Creature
-	lm := locationmanager.NewLocationManager()
+	lm := locationmanager.New()
 
 	// Verify that an empty creature has the correct DNA.
 	c = New(lm)

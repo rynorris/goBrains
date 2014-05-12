@@ -34,7 +34,7 @@ func TestGraphicsFV(t *testing.T) {
 		}
 	}()
 
-	lm := locationmanager.NewLocationManager()
+	lm := locationmanager.New()
 
 	// Create some entities
 	entities := []entity.Entity{
