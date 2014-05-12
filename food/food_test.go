@@ -14,7 +14,7 @@ import (
 func TestFood(t *testing.T) {
 
 	var food *Food
-	cm := locationmanager.NewLocationManager()
+	cm := locationmanager.New()
 
 	testContents := []float64{
 		0, // Empty food object.
@@ -62,7 +62,7 @@ func checkContent(t *testing.T, food *Food, content float64) {
 		t.Errorf("Different results from direct and indirect content queries: %v/%v",
 			food.content,
 			food.GetContent(),
-			)
+		)
 	}
 }
 

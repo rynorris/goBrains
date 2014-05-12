@@ -10,7 +10,7 @@ import (
 )
 
 func TestPulsers(t *testing.T) {
-	host := New(locationmanager.NewLocationManager())
+	host := New(locationmanager.New())
 	tBrain := newTestBrain()
 	host.brain = tBrain
 	var expected int

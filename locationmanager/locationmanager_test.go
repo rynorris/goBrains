@@ -10,6 +10,11 @@ import (
 	"testing"
 )
 
+// Limit movement to the default tank size.
+func (c *circleHitbox) tUpdate(move CoordDelta) {
+	c.update(move, coord{TANKSIZEX, TANKSIZEY})
+}
+
 // Verify that the number of hitboxes found were as expected.
 func HitboxCheck(t *testing.T, expected, actual int) {
 	if expected != actual {
@@ -58,7 +63,7 @@ func TestCircleHitbox(t *testing.T) {
 	}
 
 	move := CoordDelta{1, 0}
-	hb.update(move)
+	hb.tUpdate(move)
 
 	if hb.centre.locX != 1 {
 		t.Errorf("Expected x-location update to %v, got %v.", 1, hb.centre.locX)
@@ -66,7 +71,7 @@ func TestCircleHitbox(t *testing.T) {
 	}
 
 	move = CoordDelta{0, math.Pi / 2}
-	hb.update(move)
+	hb.tUpdate(move)
 
 	if hb.orientation != (math.Pi / 2) {
 		t.Errorf("Expected orientation update to %v, got %v.", (math.Pi / 2), hb.orientation)
@@ -74,7 +79,7 @@ func TestCircleHitbox(t *testing.T) {
 	}
 
 	move = CoordDelta{2, 0}
-	hb.update(move)
+	hb.tUpdate(move)
 
 	if hb.centre.locY != 2 {
 		t.Errorf("Expected y-location update to %v, got %v.", 2, hb.centre.locY)
@@ -105,13 +110,14 @@ func TestCircleHitbox(t *testing.T) {
 func TestLocation(t *testing.T) {
 
 	// Set up a new location manager.
-	lm := NewLocationManager()
+	lm := New()
 
 	// The entity to query for.
 	ent := &entity.TestEntity{5}
 
 	// Query for the entity which LM does not know about.  This must fail.
-	res, locx, locy, orient := lm.GetLocation(ent)
+	res, comb := lm.GetLocation(ent)
+	locx, locy, orient := comb.x, comb.y, comb.orient
 
 	if res {
 		t.Errorf("Lookup of unknown object succeeded; returned: (%v, %v, %v, %v))",
@@ -120,14 +126,43 @@ func TestLocation(t *testing.T) {
 	}
 
 	// Add the entity and query for it.
-	lm.AddEntity(ent)
-	res, locx, locy, orient = lm.GetLocation(ent)
+	lm.AddEntAtLocation(ent, Combination{0, 0, 0})
+	res, comb = lm.GetLocation(ent)
+	locx, locy, orient = comb.x, comb.y, comb.orient
 
 	if !res || (locx != 0) || (locy != 0) || (orient != 0) {
-		t.Errorf("Lookup of known object failed; returned:x (%v, %v, %v, %v))",
+		t.Errorf("Lookup of known object failed; returned: (%v, %v, %v, %v))",
 			res, locx, locy, orient)
 		lm.PrintDebug()
 	}
+}
+
+// Test the testing function - where entities start at the origin.
+func TestOrigin(t *testing.T) {
+
+	lmn := New()
+	lmo := New()
+	lmo.StartAtOrigin()
+
+	entn := &entity.TestEntity{5}
+	ento := &entity.TestEntity{5}
+	lmn.AddEntity(entn)
+	lmo.AddEntity(ento)
+
+	res, comb := lmo.GetLocation(ento)
+	if !res || (comb != Combination{0.0, 0.0, 0.0}) {
+		t.Errorf("Position of entity incorrect; returned: (%v, %v)), expected: (%v, %v)",
+			res, comb, true, Combination{0.0, 0.0, 0.0})
+		lmo.PrintDebug()
+	}
+
+	res, comb = lmn.GetLocation(entn)
+	if !res || (comb == Combination{0.0, 0.0, 0.0}) {
+		t.Errorf("Position of entity incorrect; returned: (%v, %v)),  result away from origin",
+			res, comb)
+		lmn.PrintDebug()
+	}
+
 }
 
 // Test basic collision detection interface.
@@ -140,14 +175,14 @@ func TestDetection(t *testing.T) {
 	var col []entity.Entity
 
 	// Set up a new location manager.
-	cm := NewLocationManager()
+	cm := New()
 
 	// Add two entities to be managed.
 	ent1 := &entity.TestEntity{5}
 	ent2 := &entity.TestEntity{5}
 
-	cm.AddEntity(ent1)
-	cm.AddEntity(ent2)
+	cm.AddEntAtLocation(ent1, Combination{0.0, 0.0, 0.0})
+	cm.AddEntAtLocation(ent2, Combination{0.0, 0.0, 0.0})
 
 	HitboxCheck(t, 2, len(cm.hitboxes))
 
@@ -190,7 +225,7 @@ func TestDetection(t *testing.T) {
 // Test object storage within LocationManager.
 func TestStorage(t *testing.T) {
 	// Set up a new location manager.
-	cm := NewLocationManager()
+	cm := New()
 
 	// Add two entities to be managed.
 	ent1 := &entity.TestEntity{5}
@@ -217,4 +252,59 @@ func TestStorage(t *testing.T) {
 	cm.AddEntity(ent2)
 	cm.AddEntity(ent3)
 	StoreCheck(t, cm, 3, 3)
+}
+
+type tankSize struct {
+	x, y float64
+}
+
+// Test how far we can go in a direction.
+func tankDirection(t *testing.T, s tankSize, angle float64, exp coord) {
+
+	cm := NewLocationManager(s.x, s.y)
+	ent := &entity.TestEntity{5}
+	cm.AddEntAtLocation(ent, Combination{0.0, 0.0, angle})
+	move := CoordDelta{TANKSIZEX * 99, 0}
+	cm.ChangeLocation(move, ent)
+	res, comb := cm.GetLocation(ent)
+	locx, locy := comb.x, comb.y
+
+	if !res || (locx != exp.locX) || (locy != exp.locY) {
+		t.Errorf("Expected entity to update location to maximum at (%v, %v), actually moved to (%v, %v)",
+			s.x,
+			s.y,
+			locx,
+			locy)
+		cm.PrintDebug()
+	}
+}
+
+// Ensure that we cannot exceed min or max range.
+func tankLimit(t *testing.T, s tankSize) {
+
+	// Move towards the maximum coordinate.
+	tankDirection(t, s, (math.Pi / 4.0), coord{s.x, s.y})
+
+	// Move away from the maximum coordinate.
+	tankDirection(t, s, (math.Pi * (-3.0 / 4.0)), coord{0, 0})
+}
+
+// Test that units are held within the tank.
+func TestTank(t *testing.T) {
+
+	// Test various tank sizes.
+	tankSizes := []tankSize{
+		tankSize{TANKSIZEX, TANKSIZEY},      // Normal size.
+		tankSize{TANKSIZEX, TANKSIZEX},      // Square.
+		tankSize{TANKSIZEX, 10 * TANKSIZEY}, // Lopsided.
+		tankSize{10 * TANKSIZEX, TANKSIZEY}, // Also lopsided.
+		tankSize{0.0, 0.0},                  // Tiny.
+	}
+
+	for _, limit := range tankSizes {
+		t.Logf("Test tank with size: (%v, %v)", limit.x, limit.y)
+
+		// Attempt to reach max range.
+		tankLimit(t, limit)
+	}
 }
