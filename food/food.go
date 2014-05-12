@@ -36,9 +36,11 @@ func (f *Food) Consume() float64 {
 // Call this at the end of each cycle, to remove it from the collision manager.
 // Returns a boolean for whether the teardown occured.
 func (f *Food) Check() bool {
+	f.content -= 0.1
 	if f.content > 0 {
 		return false
 	}
+	f.content = 0
 
 	f.cm.RemoveEntity(f)
 	return true

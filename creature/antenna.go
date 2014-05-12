@@ -22,7 +22,7 @@ const (
 	arc = (math.Pi / 6)
 
 	// Length of the antenna.
-	length = 10.0
+	length = 40.0
 
 	// Charge incremented per detected thing.
 	chargeAntenna = 1.0

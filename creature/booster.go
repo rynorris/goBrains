@@ -22,9 +22,9 @@ func (b *booster) Charge(strength float64) {
 func (b *booster) Work() {
 
 	if b.btype == BoosterLinear {
-		b.host.movement.move += b.charge
+		b.host.movement.move += b.charge * 0.2
 	} else if b.btype == BoosterAngular {
-		b.host.movement.rotate += b.charge * 0.1
+		b.host.movement.rotate += b.charge * 0.2
 	}
 
 	// Reset charge now it has been used.

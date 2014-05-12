@@ -16,7 +16,7 @@ import (
 const (
 	// Maximum velocities.
 	MaxLinearVel  = 5.0
-	MaxAngularVel = 0.1
+	MaxAngularVel = 0.2
 )
 
 // Creatures always report a radius of zero, as they cannot be detected.
@@ -58,15 +58,15 @@ func (c *Creature) Check() bool {
 	} else if c.movement.move < 0 {
 		c.movement.move = 0
 	}
-	c.movement.rotate *= 0.9
 	if c.movement.rotate > 1 {
 		c.movement.rotate = 1
 	} else if c.movement.rotate < -1 {
 		c.movement.rotate = -1
 	}
+	c.movement.rotate = 0
 	c.vitality -= 0.1
-	if c.vitality > 200 {
-		c.vitality = 200
+	if c.vitality > 300 {
+		c.vitality = 300
 	}
 
 	return false
@@ -116,9 +116,9 @@ func New(lm locationmanager.Detection) *Creature {
 	newC := &Creature{
 		lm:       lm,
 		dna:      genetics.NewDna(),
-		brain:    brain.NewBrain(5),
+		brain:    brain.NewBrain(4),
 		inputs:   make([]input, 0),
-		vitality: 200,
+		vitality: 300,
 	}
 
 	// Add the new creature to the location manager.

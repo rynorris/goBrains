@@ -20,7 +20,7 @@ import (
 func (cm *LocationManager) AddEntity(ent entity.Entity) {
 	newHitbox := circleHitbox{
 		active:      true,
-		centre:      coord{rand.Float64() * 500, rand.Float64() * 400},
+		centre:      coord{rand.Float64() * 640, rand.Float64() * 480},
 		orientation: 0,
 		radius:      ent.GetRadius(),
 		entity:      ent,
@@ -42,12 +42,18 @@ func (cm *LocationManager) RemoveEntity(ent entity.Entity) {
 // Update the location of an entity.
 func (cm *LocationManager) ChangeLocation(move CoordDelta, ent entity.Entity) {
 	hb := cm.findHitbox(ent)
+	if hb == nil {
+		return
+	}
 	hb.update(move)
 }
 
 // Update the radius of an entity.
 func (cm *LocationManager) ChangeRadius(radius float64, ent entity.Entity) {
 	hb := cm.findHitbox(ent)
+	if hb == nil {
+		return
+	}
 	hb.setRadius(radius)
 }
 
