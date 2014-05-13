@@ -9,8 +9,9 @@ package locationmanager
 
 import (
 	"fmt"
-	"github.com/DiscoViking/goBrains/entity"
 	"math"
+
+	"github.com/DiscoViking/goBrains/entity"
 )
 
 // Get whether the hitbox is active or not.
@@ -31,10 +32,11 @@ func (hb *circleHitbox) isInside(loc coord) bool {
 		return false
 	}
 
-	diffDist := (math.Pow((hb.centre.locX-loc.locX), 2) +
-		math.Pow((hb.centre.locY-loc.locY), 2))
+	dX := hb.centre.locX - loc.locX
+	dY := hb.centre.locY - loc.locY
+	diffDist := dX*dX + dY*dY
 
-	if diffDist < (math.Pow(hb.radius, 2)) {
+	if diffDist < hb.radius*hb.radius {
 		return true
 	}
 	return false
