@@ -27,7 +27,7 @@ func (m *em) LocationManager() locationmanager.LM {
 }
 
 // New returns a new em instance.
-func New() *em {
+func New() Manager {
 	return &em{
 		creatures:      map[entity.Entity]struct{}{},
 		food:           map[entity.Entity]struct{}{},
@@ -60,7 +60,7 @@ func (m *em) Reset() {
 		delete(m.food, f)
 	}
 	for i := 0; i < initial_food; i++ {
-		f := food.New(m.lm, 1000)
+		f := food.New(m.lm, food_size)
 		m.food[f] = struct{}{}
 	}
 }

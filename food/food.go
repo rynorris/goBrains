@@ -7,8 +7,13 @@
 package food
 
 import (
-	"github.com/DiscoViking/goBrains/locationmanager"
 	"math"
+
+	"github.com/DiscoViking/goBrains/locationmanager"
+)
+
+const (
+	decay_rate = 0.1 // Amount of food that decays each tick.
 )
 
 // Check the size of the food.  This is calculated from the amount of food represented by the instance.
@@ -36,7 +41,7 @@ func (f *Food) Consume() float64 {
 // Call this at the end of each cycle, to remove it from the collision manager.
 // Returns a boolean for whether the teardown occured.
 func (f *Food) Check() bool {
-	f.content -= 0.1
+	f.content -= decay_rate
 	if f.content > 0 {
 		return false
 	}

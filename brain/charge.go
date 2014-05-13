@@ -19,7 +19,4 @@ func (c *ChargeCarrier) Charge(strength float64) {
 // Should be called once per time-step.
 func (c *ChargeCarrier) Decay() {
 	c.currentCharge -= chargeDecayRate
-	if c.currentCharge < 0 {
-		c.currentCharge = 0
-	}
 }

@@ -11,7 +11,7 @@ import (
 // spawnFood creates a new blob of food in a random location
 // and adds it to the food list.
 func (m *em) spawnFood() {
-	f := food.New(m.lm, 1000)
+	f := food.New(m.lm, food_size)
 	m.food[f] = struct{}{}
 }
 
