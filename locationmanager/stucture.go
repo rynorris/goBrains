@@ -38,7 +38,7 @@ type CoordDelta struct {
 
 // Combination represents a combination position of x, y and an orientation.
 type Combination struct {
-	x, y, orient float64
+	X, Y, Orient float64
 }
 
 // LocationManager is an instance of a location manager.

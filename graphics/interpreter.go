@@ -27,18 +27,20 @@ func Interpret(lm locationmanager.Location, in chan entity.Entity, out chan Prim
 }
 
 func breakEntity(lm locationmanager.Location, e entity.Entity, out chan Primitive) {
-	ok, x, y, _ := lm.GetLocation(e)
+        ok, comb := lm.GetLocation(e)
 	if !ok {
 		return
 	}
+        x, y := comb.X, comb.Y
 
 	out <- Circle{int16(x), int16(y), uint16(10), 0, color.Black}
 }
 
 func breakFood(lm locationmanager.Location, f *food.Food, out chan Primitive) {
-	ok, x, y, _ := lm.GetLocation(f)
+	ok, comb := lm.GetLocation(f)
 	if !ok {
 		return
 	}
+        x, y := comb.X, comb.Y
 	out <- Circle{int16(x), int16(y), uint16(f.GetRadius()), 0, color.RGBA{50, 200, 50, 255}}
 }

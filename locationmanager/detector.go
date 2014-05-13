@@ -9,13 +9,14 @@ package locationmanager
 
 import (
 	"fmt"
+	"github.com/DiscoViking/goBrains/entity"
 	"math"
 	"math/rand"
 )
 
 const (
 	TANKSIZEX = 1280.0
-	TANKSIZEY = 960.0
+	TANKSIZEY = 1024.0
 )
 
 // Add a new entity to a random position in the tank.
@@ -24,9 +25,9 @@ func (cm *LocationManager) AddEntity(ent entity.Entity) {
 	comb := Combination{0.0, 0.0, 0.0}
 	if !cm.spawnOrigin {
 		comb = Combination{
-			x:      (rand.Float64() * cm.maxPoint.locX),
-			y:      (rand.Float64() * cm.maxPoint.locY),
-			orient: (rand.Float64() * 2 * math.Pi),
+			X:      (rand.Float64() * cm.maxPoint.locX),
+			Y:      (rand.Float64() * cm.maxPoint.locY),
+			Orient: (rand.Float64() * 2 * math.Pi),
 		}
 	}
 	cm.AddEntAtLocation(ent, comb)
@@ -36,8 +37,8 @@ func (cm *LocationManager) AddEntity(ent entity.Entity) {
 func (cm *LocationManager) AddEntAtLocation(ent entity.Entity, comb Combination) {
 	newHitbox := circleHitbox{
 		active:      true,
-		centre:      coord{comb.x, comb.y},
-		orientation: comb.orient,
+		centre:      coord{comb.X, comb.Y},
+		orientation: comb.Orient,
 		radius:      ent.GetRadius(),
 		entity:      ent,
 	}
@@ -62,7 +63,6 @@ func (cm *LocationManager) ChangeLocation(move CoordDelta, ent entity.Entity) {
 	if hb == nil {
 		return
 	}
-	hb.update(move)
 }
 
 // Update the radius of an entity.
@@ -81,8 +81,8 @@ func (cm *LocationManager) GetCollisions(offset CoordDelta, ent entity.Entity) [
 	searcher := cm.findHitbox(ent)
 	absLoc := searcher.getCoord()
 
-	dX := offset.Distance * math.Cos(searcher.getOrient())
-	dY := offset.Distance * math.Sin(searcher.getOrient())
+	dX := offset.Distance * math.Cos(searcher.getOrient()+offset.Rotation)
+	dY := offset.Distance * math.Sin(searcher.getOrient()+offset.Rotation)
 	absLoc.update(dX, dY)
 
 	for _, hb := range cm.hitboxes {

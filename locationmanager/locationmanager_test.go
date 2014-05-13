@@ -117,7 +117,7 @@ func TestLocation(t *testing.T) {
 
 	// Query for the entity which LM does not know about.  This must fail.
 	res, comb := lm.GetLocation(ent)
-	locx, locy, orient := comb.x, comb.y, comb.orient
+	locx, locy, orient := comb.X, comb.Y, comb.Orient
 
 	if res {
 		t.Errorf("Lookup of unknown object succeeded; returned: (%v, %v, %v, %v))",
@@ -128,7 +128,7 @@ func TestLocation(t *testing.T) {
 	// Add the entity and query for it.
 	lm.AddEntAtLocation(ent, Combination{0, 0, 0})
 	res, comb = lm.GetLocation(ent)
-	locx, locy, orient = comb.x, comb.y, comb.orient
+	locx, locy, orient = comb.X, comb.Y, comb.Orient
 
 	if !res || (locx != 0) || (locy != 0) || (orient != 0) {
 		t.Errorf("Lookup of known object failed; returned: (%v, %v, %v, %v))",
@@ -267,7 +267,7 @@ func tankDirection(t *testing.T, s tankSize, angle float64, exp coord) {
 	move := CoordDelta{TANKSIZEX * 99, 0}
 	cm.ChangeLocation(move, ent)
 	res, comb := cm.GetLocation(ent)
-	locx, locy := comb.x, comb.y
+	locx, locy := comb.X, comb.Y
 
 	if !res || (locx != exp.locX) || (locy != exp.locY) {
 		t.Errorf("Expected entity to update location to maximum at (%v, %v), actually moved to (%v, %v)",
