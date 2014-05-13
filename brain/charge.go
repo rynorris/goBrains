@@ -1,7 +1,7 @@
 package brain
 
 // The fixed at which ChargeCarrier disperses into the environment.
-const chargeDecayRate = 0.02
+const chargeDecayRate = 0.005
 
 // An abstract collection of electrical ChargeCarrier.
 // Used to commonise code between different kinds of

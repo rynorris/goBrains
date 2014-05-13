@@ -9,8 +9,9 @@ package locationmanager
 
 import (
 	"fmt"
-	"github.com/DiscoViking/goBrains/entity"
 	"math"
+
+	"github.com/DiscoViking/goBrains/entity"
 )
 
 // Get whether the hitbox is active or not.
@@ -45,7 +46,7 @@ func (hb *circleHitbox) update(move CoordDelta) {
 	hb.orientation += move.Rotation
 	dX := move.Distance * math.Cos(hb.orientation)
 	dY := move.Distance * math.Sin(hb.orientation)
-	hb.centre.update(dX, dY)
+	hb.centre.update(dX, -dY)
 }
 
 // Update the radius of the hitbox.

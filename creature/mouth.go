@@ -18,6 +18,7 @@ func (mt *mouth) detect() {
 	// Attempt to consume all entities at this position.
 	for _, blip := range blips {
 		mt.host.vitality += blip.Consume()
+		mt.node.Charge(0.2)
 	}
 }
 

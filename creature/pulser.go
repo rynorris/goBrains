@@ -14,7 +14,7 @@ import (
 // Fixed values.
 const (
 	// Charge incremented per detect.
-	chargePulser = 0.1
+	chargePulser = 0.03
 )
 
 // The pulser fires indiscriminately.

@@ -1,7 +1,6 @@
 package entitymanager
 
 import (
-	"fmt"
 	"math/rand"
 
 	"github.com/DiscoViking/goBrains/creature"
@@ -35,8 +34,6 @@ func (m *em) breedRandom() {
 	if ix2 < ix1 {
 		ix1, ix2 = ix2, ix1
 	}
-
-	fmt.Printf("%v, %v\n", ix1, ix2)
 
 	// Resolve indices into creatures.
 	// Because of the random nature of iterating over a map,

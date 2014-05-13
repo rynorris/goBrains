@@ -65,8 +65,8 @@ func (c *Creature) Check() bool {
 	}
 	c.movement.rotate = 0
 	c.vitality -= 0.1
-	if c.vitality > 300 {
-		c.vitality = 300
+	if c.vitality > 600 {
+		c.vitality = 600
 	}
 
 	return false
@@ -116,7 +116,7 @@ func New(lm locationmanager.Detection) *Creature {
 	newC := &Creature{
 		lm:       lm,
 		dna:      genetics.NewDna(),
-		brain:    brain.NewBrain(4),
+		brain:    brain.NewBrain(5),
 		inputs:   make([]input, 0),
 		vitality: 300,
 	}

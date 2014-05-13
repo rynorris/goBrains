@@ -7,9 +7,10 @@
 package creature
 
 import (
+	"math"
+
 	"github.com/DiscoViking/goBrains/brain"
 	"github.com/DiscoViking/goBrains/locationmanager"
-	"math"
 )
 
 // Fixed values.

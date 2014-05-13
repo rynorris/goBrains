@@ -64,9 +64,9 @@ func (cm *LocationManager) GetCollisions(offset CoordDelta, ent entity.Entity) [
 	searcher := cm.findHitbox(ent)
 	absLoc := searcher.getCoord()
 
-	dX := offset.Distance * math.Cos(searcher.getOrient())
-	dY := offset.Distance * math.Sin(searcher.getOrient())
-	absLoc.update(dX, dY)
+	dX := offset.Distance * math.Cos(searcher.getOrient()+offset.Rotation)
+	dY := offset.Distance * math.Sin(searcher.getOrient()+offset.Rotation)
+	absLoc.update(dX, -dY)
 
 	for _, hb := range cm.hitboxes {
 		if hb.isInside(absLoc) {
