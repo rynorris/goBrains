@@ -29,10 +29,11 @@ func TestInterpretDefault(t *testing.T) {
 
 	go Interpret(lm, in, out)
 
-	expected := Circle{483, 752, 10, 0, color.Black}
-
 	e := &testEntity{}
 	lm.AddEntity(e)
+
+	_, loc := lm.GetLocation(e)
+	expected := Circle{int16(loc.X), int16(loc.Y), 10, 0, color.Black}
 
 	in <- e
 
@@ -67,9 +68,12 @@ func TestInterpretFood(t *testing.T) {
 
 	go Interpret(lm, in, out)
 
-	in <- food.New(lm, 100)
+	f := food.New(lm, 100)
 
-	expected := Circle{350, 339, 10, 0, color.RGBA{50, 200, 50, 255}}
+	in <- f
+
+	_, loc := lm.GetLocation(f)
+	expected := Circle{int16(loc.X), int16(loc.Y), 10, 0, color.RGBA{50, 200, 50, 255}}
 
 	output := <-out
 
