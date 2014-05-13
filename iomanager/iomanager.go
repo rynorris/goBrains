@@ -24,8 +24,8 @@ import (
 )
 
 const (
-	WIDTH  = 1280
-	HEIGHT = 1024
+	WIDTH  = 800
+	HEIGHT = 800
 )
 
 // Starts the graphics engine up.

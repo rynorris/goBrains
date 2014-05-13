@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	TANKSIZEX = 1280.0
-	TANKSIZEY = 1024.0
+	TANKSIZEX = 800.0
+	TANKSIZEY = 800.0
 )
 
 // Add a new entity to a random position in the tank.

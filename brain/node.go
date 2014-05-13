@@ -2,8 +2,8 @@
 package brain
 
 const (
-	defaultFiringThreshold = 1.5
-	defaultFiringStrength  = 1.0
+	defaultFiringThreshold = 1.0
+	defaultFiringStrength  = 0.8
 )
 
 type Node struct {
@@ -24,6 +24,9 @@ func (n *Node) Fire() {
 // The Node should not affect anything outside itself anywhere EXCEPT
 // in the Work method.
 func (n *Node) Work() {
+	if n.currentCharge < 0 {
+		n.currentCharge = 0
+	}
 	for n.currentCharge >= n.firingThreshold {
 		n.Fire()
 		n.currentCharge -= n.firingThreshold

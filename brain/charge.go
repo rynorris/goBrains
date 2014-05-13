@@ -13,9 +13,6 @@ type ChargeCarrier struct {
 // ChargeCarrier up this ChargeCarrier by strength ChargeUnits.
 func (c *ChargeCarrier) Charge(strength float64) {
 	c.currentCharge += strength
-	if c.currentCharge < 0 {
-		c.currentCharge = 0
-	}
 }
 
 // Decreases this ChargeCarrier by chargeDecayRate.
