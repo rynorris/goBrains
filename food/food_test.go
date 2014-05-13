@@ -5,9 +5,10 @@
 package food
 
 import (
-	"github.com/DiscoViking/goBrains/locationmanager"
 	"math"
 	"testing"
+
+	"github.com/DiscoViking/goBrains/locationmanager"
 )
 
 // Basic food verification.
@@ -36,6 +37,13 @@ func TestFood(t *testing.T) {
 			return
 		}
 
+		// Content should have decayed.
+		val = val - decay_rate
+		if val < 0 {
+			val = 0
+		}
+		checkContent(t, food, val)
+
 		// Radius is the square root of the content.
 		checkRadius(t, food, math.Sqrt(val))
 
@@ -56,7 +64,7 @@ func TestFood(t *testing.T) {
 // Content checking.  Verify that the appropriate function used by external tests also works.
 func checkContent(t *testing.T, food *Food, content float64) {
 	if food.content != content {
-		t.Errorf("Expected content of %v, found %v.", food.content, content)
+		t.Errorf("Expected content of %v, found %v.", content, food.content)
 	}
 	if food.content != food.GetContent() {
 		t.Errorf("Different results from direct and indirect content queries: %v/%v",
@@ -104,8 +112,9 @@ func checkEmptying(t *testing.T, food *Food, content float64) {
 		checkConsumption(t, food, currCont)
 
 		// Food consumed.
-		if currCont != 0 {
-			currCont--
+		currCont--
+		if currCont < 0 {
+			currCont = 0
 		}
 
 		checkContent(t, food, currCont)

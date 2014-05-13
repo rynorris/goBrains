@@ -41,7 +41,7 @@ func TestGraphicsFV(t *testing.T) {
 		food.New(lm, 1000),
 	}
 
-	go Start(data, done, event)
+	go Start(lm, data, done, event)
 
 	// Get graphicsManager to draw them to the screen
 	data <- entities

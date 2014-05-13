@@ -5,21 +5,23 @@
 package creature
 
 import (
+	"testing"
+
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/food"
 	"github.com/DiscoViking/goBrains/genetics"
 	"github.com/DiscoViking/goBrains/locationmanager"
-	"testing"
+	"github.com/DiscoViking/goBrains/testutils"
 )
 
 // Verify that a movement structure is as expected for a booster.
 func CheckMove(t *testing.T, tb *booster, actual velocity, expected float64) {
-	if (tb.btype == BoosterLinear) && (actual.move != expected) {
+	if (tb.btype == BoosterLinear) && (!testutils.FloatsAreEqual(actual.move, expected)) {
 		t.Errorf("Expected linear velocity %v, got %v",
 			expected,
 			actual.move)
 	}
-	if (tb.btype == BoosterAngular) && (actual.rotate != expected) {
+	if (tb.btype == BoosterAngular) && (!testutils.FloatsAreEqual(actual.rotate, expected)) {
 		t.Errorf("Expected rotational velocity %v, got %v",
 			expected,
 			actual.rotate)
@@ -98,22 +100,22 @@ func TestMouth(t *testing.T) {
 	mot := creature.AddMouth()
 
 	// This should be as expected, or this test will most definitely fail.
-	if creature.vitality != 10 {
-		t.Errorf(errorStrHost, 1, 10, creature.vitality)
+	if creature.vitality != InitialVitality {
+		t.Errorf(errorStrHost, 1, InitialVitality, creature.vitality)
 	}
 
 	// Attempt to consume when we overlap with only ourselves present.  No change in vitality.
 	mot.detect()
-	if creature.vitality != 10 {
-		t.Errorf(errorStrHost, 2, 10, creature.vitality)
+	if creature.vitality != InitialVitality {
+		t.Errorf(errorStrHost, 2, InitialVitality, creature.vitality)
 	}
 
 	// Add some food to eat.  Try and eat it.  We do not deal with the *other* end.
 	fd := food.New(lm, 10)
 
 	mot.detect()
-	if creature.vitality != 11 {
-		t.Errorf(errorStrHost, 3, 11, creature.vitality)
+	if creature.vitality != InitialVitality+1 {
+		t.Errorf(errorStrHost, 3, InitialVitality+1, creature.vitality)
 	}
 	if fd.GetContent() != 9 {
 		t.Errorf(errorStrFood, 4, 9, fd.GetContent())
@@ -121,8 +123,8 @@ func TestMouth(t *testing.T) {
 
 	// And repeat. The first time might have been a fluke, right?
 	mot.detect()
-	if creature.vitality != 12 {
-		t.Errorf(errorStrHost, 5, 12, creature.vitality)
+	if creature.vitality != InitialVitality+2 {
+		t.Errorf(errorStrHost, 5, InitialVitality+2, creature.vitality)
 	}
 	if fd.GetContent() != 8 {
 		t.Errorf(errorStrFood, 6, 8, fd.GetContent())
@@ -132,8 +134,8 @@ func TestMouth(t *testing.T) {
 	for ii := 0; ii < 10; ii++ {
 		mot.detect()
 	}
-	if creature.vitality != 20 {
-		t.Errorf(errorStrHost, 7, 20, creature.vitality)
+	if creature.vitality != InitialVitality+10 {
+		t.Errorf(errorStrHost, 7, InitialVitality+10, creature.vitality)
 	}
 	if fd.GetContent() != 0 {
 		t.Errorf(errorStrFood, 8, 0, fd.GetContent())
@@ -191,11 +193,11 @@ func TestBoosters(t *testing.T) {
 		CheckMove(t, testBooster, host.movement, 0.0)
 
 		testBooster.Work()
-		CheckMove(t, testBooster, host.movement, 0.1)
+		CheckMove(t, testBooster, host.movement, 0.02)
 
 		// Ensure that the charge has definitely depleted after use.
 		testBooster.Work()
-		CheckMove(t, testBooster, host.movement, 0.1)
+		CheckMove(t, testBooster, host.movement, 0.02)
 	}
 
 	// Test that activating both boosters at once works.
@@ -207,7 +209,7 @@ func TestBoosters(t *testing.T) {
 		testBooster.Work()
 	}
 	for _, testBooster := range testBoosters {
-		CheckMove(t, testBooster, host.movement, 0.1)
+		CheckMove(t, testBooster, host.movement, 0.02)
 	}
 
 }

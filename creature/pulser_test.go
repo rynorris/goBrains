@@ -5,8 +5,10 @@
 package creature
 
 import (
-	"github.com/DiscoViking/goBrains/locationmanager"
+	"math"
 	"testing"
+
+	"github.com/DiscoViking/goBrains/locationmanager"
 )
 
 func TestPulsers(t *testing.T) {
@@ -23,7 +25,7 @@ func TestPulsers(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		p.detect()
 		tBrain.Work()
-		expected = (i / 5)
+		expected = int(math.Floor(float64(i) * chargePulser))
 		if tBrain.fired != expected {
 			t.Errorf("Expected to fire %v, actually fired %v times.", expected, tBrain.fired)
 		}

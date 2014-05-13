@@ -25,11 +25,16 @@ func TestInterpretDefault(t *testing.T) {
 	out := make(chan Primitive)
 	defer close(in)
 
-	go Interpret(in, out)
+	lm := locationmanager.New()
 
-	expected := Circle{100, 100, 10, 0, color.Black}
+	go Interpret(lm, in, out)
 
-	in <- &testEntity{}
+	expected := Circle{483, 752, 10, 0, color.Black}
+
+	e := &testEntity{}
+	lm.AddEntity(e)
+
+	in <- e
 
 	output := <-out
 
@@ -58,13 +63,13 @@ func TestInterpretFood(t *testing.T) {
 	out := make(chan Primitive)
 	defer close(in)
 
-	go Interpret(in, out)
-
 	lm := locationmanager.New()
+
+	go Interpret(lm, in, out)
 
 	in <- food.New(lm, 100)
 
-	expected := Circle{100, 100, 11, 0, color.Black}
+	expected := Circle{350, 339, 10, 0, color.RGBA{50, 200, 50, 255}}
 
 	output := <-out
 
@@ -77,28 +82,6 @@ func TestInterpretFood(t *testing.T) {
 	}
 
 	circle := output.(Circle)
-
-	// Test the circle was what we expected.
-	if circle != expected {
-		t.Errorf("Expected circle x=%v y=%v r=%v c=%v\n"+
-			"Got x=%v y=%v r=%v c=%v",
-			expected.x, expected.y, expected.r, expected.c,
-			circle.x, circle.y, circle.r, circle.c)
-	}
-
-	expected = Circle{100, 100, 10, 0, color.RGBA{50, 200, 50, 255}}
-
-	output = <-out
-
-	// Test it output a Circle.
-	switch T := output.(type) {
-	case Circle:
-		// Do Nothing, this is correct
-	default:
-		t.Errorf("Expected circle, got %v.", T)
-	}
-
-	circle = output.(Circle)
 
 	// Test the circle was what we expected.
 	if circle != expected {

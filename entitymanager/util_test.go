@@ -3,7 +3,7 @@ package entitymanager
 import "testing"
 
 func TestBreedRandom(t *testing.T) {
-	m := New()
+	m := New().(*em)
 	m.Reset()
 
 	t.Log("Breeding new creature.")
@@ -20,7 +20,7 @@ func TestBreedRandom(t *testing.T) {
 }
 
 func TestSpawnFood(t *testing.T) {
-	m := New()
+	m := New().(*em)
 	m.Reset()
 
 	t.Log("Spawning food.")
