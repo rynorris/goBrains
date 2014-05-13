@@ -9,9 +9,10 @@ package locationmanager
 
 import (
 	"fmt"
-	"github.com/DiscoViking/goBrains/entity"
 	"math"
 	"math/rand"
+
+	"github.com/DiscoViking/goBrains/entity"
 )
 
 const (
