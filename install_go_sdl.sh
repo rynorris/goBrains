@@ -1,7 +1,3 @@
 #!/bin/sh
 
-cd $GOPATH/src
-mkdir -p github.com/banthar
-cd github.com/banthar
-git clone https://github.com/banthar/Go-SDL.git
-
+go get github.com/banthar/Go-SDL
