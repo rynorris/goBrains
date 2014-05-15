@@ -15,11 +15,6 @@ import (
 	"github.com/DiscoViking/goBrains/entity"
 )
 
-const (
-	TANKSIZEX = 800.0
-	TANKSIZEY = 800.0
-)
-
 // Add a new entity to a random position in the tank.
 // This is added to first empty entry in the array, else append a new entry.
 func (cm *LocationManager) AddEntity(ent entity.Entity) {

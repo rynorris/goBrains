@@ -3,17 +3,17 @@ package entitymanager
 import "github.com/DiscoViking/goBrains/config"
 
 var (
-	breeding_rate       int     = 150  // Spawn a new creature every this many ticks.
-	food_replenish_rate int     = 200  // Spawn a new blob of food every this many ticks.
-	initial_creatures   int     = 40   // Start with this many random creatures.
-	initial_food        int     = 50   // Start with this many randomly placed food blobs.
-	food_size           float64 = 1000 // Size of food blobs to spawn.
+	breeding_rate       int
+	food_replenish_rate int
+	initial_creatures   int
+	initial_food        int
+	food_size           float64
 )
 
 func LoadConfig(cfg *config.Config) {
-	initial_creatures = cfg.EntityManager.InitialCreatures
-	initial_food = cfg.EntityManager.InitialFood
-	breeding_rate = cfg.EntityManager.BreedingRate
-	food_replenish_rate = cfg.EntityManager.FoodSpawnRate
-	food_size = cfg.EntityManager.FoodSize
+	initial_creatures = cfg.Entity.InitialCreatures
+	initial_food = cfg.Entity.InitialFood
+	breeding_rate = cfg.Entity.BreedingRate
+	food_replenish_rate = cfg.Entity.FoodSpawnRate
+	food_size = cfg.Entity.FoodSize
 }

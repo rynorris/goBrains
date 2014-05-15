@@ -8,11 +8,14 @@ import (
 	"runtime/pprof"
 	"time"
 
+	"github.com/DiscoViking/goBrains/brain"
 	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/entitymanager"
 	"github.com/DiscoViking/goBrains/events"
+	"github.com/DiscoViking/goBrains/genetics"
 	"github.com/DiscoViking/goBrains/iomanager"
+	"github.com/DiscoViking/goBrains/locationmanager"
 	"github.com/banthar/Go-SDL/sdl"
 )
 
@@ -99,4 +102,7 @@ func main() {
 func loadModules(cfg *config.Config) {
 	entitymanager.LoadConfig(cfg)
 	iomanager.LoadConfig(cfg)
+	locationmanager.LoadConfig(cfg)
+	brain.LoadConfig(cfg)
+	genetics.LoadConfig(cfg)
 }

@@ -1,11 +1,6 @@
 // A real-time neural network implementation.
 package brain
 
-const (
-	defaultFiringThreshold = 1.0
-	defaultFiringStrength  = 0.8
-)
-
 type Node struct {
 	ChargeCarrier
 	firingThreshold float64      // When currentCharge crosses this threshold, the node will Fire().
