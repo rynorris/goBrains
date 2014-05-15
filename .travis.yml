@@ -10,6 +10,7 @@ before_install:
   - ./install_go_sdl.sh
 
 install: 
+  - go get code.google.com/p/gcfg
   - go get code.google.com/p/go.tools/cmd/cover
 
 script: go test -cover ./...
