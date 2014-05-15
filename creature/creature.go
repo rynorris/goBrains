@@ -55,8 +55,8 @@ func (c *Creature) Check() bool {
 	// Cap movement speeds
 	if c.movement.move > MaxLinearVel {
 		c.movement.move = MaxLinearVel
-	} else if c.movement.move < 0 {
-		c.movement.move = 0
+	} else if c.movement.move < -MaxLinearVel {
+		c.movement.move = -MaxLinearVel
 	}
 	if c.movement.rotate > MaxAngularVel {
 		c.movement.rotate = MaxAngularVel
