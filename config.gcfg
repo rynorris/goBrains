@@ -1,0 +1,12 @@
+; Configuration file for goBrains
+
+[General]
+ScreenWidth = 800
+ScreenHeight = 800
+
+[EntityManager]
+InitialCreatures = 40
+InitialFood = 50
+BreedingRate = 150
+FoodSpawnRate = 200
+FoodSize = 1000

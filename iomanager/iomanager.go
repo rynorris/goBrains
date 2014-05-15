@@ -23,11 +23,6 @@ import (
 	"github.com/banthar/Go-SDL/sdl"
 )
 
-const (
-	WIDTH  = 800
-	HEIGHT = 800
-)
-
 // Starts the graphics engine up.
 // Once called, pass a slice of Entities into the passed in channel
 // once per frame for drawing.
@@ -49,8 +44,8 @@ func mainLoop(lm locationmanager.Location, data chan []entity.Entity, done chan 
 
 	// Create the screen surface.
 	fmt.Printf("Creating screen\n")
-	screen := sdl.SetVideoMode(WIDTH, HEIGHT, 32, sdl.RESIZABLE|sdl.DOUBLEBUF|sdl.SWSURFACE)
-	canvas := sdl.CreateRGBSurface(0, WIDTH, HEIGHT, 32, 0, 0, 0, 0)
+	screen := sdl.SetVideoMode(width, height, 32, sdl.RESIZABLE|sdl.DOUBLEBUF|sdl.SWSURFACE)
+	canvas := sdl.CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0)
 	background := sdl.MapRGB(sdl.GetVideoInfo().Vfmt, 200, 200, 200)
 
 	fmt.Printf("Entering main loop\n")
@@ -69,7 +64,7 @@ func mainLoop(lm locationmanager.Location, data chan []entity.Entity, done chan 
 			fmt.Printf("Dt: %v, FPS: %v, Entities: %v\n", dt, fps, len(entities))
 		}
 
-		canvas.FillRect(&sdl.Rect{0, 0, WIDTH, HEIGHT}, background)
+		canvas.FillRect(&sdl.Rect{0, 0, uint16(width), uint16(height)}, background)
 
 		// Construct the graphics pipeline.
 		interpret := make(chan entity.Entity)

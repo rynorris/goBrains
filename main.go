@@ -8,6 +8,7 @@ import (
 	"runtime/pprof"
 	"time"
 
+	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/entitymanager"
 	"github.com/DiscoViking/goBrains/events"
@@ -34,6 +35,13 @@ func main() {
 	}
 
 	rand.Seed(time.Now().UnixNano())
+
+	cfg, err := config.Load("config.gcfg")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	loadModules(cfg)
 
 	data := make(chan []entity.Entity)
 	done := make(chan struct{})
@@ -85,4 +93,10 @@ func main() {
 			}
 		}
 	}
+}
+
+// Loads config into all modules which require it.
+func loadModules(cfg *config.Config) {
+	entitymanager.LoadConfig(cfg)
+	iomanager.LoadConfig(cfg)
 }
