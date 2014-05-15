@@ -3,8 +3,8 @@ package iomanager
 import "github.com/DiscoViking/goBrains/config"
 
 var (
-	width  int
-	height int
+	width  int = 800
+	height int = 800
 )
 
 func LoadConfig(cfg *config.Config) {

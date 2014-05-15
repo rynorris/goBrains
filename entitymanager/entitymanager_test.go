@@ -27,7 +27,7 @@ func TestSpin(t *testing.T) {
 	}
 
 	t.Logf("Fast forwarding %v cycles.", breeding_rate)
-	for i := 0.0; i < math.Min(breeding_rate, food_replenish_rate); i++ {
+	for i := 0.0; i < math.Min(float64(breeding_rate), float64(food_replenish_rate)); i++ {
 		m.Spin()
 	}
 

@@ -3,11 +3,11 @@ package entitymanager
 import "github.com/DiscoViking/goBrains/config"
 
 var (
-	breeding_rate       int
-	food_replenish_rate int
-	initial_creatures   int
-	initial_food        int
-	food_size           float64
+	breeding_rate       int     = 150
+	food_replenish_rate int     = 200
+	initial_creatures   int     = 40
+	initial_food        int     = 50
+	food_size           float64 = 1000
 )
 
 func LoadConfig(cfg *config.Config) {
