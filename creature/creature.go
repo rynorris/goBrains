@@ -47,22 +47,23 @@ func (c *Creature) Check() bool {
 	// Update the brain one cycle.
 	c.brain.Work()
 
-	// Update LM with the distance we are moving this check.
-	c.lm.ChangeLocation(locationmanager.CoordDelta{c.movement.move,
-		c.movement.rotate},
-		c)
-
 	// Cap movement speeds
 	if c.movement.move > MaxLinearVel {
 		c.movement.move = MaxLinearVel
-	} else if c.movement.move < -MaxLinearVel {
-		c.movement.move = -MaxLinearVel
+	} else if c.movement.move < 0 {
+		c.movement.move = 0
 	}
 	if c.movement.rotate > MaxAngularVel {
 		c.movement.rotate = MaxAngularVel
 	} else if c.movement.rotate < -MaxAngularVel {
 		c.movement.rotate = -MaxAngularVel
 	}
+
+	// Update LM with the distance we are moving this check.
+	c.lm.ChangeLocation(locationmanager.CoordDelta{c.movement.move,
+		c.movement.rotate},
+		c)
+
 	c.movement.rotate = 0
 
 	// Decrement and cap vitality.
