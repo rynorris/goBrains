@@ -47,15 +47,24 @@ func breakCreature(lm locationmanager.Location, c *creature.Creature, out chan P
 	if !ok {
 		return
 	}
+	var dx, dy float64
 
 	x, y, o := comb.X, comb.Y, comb.Orient
 	cosO := math.Cos(o)
 	sinO := math.Sin(o)
 
+	// Draw the antenna lines first, so that the circles cover them.
+	dx = math.Cos(o+math.Pi/6) * 40
+	dy = math.Sin(o+math.Pi/6) * 40
+	out <- Line{int16(x), int16(y), int16(x + dx), int16(y + dy), color.RGBA{170, 170, 170, 255}}
+	dx = math.Cos(o-math.Pi/6) * 40
+	dy = math.Sin(o-math.Pi/6) * 40
+	out <- Line{int16(x), int16(y), int16(x + dx), int16(y + dy), color.RGBA{170, 170, 170, 255}}
+
 	// Body
 	out <- Circle{int16(x), int16(y), uint16(8), 0, color.RGBA{200, 50, 50, 255}}
-	dx := cosO * 6
-	dy := sinO * 6
+	dx = cosO * 6
+	dy = sinO * 6
 	out <- Circle{int16(x - dx), int16(y - dy), uint16(6), 0, color.RGBA{200, 50, 50, 255}}
 	dx = cosO * 10
 	dy = sinO * 10
