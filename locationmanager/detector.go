@@ -59,10 +59,10 @@ func (cm *LocationManager) RemoveEntity(ent entity.Entity) {
 // Update the location of an entity.
 func (cm *LocationManager) ChangeLocation(move CoordDelta, ent entity.Entity) {
 	hb := cm.findHitbox(ent)
-	hb.update(move, cm.maxPoint)
 	if hb == nil {
 		return
 	}
+	hb.update(move, cm.maxPoint)
 }
 
 // Update the radius of an entity.
