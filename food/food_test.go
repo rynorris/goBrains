@@ -86,8 +86,8 @@ func checkCheck(t *testing.T, food *Food, result bool) bool {
 
 // Radius checking.
 func checkRadius(t *testing.T, food *Food, radius float64) {
-	if food.GetRadius() != radius {
-		t.Errorf("Expected radius of %v, found %v.", food.GetRadius(), radius)
+	if food.Radius() != radius {
+		t.Errorf("Expected radius of %v, found %v.", food.Radius(), radius)
 	}
 }
 

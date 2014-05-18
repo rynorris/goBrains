@@ -9,10 +9,9 @@ package locationmanager
 
 import (
 	"fmt"
+	"github.com/DiscoViking/goBrains/entity"
 	"math"
 	"math/rand"
-
-	"github.com/DiscoViking/goBrains/entity"
 )
 
 const (
@@ -40,7 +39,7 @@ func (cm *LocationManager) AddEntAtLocation(ent entity.Entity, comb Combination)
 		active:      true,
 		centre:      coord{comb.X, comb.Y},
 		orientation: comb.Orient,
-		radius:      ent.GetRadius(),
+		radius:      ent.Radius(),
 		entity:      ent,
 	}
 

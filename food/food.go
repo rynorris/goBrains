@@ -17,12 +17,12 @@ const (
 )
 
 // Check the size of the food.  This is calculated from the amount of food represented by the instance.
-func (f *Food) GetRadius() float64 {
+func (f *Food) Radius() float64 {
 	return math.Sqrt(f.content)
 }
 
 // Get the color of the food.  This never changes.
-func (f *Food) GetColor() color.RGBA {
+func (f *Food) Color() color.RGBA {
 	return f.color
 }
 
@@ -37,8 +37,7 @@ func (f *Food) Consume() float64 {
 	}
 
 	// Report the new radius to the collision detector.
-	f.cm.ChangeRadius(f.GetRadius(), f)
-
+	f.cm.ChangeRadius(f.Radius(), f)
 	return (initFood - f.content)
 }
 

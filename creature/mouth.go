@@ -32,7 +32,7 @@ func (host *Creature) AddMouth() *mouth {
 	input := inputStruct{
 		putStruct: putStruct{host: host},
 		node:      node,
-		location:  locationmanager.CoordDelta{host.GetRadius(), 0.0},
+		location:  locationmanager.CoordDelta{host.Radius(), 0.0},
 	}
 	m := &mouth{input}
 

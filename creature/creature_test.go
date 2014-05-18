@@ -65,16 +65,22 @@ func TestAntenna(t *testing.T) {
 	}
 
 	// Add something to detect.  Is it detected?
+	// As the antenna has three inputs and it will charge three times.
 	creature.lm.AddEntity(&entity.TestEntity{100})
 	antL.detect()
 	tBrain.Work()
-	if tBrain.fired != 1 {
-		t.Errorf(errorStr, 2, 1, tBrain.fired)
+	if tBrain.fired != 3 {
+		t.Errorf(errorStr, 2, 3, tBrain.fired)
 	}
 	antR.detect()
 	tBrain.Work()
-	if tBrain.fired != 2 {
-		t.Errorf(errorStr, 3, 2, tBrain.fired)
+	if tBrain.fired != 6 {
+		t.Errorf(errorStr, 3, 6, tBrain.fired)
+	}
+
+	if t.Failed() {
+		// Later tests will be incredibly verbose, so stop here if we have failed already.
+		return
 	}
 
 	// Detection of multiple entities at once.
@@ -85,8 +91,8 @@ func TestAntenna(t *testing.T) {
 	}
 	antL.detect()
 	tBrain.Work()
-	if tBrain.fired != 100 {
-		t.Errorf(errorStr, 4, 100, tBrain.fired)
+	if tBrain.fired != 300 {
+		t.Errorf(errorStr, 4, 300, tBrain.fired)
 	}
 }
 
@@ -112,9 +118,11 @@ func TestMouth(t *testing.T) {
 
 	// Add some food to eat.  Try and eat it.  We do not deal with the *other* end.
 	fd := food.New(lm, 10)
+	lm.ChangeLocation(mot.location, fd)
 
 	mot.detect()
 	if creature.vitality != InitialVitality+1 {
+		lm.PrintDebug()
 		t.Errorf(errorStrHost, 3, InitialVitality+1, creature.vitality)
 	}
 	if fd.GetContent() != 9 {
@@ -128,6 +136,10 @@ func TestMouth(t *testing.T) {
 	}
 	if fd.GetContent() != 8 {
 		t.Errorf(errorStrFood, 6, 8, fd.GetContent())
+	}
+	if t.Failed() {
+		// Later tests will be incredibly verbose, so stop here if we have failed already.
+		return
 	}
 
 	// Deplete the food entirely.
@@ -150,6 +162,7 @@ func TestMouth(t *testing.T) {
 	muchFood := make([]*food.Food, 100)
 	for ii := 0; ii < 100; ii++ {
 		muchFood[ii] = food.New(lm, 10)
+		lm.ChangeLocation(mot.location, muchFood[ii])
 	}
 
 	mot.detect()
