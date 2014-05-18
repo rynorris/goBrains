@@ -7,16 +7,13 @@
 package graphics
 
 import (
+	"github.com/DiscoViking/goBrains/creature"
+	"github.com/DiscoViking/goBrains/entity"
+	"github.com/DiscoViking/goBrains/food"
+	"github.com/DiscoViking/goBrains/locationmanager"
 	"image/color"
 	"math"
 )
-
-import (
-	"github.com/DiscoViking/goBrains/creature"
-	"github.com/DiscoViking/goBrains/entity"
-	"github.com/DiscoViking/goBrains/locationmanager"
-)
-import "github.com/DiscoViking/goBrains/food"
 
 func Interpret(lm locationmanager.Location, in chan entity.Entity, out chan Primitive) {
 	defer close(out)
@@ -39,7 +36,7 @@ func breakEntity(lm locationmanager.Location, e entity.Entity, out chan Primitiv
 	}
 	x, y := comb.X, comb.Y
 
-	out <- Circle{int16(x), int16(y), uint16(10), 0, color.Black}
+	out <- Circle{int16(x), int16(y), uint16(10), 0, e.GetColor()}
 }
 
 func breakCreature(lm locationmanager.Location, c *creature.Creature, out chan Primitive) {
@@ -90,5 +87,5 @@ func breakFood(lm locationmanager.Location, f *food.Food, out chan Primitive) {
 		return
 	}
 	x, y := comb.X, comb.Y
-	out <- Circle{int16(x), int16(y), uint16(f.GetRadius()), 0, color.RGBA{50, 200, 50, 255}}
+	out <- Circle{int16(x), int16(y), uint16(f.GetRadius()), 0, f.GetColor()}
 }

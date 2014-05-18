@@ -10,6 +10,7 @@ import (
 	"github.com/DiscoViking/goBrains/brain"
 	"github.com/DiscoViking/goBrains/genetics"
 	"github.com/DiscoViking/goBrains/locationmanager"
+	"image/color"
 )
 
 // Fixed values.
@@ -24,6 +25,11 @@ const (
 // Creatures always report a radius of zero, as they cannot be detected.
 func (c *Creature) GetRadius() float64 {
 	return 0
+}
+
+// Get the colour of the creature.
+func (c *Creature) GetColor() color.RGBA {
+	return c.color
 }
 
 // Creatures cannot consume each other.
@@ -121,6 +127,7 @@ func New(lm locationmanager.Detection) *Creature {
 		dna:      genetics.NewDna(),
 		brain:    brain.NewBrain(4),
 		inputs:   make([]input, 0),
+		color:    color.RGBA{},
 		vitality: InitialVitality,
 	}
 
