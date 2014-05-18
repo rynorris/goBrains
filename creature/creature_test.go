@@ -43,6 +43,13 @@ func checkDnaLen(t *testing.T, c *Creature) {
 	}
 }
 
+// Verify collection of values from a creature.
+func TestValues(t *testing.T) {
+	c := New(locationmanager.New())
+	c.Color()
+	c.Radius()
+}
+
 // Basic antenna verification.
 func TestAntenna(t *testing.T) {
 	errorStr := "[%v] Expected test brain to have received %v firings, actually got %v."
@@ -225,6 +232,22 @@ func TestBoosters(t *testing.T) {
 		CheckMove(t, testBooster, host.movement, 0.02)
 	}
 
+	// Test overcharging boosters (in both directions), and that they are limited.
+	host.movement = velocity{0, 0}
+	for _, testBooster := range testBoosters {
+		testBooster.Charge(9999)
+		testBooster.Work()
+	}
+	CheckMove(t, linBoost, host.movement, MaxLinearVel)
+	CheckMove(t, angBoost, host.movement, MaxAngularVel)
+
+	host.movement = velocity{0, 0}
+	for _, testBooster := range testBoosters {
+		testBooster.Charge(-9999)
+		testBooster.Work()
+	}
+	CheckMove(t, linBoost, host.movement, -MaxLinearVel)
+	CheckMove(t, angBoost, host.movement, -MaxAngularVel)
 }
 
 // High-level creature verification.
@@ -248,6 +271,15 @@ func TestCreature(t *testing.T) {
 	if creature.Check() {
 		t.Errorf(errorStrDead, 3, "alive", "dead")
 		return
+	}
+
+	// Vitality is capped.
+	creature.vitality = MaxVitality + 10
+	creature.Check()
+	if creature.vitality > MaxVitality {
+		t.Errorf("Expected vitality should be capped at %v, but actually at %v.",
+			creature.vitality,
+			MaxVitality)
 	}
 
 	// If the creature runs out of vitality it will die.

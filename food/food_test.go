@@ -50,6 +50,9 @@ func TestFood(t *testing.T) {
 		// Test simple food consumption.
 		checkConsumption(t, food, val)
 
+		// Get the food colour.
+		checkColour(t, food)
+
 		// Reset.
 		food = New(cm, val)
 
@@ -101,6 +104,11 @@ func checkConsumption(t *testing.T, food *Food, content float64) {
 	case (content == 0) && (resp != 0):
 		t.Errorf("Expected no comsumption of food, but %v reported.", resp)
 	}
+}
+
+// Check food has a colour. Belt-and-braces test only.
+func checkColour(t *testing.T, f *Food) {
+	f.Color()
 }
 
 // Check being greedy.  If we try and eat all the food, does it stop?

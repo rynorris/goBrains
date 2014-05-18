@@ -15,9 +15,6 @@ import (
 
 // Fixed values.
 const (
-	// Maximum velocities.
-	MaxLinearVel    = 1.0
-	MaxAngularVel   = 1.0
 	MaxVitality     = 600
 	InitialVitality = 300
 )
@@ -37,11 +34,27 @@ func (c *Creature) Consume() float64 {
 	return 0
 }
 
+// Manage vitality.
+func (c *Creature) manageVitality() bool {
+	if c.vitality <= 0 {
+		c.lm.RemoveEntity(c)
+		return true
+	}
+
+	// Decrement and cap vitality.
+	c.vitality -= 0.1
+	if c.vitality > MaxVitality {
+		c.vitality = MaxVitality
+	}
+
+	return false
+}
+
 // Check the status of the creature and update LM appropriately.
 // Returns a boolean for whether teardown occured.
 func (c *Creature) Check() bool {
-	if c.vitality <= 0 {
-		c.lm.RemoveEntity(c)
+	death := c.manageVitality()
+	if death {
 		return true
 	}
 
@@ -53,30 +66,10 @@ func (c *Creature) Check() bool {
 	// Update the brain one cycle.
 	c.brain.Work()
 
-	// Cap movement speeds
-	if c.movement.move > MaxLinearVel {
-		c.movement.move = MaxLinearVel
-	} else if c.movement.move < 0 {
-		c.movement.move = 0
-	}
-	if c.movement.rotate > MaxAngularVel {
-		c.movement.rotate = MaxAngularVel
-	} else if c.movement.rotate < -MaxAngularVel {
-		c.movement.rotate = -MaxAngularVel
-	}
-
 	// Update LM with the distance we are moving this check.
 	c.lm.ChangeLocation(locationmanager.CoordDelta{c.movement.move,
 		c.movement.rotate},
 		c)
-
-	c.movement.rotate = 0
-
-	// Decrement and cap vitality.
-	c.vitality -= 0.1
-	if c.vitality > MaxVitality {
-		c.vitality = MaxVitality
-	}
 
 	return false
 }

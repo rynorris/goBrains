@@ -11,6 +11,13 @@ const (
 	// Booster types.
 	BoosterLinear  = 1
 	BoosterAngular = 2
+
+	// Maximum velocities.
+	MaxLinearVel  = 1.0
+	MaxAngularVel = 0.1
+
+	// Velocity scaling.  Linear is in pixels, but rotation is in radians - so scale the latter down.
+	LinPerAng = 10
 )
 
 // Outputs are chargeable.  This means they accept accept charge from nodes in the brain.
@@ -24,7 +31,19 @@ func (b *booster) Work() {
 	if b.btype == BoosterLinear {
 		b.host.movement.move += b.charge * 0.2
 	} else if b.btype == BoosterAngular {
-		b.host.movement.rotate += b.charge * 0.2
+		b.host.movement.rotate += b.charge * 0.2 * LinPerAng
+	}
+
+	// Cap movement speeds
+	if b.host.movement.move > MaxLinearVel {
+		b.host.movement.move = MaxLinearVel
+	} else if b.host.movement.move < -MaxLinearVel {
+		b.host.movement.move = -MaxLinearVel
+	}
+	if b.host.movement.rotate > MaxAngularVel {
+		b.host.movement.rotate = MaxAngularVel
+	} else if b.host.movement.rotate < -MaxAngularVel {
+		b.host.movement.rotate = -MaxAngularVel
 	}
 
 	// Reset charge now it has been used.
