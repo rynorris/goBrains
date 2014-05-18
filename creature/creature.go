@@ -23,12 +23,12 @@ const (
 )
 
 // Creatures always report a radius of zero, as they cannot be detected.
-func (c *Creature) GetRadius() float64 {
-	return 0
+func (c *Creature) Radius() float64 {
+	return 10
 }
 
 // Get the colour of the creature.
-func (c *Creature) GetColor() color.RGBA {
+func (c *Creature) Color() color.RGBA {
 	return c.color
 }
 

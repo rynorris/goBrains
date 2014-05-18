@@ -13,10 +13,10 @@ import "image/color"
 type Entity interface {
 
 	// Get the size of the entity.
-	GetRadius() float64
+	Radius() float64
 
 	// Get the colour of this creature.
-	GetColor() color.RGBA
+	Color() color.RGBA
 
 	// Query the state of the entity.
 	// Returns a boolean for if it is being torn down on this check.

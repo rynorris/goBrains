@@ -36,7 +36,7 @@ func breakEntity(lm locationmanager.Location, e entity.Entity, out chan Primitiv
 	}
 	x, y := comb.X, comb.Y
 
-	out <- Circle{int16(x), int16(y), uint16(10), 0, e.GetColor()}
+	out <- Circle{int16(x), int16(y), uint16(e.Radius()), 0, e.Color()}
 }
 
 func breakCreature(lm locationmanager.Location, c *creature.Creature, out chan Primitive) {
@@ -87,5 +87,5 @@ func breakFood(lm locationmanager.Location, f *food.Food, out chan Primitive) {
 		return
 	}
 	x, y := comb.X, comb.Y
-	out <- Circle{int16(x), int16(y), uint16(f.GetRadius()), 0, f.GetColor()}
+	out <- Circle{int16(x), int16(y), uint16(f.Radius()), 0, f.Color()}
 }

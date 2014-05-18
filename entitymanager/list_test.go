@@ -1,6 +1,9 @@
 package entitymanager
 
-import "testing"
+import (
+	"image/color"
+	"testing"
+)
 
 type testEntity struct {
 	dead bool
@@ -10,8 +13,9 @@ func (e *testEntity) Check() bool {
 	return e.dead
 }
 
-func (e *testEntity) GetRadius() float64 { return 0 }
-func (e *testEntity) Consume() float64   { return 0 }
+func (e *testEntity) Radius() float64   { return 0 }
+func (e *testEntity) Color() color.RGBA { return color.RGBA{} }
+func (e *testEntity) Consume() float64  { return 0 }
 
 func TestNewList(t *testing.T) {
 	l := NewList()

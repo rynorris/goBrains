@@ -31,7 +31,7 @@ const (
 	length = 40.0
 
 	// Charge incremented per detected thing.
-	chargeAntenna = 2.0
+	chargeAntenna = 1.0
 )
 
 // Charge an input node for a colour.
@@ -43,10 +43,9 @@ func anCharge(n *brain.Node, colorVal, alpha uint8) {
 
 // The antenna twitches, and attempts to detect nearby entities.
 func (an *antenna) detect() {
-
 	// Charge nodes for each colour detected.
 	for _, blip := range an.host.lm.GetCollisions(an.location, an.host) {
-		c := blip.GetColor()
+		c := blip.Color()
 		anCharge(an.colorNodes[0], c.R, c.A)
 		anCharge(an.colorNodes[1], c.G, c.A)
 		anCharge(an.colorNodes[2], c.B, c.A)

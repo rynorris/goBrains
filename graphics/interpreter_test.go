@@ -11,12 +11,13 @@ type testEntity struct {
 }
 
 // The testEntity always has radius 10.
-func (t testEntity) GetRadius() float64 {
+func (t testEntity) Radius() float64 {
 	return 10
 }
 
-func (t testEntity) Check() bool      { return false }
-func (t testEntity) Consume() float64 { return 0 }
+func (t testEntity) Color() color.RGBA { return color.RGBA{} }
+func (t testEntity) Check() bool       { return false }
+func (t testEntity) Consume() float64  { return 0 }
 
 // Test that the interpreter does what we expect when it's given an
 // entity it doesn't recognise.
@@ -33,7 +34,7 @@ func TestInterpretDefault(t *testing.T) {
 	lm.AddEntity(e)
 
 	_, loc := lm.GetLocation(e)
-	expected := Circle{int16(loc.X), int16(loc.Y), 10, 0, color.Black}
+	expected := Circle{int16(loc.X), int16(loc.Y), 10, 0, color.RGBA{}}
 
 	in <- e
 
