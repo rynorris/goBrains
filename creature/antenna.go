@@ -7,10 +7,9 @@
 package creature
 
 import (
-	"math"
-
 	"github.com/DiscoViking/goBrains/brain"
 	"github.com/DiscoViking/goBrains/locationmanager"
+	"math"
 )
 
 // Fixed values.
@@ -19,6 +18,12 @@ const (
 	AntennaLeft  = 1
 	AntennaRight = 2
 
+	// Number of colors detected by an antenna.
+	colorNum = 3
+
+	// Max value of colours and alpha.
+	colorScale = 255
+
 	// Offset of the antenna from the face of the creature.
 	arc = (math.Pi / 6)
 
@@ -26,17 +31,25 @@ const (
 	length = 40.0
 
 	// Charge incremented per detected thing.
-	chargeAntenna = 1.0
+	chargeAntenna = 2.0
 )
 
-// The antenna twitches, and attempts to detect nearby food.
-func (an *antenna) detect() {
-	blips := an.host.lm.GetCollisions(an.location, an.host)
+// Charge an input node for a colour.
+func anCharge(n *brain.Node, colorVal, alpha uint8) {
 
-	// The antenna detects all objects collided with.
-	// This does not actually do any checking on what the entity is - we just detect it!
-	for ii := 0; ii < len(blips); ii++ {
-		an.node.Charge(chargeAntenna)
+	// Each value from color.RGBA is a 255-integer.  Scale this to a float in the range 0-1.
+	n.Charge(chargeAntenna * (float64(colorVal) / colorScale) * (float64(alpha) / colorScale))
+}
+
+// The antenna twitches, and attempts to detect nearby entities.
+func (an *antenna) detect() {
+
+	// Charge nodes for each colour detected.
+	for _, blip := range an.host.lm.GetCollisions(an.location, an.host) {
+		c := blip.GetColor()
+		anCharge(an.colorNodes[0], c.R, c.A)
+		anCharge(an.colorNodes[1], c.G, c.A)
+		anCharge(an.colorNodes[2], c.B, c.A)
 	}
 }
 
@@ -49,16 +62,19 @@ func (host *Creature) AddAntenna(antType int) *antenna {
 		thisArc = -1 * arc
 	}
 
-	// Link the antenna to the hosts' brain.
-	node := brain.NewNode()
-	host.brain.AddInputNode(node)
-
 	input := inputStruct{
 		putStruct: putStruct{host: host},
-		node:      node,
+		node:      nil,
 		location:  locationmanager.CoordDelta{length, thisArc},
 	}
-	a := &antenna{input}
+	a := &antenna{input, make([]*brain.Node, 0)}
+
+	// Creatures detect colours independently.  Add a node for each colour detected.
+	for ii := 0; ii < colorNum; ii++ {
+		newN := brain.NewNode()
+		a.colorNodes = append(a.colorNodes, newN)
+		host.brain.AddInputNode(newN)
+	}
 
 	// Add the antenna to host's list of inputs.
 	host.inputs = append(host.inputs, a)

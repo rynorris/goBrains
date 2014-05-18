@@ -7,9 +7,9 @@
 package food
 
 import (
-	"math"
-
 	"github.com/DiscoViking/goBrains/locationmanager"
+	"image/color"
+	"math"
 )
 
 const (
@@ -19,6 +19,11 @@ const (
 // Check the size of the food.  This is calculated from the amount of food represented by the instance.
 func (f *Food) GetRadius() float64 {
 	return math.Sqrt(f.content)
+}
+
+// Get the color of the food.  This never changes.
+func (f *Food) GetColor() color.RGBA {
+	return f.color
 }
 
 // Consumption of the food.  Returns the food content eaten.
@@ -61,6 +66,7 @@ func New(cm locationmanager.Detection, foodLevel float64) *Food {
 	newF := &Food{
 		content: foodLevel,
 		cm:      cm,
+		color:   color.RGBA{50, 200, 50, 255},
 	}
 
 	// Add the new food to the collision detector.

@@ -10,6 +10,7 @@ import (
 	"github.com/DiscoViking/goBrains/brain"
 	"github.com/DiscoViking/goBrains/genetics"
 	"github.com/DiscoViking/goBrains/locationmanager"
+	"image/color"
 )
 
 // The high-level creature struct.
@@ -26,6 +27,9 @@ type Creature struct {
 
 	// Brain inputs!
 	inputs []input
+
+	// Colour of the creature.
+	color color.RGBA
 
 	// The current vitality of the creature.
 	// This decrements each update.  The creature dies when this reaches zero.
@@ -81,6 +85,7 @@ type pulser struct {
 
 type antenna struct {
 	inputStruct
+	colorNodes []*brain.Node
 }
 
 type mouth struct {
