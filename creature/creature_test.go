@@ -5,13 +5,12 @@
 package creature
 
 import (
-	"testing"
-
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/food"
 	"github.com/DiscoViking/goBrains/genetics"
 	"github.com/DiscoViking/goBrains/locationmanager"
 	"github.com/DiscoViking/goBrains/testutils"
+	"testing"
 )
 
 // Verify that a movement structure is as expected for a booster.
@@ -21,10 +20,10 @@ func CheckMove(t *testing.T, tb *booster, actual velocity, expected float64) {
 			expected,
 			actual.move)
 	}
-	if (tb.btype == BoosterAngular) && (!testutils.FloatsAreEqual(actual.rotate, expected)) {
+	if (tb.btype == BoosterAngular) && (!testutils.FloatsAreEqual(actual.rotate*LinPerAng, expected)) {
 		t.Errorf("Expected rotational velocity %v, got %v",
 			expected,
-			actual.rotate)
+			actual.rotate*LinPerAng)
 	}
 }
 
@@ -238,16 +237,16 @@ func TestBoosters(t *testing.T) {
 		testBooster.Charge(9999)
 		testBooster.Work()
 	}
-	CheckMove(t, linBoost, host.movement, MaxLinearVel)
-	CheckMove(t, angBoost, host.movement, MaxAngularVel)
+	CheckMove(t, linBoost, host.movement, MaxLinVel)
+	CheckMove(t, angBoost, host.movement, MaxLinVel)
 
 	host.movement = velocity{0, 0}
 	for _, testBooster := range testBoosters {
 		testBooster.Charge(-9999)
 		testBooster.Work()
 	}
-	CheckMove(t, linBoost, host.movement, -MaxLinearVel)
-	CheckMove(t, angBoost, host.movement, -MaxAngularVel)
+	CheckMove(t, linBoost, host.movement, -MaxLinVel)
+	CheckMove(t, angBoost, host.movement, -MaxLinVel)
 }
 
 // High-level creature verification.
