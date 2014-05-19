@@ -15,8 +15,9 @@ import (
 
 // Fixed values.
 const (
-	MaxVitality     = 600
-	InitialVitality = 300
+	MaxVitality      = 600
+	InitialVitality  = 300
+	SpeedDegredation = 0.9
 )
 
 // Creatures always report a radius of zero, as they cannot be detected.
@@ -50,6 +51,12 @@ func (c *Creature) manageVitality() bool {
 	return false
 }
 
+// Manage velocities.  Velocity must degrade, so that creatures can stop.
+func (c *Creature) manageSpeed() {
+	c.movement.move *= SpeedDegredation
+	c.movement.rotate *= SpeedDegredation
+}
+
 // Check the status of the creature and update LM appropriately.
 // Returns a boolean for whether teardown occured.
 func (c *Creature) Check() bool {
@@ -70,6 +77,7 @@ func (c *Creature) Check() bool {
 	c.lm.ChangeLocation(locationmanager.CoordDelta{c.movement.move,
 		c.movement.rotate},
 		c)
+	c.manageSpeed()
 
 	return false
 }

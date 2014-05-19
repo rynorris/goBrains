@@ -13,7 +13,7 @@ const (
 	BoosterAngular = 2
 
 	// Velocity scaling.  Linear is in pixels, but rotation is in radians - so scale the latter down.
-	LinPerAng = 100
+	LinPerAng = 10
 
 	// Maximum velocity.
 	MaxLinVel = 1.0
