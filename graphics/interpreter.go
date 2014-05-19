@@ -59,13 +59,14 @@ func breakCreature(lm locationmanager.Location, c *creature.Creature, out chan P
 	out <- Line{int16(x), int16(y), int16(x + dx), int16(y + dy), color.RGBA{170, 170, 170, 255}}
 
 	// Body
-	out <- Circle{int16(x), int16(y), uint16(8), 0, color.RGBA{200, 50, 50, 255}}
+	col := c.Color()
+	out <- Circle{int16(x), int16(y), uint16(8), 0, col}
 	dx = cosO * 6
 	dy = sinO * 6
-	out <- Circle{int16(x - dx), int16(y - dy), uint16(6), 0, color.RGBA{200, 50, 50, 255}}
+	out <- Circle{int16(x - dx), int16(y - dy), uint16(6), 0, col}
 	dx = cosO * 10
 	dy = sinO * 10
-	out <- Circle{int16(x - dx), int16(y - dy), uint16(4), 0, color.RGBA{200, 50, 50, 255}}
+	out <- Circle{int16(x - dx), int16(y - dy), uint16(4), 0, col}
 
 	// Mouth
 	dx = cosO * 6

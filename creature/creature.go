@@ -120,7 +120,7 @@ func New(lm locationmanager.Detection) *Creature {
 		dna:      genetics.NewDna(),
 		brain:    brain.NewBrain(4),
 		inputs:   make([]input, 0),
-		color:    color.RGBA{},
+		color:    color.RGBA{200, 50, 50, 255},
 		vitality: InitialVitality,
 	}
 
