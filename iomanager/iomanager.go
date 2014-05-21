@@ -51,7 +51,7 @@ func mainLoop(lm locationmanager.Location, data chan []entity.Entity, done chan 
 	fmt.Printf("Creating screen\n")
 	screen := sdl.SetVideoMode(WIDTH, HEIGHT, 32, sdl.RESIZABLE|sdl.DOUBLEBUF|sdl.SWSURFACE)
 	canvas := sdl.CreateRGBSurface(0, WIDTH, HEIGHT, 32, 0, 0, 0, 0)
-	background := sdl.MapRGB(sdl.GetVideoInfo().Vfmt, 200, 200, 200)
+	background := sdl.MapRGB(sdl.GetVideoInfo().Vfmt, 20, 20, 20)
 
 	fmt.Printf("Entering main loop\n")
 	// Main drawing loop

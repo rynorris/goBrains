@@ -57,6 +57,16 @@ func (c Circle) draw(s *sdl.Surface) {
 	}
 }
 
+// Specifies a line to be drawn.
+type Line struct {
+	x0, y0, x1, y1 int16
+	c              color.Color
+}
+
+func (l Line) draw(s *sdl.Surface) {
+	drawLine(l.x0, l.y0, l.x1, l.y1, l.c, s)
+}
+
 // drawFilledCircle uses the integer midpoint circle algorithm to draw a filled
 // circle to the given surface.
 func drawFilledCircle(x0, y0 int16, r uint16, c color.Color, s *sdl.Surface) {
@@ -115,6 +125,73 @@ func drawOutlineCircle(x0, y0 int16, r uint16, c color.Color, s *sdl.Surface) {
 			x--
 			e += 2 * (y - x + 1)
 		}
+	}
+}
+
+// Uses Bresenham's algorithm to draw a line between two points.
+func drawLine(x0, y0, x1, y1 int16, c color.Color, s *sdl.Surface) {
+	s.Lock()
+	defer s.Unlock()
+
+	color := sdl.ColorFromGoColor(c)
+
+	// Make sure the two ends are left-to-right.
+	if x1 < x0 {
+		x0, x1 = x1, x0
+		y0, y1 = y1, y0
+	}
+
+	// This algorithm only works for curves where dx > -dy and dy < 0
+	// So, prepare a coordinate transform to make this the case.
+	// We will then reverse the transform when we plot the points.
+	// There are 4 cases, all the transformations are self-inverse, which
+	// makes our lives a little easier.
+	dx := int(x1 - x0)
+	dy := int(y1 - y0)
+	var transform func(x, y int) (int, int)
+	var inverse func(x, y int) (int, int)
+
+	if dy < 0 {
+		if dx < -dy {
+			transform = func(x, y int) (int, int) { return -y, x }
+			inverse = func(x, y int) (int, int) { return y, -x }
+		} else {
+			transform = func(x, y int) (int, int) { return x, -y }
+			inverse = transform
+		}
+	} else {
+		if dx < dy {
+			transform = func(x, y int) (int, int) { return y, x }
+			inverse = transform
+		} else {
+			transform = func(x, y int) (int, int) { return x, y }
+			inverse = transform
+		}
+	}
+
+	// Transform coordinates.
+	tx0, ty0 := transform(int(x0), int(y0))
+	tx1, ty1 := transform(int(x1), int(y1))
+
+	// Recalculate dx and dy.
+	dx = tx1 - tx0
+	dy = ty1 - ty0
+
+	D := 2*dy - dx
+
+	safeSet(s, int(x0), int(y0), color)
+
+	y := ty0
+
+	for x := tx0 + 1; x <= tx1; x++ {
+		if D > 0 {
+			y += 1
+			D += 2*dy - 2*dx
+		} else {
+			D += 2 * dy
+		}
+		tx, ty := inverse(x, y)
+		safeSet(s, tx, ty, color)
 	}
 }
 

@@ -254,6 +254,24 @@ func TestStorage(t *testing.T) {
 	StoreCheck(t, cm, 3, 3)
 }
 
+// Test error cases.
+func TestErrors(t *testing.T) {
+	lm := New()
+
+	// Two new entities, one of which is added to LM.
+	ent1 := &entity.TestEntity{5}
+	ent2 := &entity.TestEntity{5}
+	lm.AddEntity(ent1)
+
+	// Successful changes.
+	lm.ChangeLocation(CoordDelta{0, 0}, ent1)
+	lm.ChangeRadius(0, ent1)
+
+	// Error changes.
+	lm.ChangeLocation(CoordDelta{0, 0}, ent2)
+	lm.ChangeRadius(0, ent2)
+}
+
 type tankSize struct {
 	x, y float64
 }

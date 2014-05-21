@@ -10,20 +10,24 @@ import (
 	"github.com/DiscoViking/goBrains/brain"
 	"github.com/DiscoViking/goBrains/genetics"
 	"github.com/DiscoViking/goBrains/locationmanager"
+	"image/color"
 )
 
 // Fixed values.
 const (
-	// Maximum velocities.
-	MaxLinearVel    = 1.0
-	MaxAngularVel   = 1.0
-	MaxVitality     = 600
-	InitialVitality = 300
+	MaxVitality      = 600
+	InitialVitality  = 300
+	SpeedDegredation = 0.9
 )
 
 // Creatures always report a radius of zero, as they cannot be detected.
-func (c *Creature) GetRadius() float64 {
-	return 0
+func (c *Creature) Radius() float64 {
+	return 10
+}
+
+// Get the colour of the creature.
+func (c *Creature) Color() color.RGBA {
+	return c.color
 }
 
 // Creatures cannot consume each other.
@@ -31,11 +35,33 @@ func (c *Creature) Consume() float64 {
 	return 0
 }
 
+// Manage vitality.
+func (c *Creature) manageVitality() bool {
+	if c.vitality <= 0 {
+		c.lm.RemoveEntity(c)
+		return true
+	}
+
+	// Decrement and cap vitality.
+	c.vitality -= 0.1
+	if c.vitality > MaxVitality {
+		c.vitality = MaxVitality
+	}
+
+	return false
+}
+
+// Manage velocities.  Velocity must degrade, so that creatures can stop.
+func (c *Creature) manageSpeed() {
+	c.movement.move *= SpeedDegredation
+	c.movement.rotate *= SpeedDegredation
+}
+
 // Check the status of the creature and update LM appropriately.
 // Returns a boolean for whether teardown occured.
 func (c *Creature) Check() bool {
-	if c.vitality <= 0 {
-		c.lm.RemoveEntity(c)
+	death := c.manageVitality()
+	if death {
 		return true
 	}
 
@@ -51,25 +77,7 @@ func (c *Creature) Check() bool {
 	c.lm.ChangeLocation(locationmanager.CoordDelta{c.movement.move,
 		c.movement.rotate},
 		c)
-
-	// Cap movement speeds
-	if c.movement.move > MaxLinearVel {
-		c.movement.move = MaxLinearVel
-	} else if c.movement.move < 0 {
-		c.movement.move = 0
-	}
-	if c.movement.rotate > MaxAngularVel {
-		c.movement.rotate = MaxAngularVel
-	} else if c.movement.rotate < -MaxAngularVel {
-		c.movement.rotate = -MaxAngularVel
-	}
-	c.movement.rotate = 0
-
-	// Decrement and cap vitality.
-	c.vitality -= 0.1
-	if c.vitality > MaxVitality {
-		c.vitality = MaxVitality
-	}
+	c.manageSpeed()
 
 	return false
 }
@@ -120,6 +128,7 @@ func New(lm locationmanager.Detection) *Creature {
 		dna:      genetics.NewDna(),
 		brain:    brain.NewBrain(4),
 		inputs:   make([]input, 0),
+		color:    color.RGBA{200, 50, 50, 255},
 		vitality: InitialVitality,
 	}
 

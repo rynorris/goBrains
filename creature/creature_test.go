@@ -5,13 +5,12 @@
 package creature
 
 import (
-	"testing"
-
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/food"
 	"github.com/DiscoViking/goBrains/genetics"
 	"github.com/DiscoViking/goBrains/locationmanager"
 	"github.com/DiscoViking/goBrains/testutils"
+	"testing"
 )
 
 // Verify that a movement structure is as expected for a booster.
@@ -21,10 +20,10 @@ func CheckMove(t *testing.T, tb *booster, actual velocity, expected float64) {
 			expected,
 			actual.move)
 	}
-	if (tb.btype == BoosterAngular) && (!testutils.FloatsAreEqual(actual.rotate, expected)) {
+	if (tb.btype == BoosterAngular) && (!testutils.FloatsAreEqual(actual.rotate*LinPerAng, expected)) {
 		t.Errorf("Expected rotational velocity %v, got %v",
 			expected,
-			actual.rotate)
+			actual.rotate*LinPerAng)
 	}
 }
 
@@ -41,6 +40,13 @@ func checkDnaLen(t *testing.T, c *Creature) {
 	if gn != ga {
 		t.Errorf("Mismatch of DNA with creature.  Expected %v, actual %v", gn, ga)
 	}
+}
+
+// Verify collection of values from a creature.
+func TestValues(t *testing.T) {
+	c := New(locationmanager.New())
+	c.Color()
+	c.Radius()
 }
 
 // Basic antenna verification.
@@ -65,16 +71,22 @@ func TestAntenna(t *testing.T) {
 	}
 
 	// Add something to detect.  Is it detected?
+	// As the antenna has three inputs and it will charge three times.
 	creature.lm.AddEntity(&entity.TestEntity{100})
 	antL.detect()
 	tBrain.Work()
-	if tBrain.fired != 1 {
-		t.Errorf(errorStr, 2, 1, tBrain.fired)
+	if tBrain.fired != 3 {
+		t.Errorf(errorStr, 2, 3, tBrain.fired)
 	}
 	antR.detect()
 	tBrain.Work()
-	if tBrain.fired != 2 {
-		t.Errorf(errorStr, 3, 2, tBrain.fired)
+	if tBrain.fired != 6 {
+		t.Errorf(errorStr, 3, 6, tBrain.fired)
+	}
+
+	if t.Failed() {
+		// Later tests will be incredibly verbose, so stop here if we have failed already.
+		return
 	}
 
 	// Detection of multiple entities at once.
@@ -85,8 +97,8 @@ func TestAntenna(t *testing.T) {
 	}
 	antL.detect()
 	tBrain.Work()
-	if tBrain.fired != 100 {
-		t.Errorf(errorStr, 4, 100, tBrain.fired)
+	if tBrain.fired != 300 {
+		t.Errorf(errorStr, 4, 300, tBrain.fired)
 	}
 }
 
@@ -112,9 +124,11 @@ func TestMouth(t *testing.T) {
 
 	// Add some food to eat.  Try and eat it.  We do not deal with the *other* end.
 	fd := food.New(lm, 10)
+	lm.ChangeLocation(mot.location, fd)
 
 	mot.detect()
 	if creature.vitality != InitialVitality+1 {
+		lm.PrintDebug()
 		t.Errorf(errorStrHost, 3, InitialVitality+1, creature.vitality)
 	}
 	if fd.GetContent() != 9 {
@@ -128,6 +142,10 @@ func TestMouth(t *testing.T) {
 	}
 	if fd.GetContent() != 8 {
 		t.Errorf(errorStrFood, 6, 8, fd.GetContent())
+	}
+	if t.Failed() {
+		// Later tests will be incredibly verbose, so stop here if we have failed already.
+		return
 	}
 
 	// Deplete the food entirely.
@@ -150,6 +168,7 @@ func TestMouth(t *testing.T) {
 	muchFood := make([]*food.Food, 100)
 	for ii := 0; ii < 100; ii++ {
 		muchFood[ii] = food.New(lm, 10)
+		lm.ChangeLocation(mot.location, muchFood[ii])
 	}
 
 	mot.detect()
@@ -212,6 +231,22 @@ func TestBoosters(t *testing.T) {
 		CheckMove(t, testBooster, host.movement, 0.02)
 	}
 
+	// Test overcharging boosters (in both directions), and that they are limited.
+	host.movement = velocity{0, 0}
+	for _, testBooster := range testBoosters {
+		testBooster.Charge(9999)
+		testBooster.Work()
+	}
+	CheckMove(t, linBoost, host.movement, MaxLinVel)
+	CheckMove(t, angBoost, host.movement, MaxLinVel)
+
+	host.movement = velocity{0, 0}
+	for _, testBooster := range testBoosters {
+		testBooster.Charge(-9999)
+		testBooster.Work()
+	}
+	CheckMove(t, linBoost, host.movement, -MaxLinVel)
+	CheckMove(t, angBoost, host.movement, -MaxLinVel)
 }
 
 // High-level creature verification.
@@ -235,6 +270,15 @@ func TestCreature(t *testing.T) {
 	if creature.Check() {
 		t.Errorf(errorStrDead, 3, "alive", "dead")
 		return
+	}
+
+	// Vitality is capped.
+	creature.vitality = MaxVitality + 10
+	creature.Check()
+	if creature.vitality > MaxVitality {
+		t.Errorf("Expected vitality should be capped at %v, but actually at %v.",
+			creature.vitality,
+			MaxVitality)
 	}
 
 	// If the creature runs out of vitality it will die.
