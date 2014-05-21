@@ -16,9 +16,14 @@ func (te *TestEntity) Color() color.RGBA {
 	return color.RGBA{255, 255, 255, 255}
 }
 
+// Just increment the work counter.
+func (te *TestEntity) Work() {
+	te.TeWork += 1
+}
+
 // Check the entity.  It returns as expected.
 func (te *TestEntity) Check() bool {
-	return false
+	return te.TeDead
 }
 
 // Test entities cannot be consumed.

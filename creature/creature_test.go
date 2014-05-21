@@ -72,7 +72,7 @@ func TestAntenna(t *testing.T) {
 
 	// Add something to detect.  Is it detected?
 	// As the antenna has three inputs and it will charge three times.
-	creature.lm.AddEntity(&entity.TestEntity{100})
+	creature.lm.AddEntity(&entity.TestEntity{TeRadius: 100})
 	antL.detect()
 	tBrain.Work()
 	if tBrain.fired != 3 {
@@ -93,7 +93,7 @@ func TestAntenna(t *testing.T) {
 	// Add another 99, for a total of 100 entities to detect.
 	tBrain.fired = 0
 	for ii := 0; ii < 99; ii++ {
-		creature.lm.AddEntity(&entity.TestEntity{100})
+		creature.lm.AddEntity(&entity.TestEntity{TeRadius: 100})
 	}
 	antL.detect()
 	tBrain.Work()

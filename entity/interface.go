@@ -18,6 +18,9 @@ type Entity interface {
 	// Get the colour of this creature.
 	Color() color.RGBA
 
+	// Does all updating of an entity. Guarenteed to be thread-safe.
+	Work()
+
 	// Query the state of the entity.
 	// Returns a boolean for if it is being torn down on this check.
 	Check() bool

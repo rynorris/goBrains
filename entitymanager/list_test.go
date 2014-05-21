@@ -1,21 +1,9 @@
 package entitymanager
 
 import (
-	"image/color"
+	"github.com/DiscoViking/goBrains/entity"
 	"testing"
 )
-
-type testEntity struct {
-	dead bool
-}
-
-func (e *testEntity) Check() bool {
-	return e.dead
-}
-
-func (e *testEntity) Radius() float64   { return 0 }
-func (e *testEntity) Color() color.RGBA { return color.RGBA{} }
-func (e *testEntity) Consume() float64  { return 0 }
 
 func TestNewList(t *testing.T) {
 	l := NewList()
@@ -27,7 +15,7 @@ func TestNewList(t *testing.T) {
 func TestAdd(t *testing.T) {
 	l := NewList()
 
-	e := &testEntity{false}
+	e := &entity.TestEntity{}
 
 	t.Log("Adding entity to list.")
 	l.Add(e)
@@ -43,7 +31,7 @@ func TestAdd(t *testing.T) {
 
 	t.Log("Adding 5 more entities to list.")
 	for i := 0; i < 5; i++ {
-		l.Add(&testEntity{false})
+		l.Add(&entity.TestEntity{})
 	}
 	if len(l) != 6 {
 		t.Errorf("Expected 6 entity in list, got %v.", len(l))
@@ -53,8 +41,9 @@ func TestAdd(t *testing.T) {
 func TestCheck(t *testing.T) {
 	l := NewList()
 
-	alive := &testEntity{false}
-	dead := &testEntity{true}
+	alive := &entity.TestEntity{}
+	dead := &entity.TestEntity{}
+	dead.TeDead = true
 
 	l.Add(alive)
 	l.Add(dead)

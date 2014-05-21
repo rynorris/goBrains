@@ -41,6 +41,9 @@ func (f *Food) Consume() float64 {
 	return (initFood - f.content)
 }
 
+// Food does no work.
+func (f *Food) Work() {}
+
 // Attempt to tear down a food object.
 // Call this at the end of each cycle, to remove it from the collision manager.
 // Returns a boolean for whether the teardown occured.

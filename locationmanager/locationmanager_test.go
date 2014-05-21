@@ -59,7 +59,7 @@ func TestCircleHitbox(t *testing.T) {
 		centre:      coord{0, 0},
 		orientation: 0,
 		radius:      10,
-		entity:      &entity.TestEntity{0},
+		entity:      &entity.TestEntity{TeRadius: 0},
 	}
 
 	move := CoordDelta{1, 0}
@@ -92,7 +92,7 @@ func TestCircleHitbox(t *testing.T) {
 		centre:      coord{0, 0},
 		orientation: (math.Pi * 2 / 6),
 		radius:      10,
-		entity:      &entity.TestEntity{0},
+		entity:      &entity.TestEntity{TeRadius: 0},
 	}
 
 	loc := coord{1, 2}
@@ -113,7 +113,7 @@ func TestLocation(t *testing.T) {
 	lm := New()
 
 	// The entity to query for.
-	ent := &entity.TestEntity{5}
+	ent := &entity.TestEntity{TeRadius: 5}
 
 	// Query for the entity which LM does not know about.  This must fail.
 	res, comb := lm.GetLocation(ent)
@@ -144,8 +144,8 @@ func TestOrigin(t *testing.T) {
 	lmo := New()
 	lmo.StartAtOrigin()
 
-	entn := &entity.TestEntity{5}
-	ento := &entity.TestEntity{5}
+	entn := &entity.TestEntity{TeRadius: 5}
+	ento := &entity.TestEntity{TeRadius: 5}
 	lmn.AddEntity(entn)
 	lmo.AddEntity(ento)
 
@@ -178,8 +178,8 @@ func TestDetection(t *testing.T) {
 	cm := New()
 
 	// Add two entities to be managed.
-	ent1 := &entity.TestEntity{5}
-	ent2 := &entity.TestEntity{5}
+	ent1 := &entity.TestEntity{TeRadius: 5}
+	ent2 := &entity.TestEntity{TeRadius: 5}
 
 	cm.AddEntAtLocation(ent1, Combination{0.0, 0.0, 0.0})
 	cm.AddEntAtLocation(ent2, Combination{0.0, 0.0, 0.0})
@@ -228,8 +228,8 @@ func TestStorage(t *testing.T) {
 	cm := New()
 
 	// Add two entities to be managed.
-	ent1 := &entity.TestEntity{5}
-	ent2 := &entity.TestEntity{5}
+	ent1 := &entity.TestEntity{TeRadius: 5}
+	ent2 := &entity.TestEntity{TeRadius: 5}
 
 	cm.AddEntity(ent1)
 	cm.AddEntity(ent2)
@@ -248,7 +248,7 @@ func TestStorage(t *testing.T) {
 	StoreCheck(t, cm, 2, 1)
 
 	// Extend the list again.
-	ent3 := &entity.TestEntity{5}
+	ent3 := &entity.TestEntity{TeRadius: 5}
 	cm.AddEntity(ent2)
 	cm.AddEntity(ent3)
 	StoreCheck(t, cm, 3, 3)
@@ -259,8 +259,8 @@ func TestErrors(t *testing.T) {
 	lm := New()
 
 	// Two new entities, one of which is added to LM.
-	ent1 := &entity.TestEntity{5}
-	ent2 := &entity.TestEntity{5}
+	ent1 := &entity.TestEntity{TeRadius: 5}
+	ent2 := &entity.TestEntity{TeRadius: 5}
 	lm.AddEntity(ent1)
 
 	// Successful changes.
@@ -280,7 +280,7 @@ type tankSize struct {
 func tankDirection(t *testing.T, s tankSize, angle float64, exp coord) {
 
 	cm := NewLocationManager(s.x, s.y)
-	ent := &entity.TestEntity{5}
+	ent := &entity.TestEntity{TeRadius: 5}
 	cm.AddEntAtLocation(ent, Combination{0.0, 0.0, angle})
 	move := CoordDelta{TANKSIZEX * 99, 0}
 	cm.ChangeLocation(move, ent)

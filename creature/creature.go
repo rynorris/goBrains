@@ -57,14 +57,8 @@ func (c *Creature) manageSpeed() {
 	c.movement.rotate *= SpeedDegredation
 }
 
-// Check the status of the creature and update LM appropriately.
-// Returns a boolean for whether teardown occured.
-func (c *Creature) Check() bool {
-	death := c.manageVitality()
-	if death {
-		return true
-	}
-
+// Do all updating and moving of a creature.
+func (c *Creature) Work() {
 	// Get all our inputs to charge appropriately.
 	for _, in := range c.inputs {
 		in.detect()
@@ -78,6 +72,15 @@ func (c *Creature) Check() bool {
 		c.movement.rotate},
 		c)
 	c.manageSpeed()
+}
+
+// Check the status of the creature and update LM appropriately.
+// Returns a boolean for whether teardown occured.
+func (c *Creature) Check() bool {
+	death := c.manageVitality()
+	if death {
+		return true
+	}
 
 	return false
 }

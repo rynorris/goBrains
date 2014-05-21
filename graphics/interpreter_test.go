@@ -6,19 +6,6 @@ import "github.com/DiscoViking/goBrains/entity"
 import "github.com/DiscoViking/goBrains/food"
 import "github.com/DiscoViking/goBrains/locationmanager"
 
-// A dummy entity we use for testing the interpreter.
-type testEntity struct {
-}
-
-// The testEntity always has radius 10.
-func (t testEntity) Radius() float64 {
-	return 10
-}
-
-func (t testEntity) Color() color.RGBA { return color.RGBA{} }
-func (t testEntity) Check() bool       { return false }
-func (t testEntity) Consume() float64  { return 0 }
-
 // Test that the interpreter does what we expect when it's given an
 // entity it doesn't recognise.
 func TestInterpretDefault(t *testing.T) {
@@ -30,11 +17,12 @@ func TestInterpretDefault(t *testing.T) {
 
 	go Interpret(lm, in, out)
 
-	e := &testEntity{}
+	e := &entity.TestEntity{}
+	e.TeRadius = 10
 	lm.AddEntity(e)
 
 	_, loc := lm.GetLocation(e)
-	expected := Circle{int16(loc.X), int16(loc.Y), 10, 0, color.RGBA{}}
+	expected := Circle{int16(loc.X), int16(loc.Y), 10, 0, color.RGBA{255, 255, 255, 255}}
 
 	in <- e
 
