@@ -5,7 +5,7 @@ import "github.com/DiscoViking/goBrains/entity"
 type entityList map[entity.Entity]struct{}
 
 func (l entityList) Work() {
-	workers := 1
+	workers := 16
 	work := make(chan entity.Entity)
 	done := make(chan struct{})
 	defer close(done)
