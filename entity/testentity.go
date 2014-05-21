@@ -16,6 +16,9 @@ func (te *TestEntity) Color() color.RGBA {
 	return color.RGBA{255, 255, 255, 255}
 }
 
+// Test entity does no work.
+func (te *TestEntity) Work() {}
+
 // Check the entity.  It returns as expected.
 func (te *TestEntity) Check() bool {
 	return false

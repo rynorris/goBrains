@@ -70,6 +70,7 @@ func (m *em) Reset() {
 // Spawn new creatures/food if necessary.
 func (m *em) Spin() {
 	// Update all creatures
+	m.creatures.Work()
 	m.creatures.Check()
 
 	// Update all food
