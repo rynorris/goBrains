@@ -8,5 +8,7 @@ package entity
 
 // Test entity, for testing!
 type TestEntity struct {
-	Radius float64
+	TeRadius float64
+	TeDead   bool
+	TeWork   int
 }

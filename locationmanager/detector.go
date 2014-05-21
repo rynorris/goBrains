@@ -9,10 +9,9 @@ package locationmanager
 
 import (
 	"fmt"
+	"github.com/DiscoViking/goBrains/entity"
 	"math"
 	"math/rand"
-
-	"github.com/DiscoViking/goBrains/entity"
 )
 
 // Add a new entity to a random position in the tank.
@@ -35,7 +34,7 @@ func (cm *LocationManager) AddEntAtLocation(ent entity.Entity, comb Combination)
 		active:      true,
 		centre:      coord{comb.X, comb.Y},
 		orientation: comb.Orient,
-		radius:      ent.GetRadius(),
+		radius:      ent.Radius(),
 		entity:      ent,
 	}
 
@@ -55,10 +54,10 @@ func (cm *LocationManager) RemoveEntity(ent entity.Entity) {
 // Update the location of an entity.
 func (cm *LocationManager) ChangeLocation(move CoordDelta, ent entity.Entity) {
 	hb := cm.findHitbox(ent)
-	hb.update(move, cm.maxPoint)
 	if hb == nil {
 		return
 	}
+	hb.update(move, cm.maxPoint)
 }
 
 // Update the radius of an entity.

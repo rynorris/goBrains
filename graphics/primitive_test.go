@@ -16,11 +16,12 @@
 package graphics
 
 import (
-	"github.com/banthar/Go-SDL/sdl"
 	"image/color"
 	"os"
 	"strconv"
 	"testing"
+
+	"github.com/banthar/Go-SDL/sdl"
 )
 
 func TestPoint(t *testing.T) {
@@ -123,5 +124,43 @@ func TestCircle(t *testing.T) {
 		CompareOutput(testname, t)
 
 		ii++
+	}
+}
+
+func TestLine(t *testing.T) {
+	// This test does not run in Travis.
+	if os.Getenv("TRAVIS") == "true" {
+		t.Log("This test does not work in the Travis VMs. Passing by default.")
+		return
+	}
+
+	// Initialise SDL
+	if sdl.Init(sdl.INIT_VIDEO) != 0 {
+		panic(sdl.GetError())
+	}
+
+	// Ensure that SDL will exit gracefully when we're done.
+	defer sdl.Quit()
+
+	// Set up some lines to test
+	lines := []Line{
+		Line{10, 10, 20, 80, color.RGBA{28, 12, 231, 255}}, // Steep downwards.
+		Line{10, 60, 70, 80, color.RGBA{28, 12, 231, 255}}, // Shallow downwards.
+		Line{10, 30, 70, 20, color.RGBA{28, 12, 231, 255}}, // Shallow upwards.
+		Line{10, 70, 30, 20, color.RGBA{28, 12, 231, 255}}, // Steep upwards.
+		Line{10, 30, 10, 80, color.RGBA{28, 12, 231, 255}}, // Vertical.
+		Line{10, 20, 60, 20, color.RGBA{28, 12, 231, 255}}, // Horizontal.
+	}
+
+	for i, l := range lines {
+		testname := "TestLine_" + strconv.Itoa(i)
+
+		s := sdl.CreateRGBSurface(0, 100, 100, 16, 0, 0, 0, 0)
+
+		l.draw(s)
+
+		s.SaveBMP("test_output/" + testname + "_got.bmp")
+
+		CompareOutput(testname, t)
 	}
 }

@@ -46,23 +46,13 @@ func mainLoop(lm locationmanager.Location, data chan []entity.Entity, done chan 
 	fmt.Printf("Creating screen\n")
 	screen := sdl.SetVideoMode(width, height, 32, sdl.RESIZABLE|sdl.DOUBLEBUF|sdl.SWSURFACE)
 	canvas := sdl.CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0)
-	background := sdl.MapRGB(sdl.GetVideoInfo().Vfmt, 200, 200, 200)
+	background := sdl.MapRGB(sdl.GetVideoInfo().Vfmt, 20, 20, 20)
 
 	fmt.Printf("Entering main loop\n")
 	// Main drawing loop
-	time := uint32(0)
-	frame := 0
 
 	// We loop every time we are passed in an array of entities to draw.
 	for entities := range data {
-		frame = (frame + 1) % 100
-		if frame == 0 {
-			newTime := sdl.GetTicks()
-			dt := newTime - time
-			time = newTime
-			fps := 100000 / float32(dt)
-			fmt.Printf("Dt: %v, FPS: %v, Entities: %v\n", dt, fps, len(entities))
-		}
 
 		canvas.FillRect(&sdl.Rect{0, 0, uint16(width), uint16(height)}, background)
 

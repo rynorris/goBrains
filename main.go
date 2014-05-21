@@ -83,7 +83,16 @@ func main() {
 		<-done
 	}
 
+	frames := 0
+	before := time.Now()
+
 	for running {
+		frames += 1
+		if time.Since(before) > 2*time.Second {
+			before = time.Now()
+			log.Printf("FPS: %v\n", frames/2)
+			frames = 0
+		}
 		em.Spin()
 		if rateLimit {
 			<-timer
