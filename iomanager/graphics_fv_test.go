@@ -8,8 +8,8 @@ import (
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/events"
 	"github.com/DiscoViking/goBrains/food"
-	"github.com/DiscoViking/goBrains/graphics"
 	"github.com/DiscoViking/goBrains/locationmanager"
+	"github.com/DiscoViking/goBrains/testutils"
 	"github.com/banthar/Go-SDL/sdl"
 )
 
@@ -51,5 +51,5 @@ func TestGraphicsFV(t *testing.T) {
 	s := sdl.GetVideoSurface()
 	s.SaveBMP("test_output/TestGraphicsFV_got.bmp")
 
-	graphics.CompareOutput("TestGraphicsFV", t)
+	testutils.CompareOutputImages("TestGraphicsFV", t)
 }

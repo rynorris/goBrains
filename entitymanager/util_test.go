@@ -4,18 +4,20 @@ import "testing"
 
 func TestBreedRandom(t *testing.T) {
 	m := New().(*em)
+
+	// Test with no creatures.
+	m.breedRandom()
+	if len(m.creatures) != 0 {
+		t.Errorf("Something happened when breeding with 0 creatures in pool.\nCreatures: %#v", m.creatures)
+	}
 	m.Reset()
 
-	t.Log("Breeding new creature.")
-	m.breedRandom()
-	if len(m.creatures) != initial_creatures+1 {
-		t.Errorf("Expected %v creatures, got %v.", initial_creatures+1, len(m.creatures))
-	}
-
-	t.Log("Breeding new creature.")
-	m.breedRandom()
-	if len(m.creatures) != initial_creatures+2 {
-		t.Errorf("Expected %v creatures, got %v.", initial_creatures+2, len(m.creatures))
+	for i := 1; i < 20; i++ {
+		t.Log("Breeding new creature.")
+		m.breedRandom()
+		if len(m.creatures) != initial_creatures+i {
+			t.Errorf("Expected %v creatures, got %v.", initial_creatures+i, len(m.creatures))
+		}
 	}
 }
 

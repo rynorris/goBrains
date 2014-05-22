@@ -1,15 +1,46 @@
 package graphics
 
 import (
-	"github.com/DiscoViking/goBrains/creature"
-	"github.com/DiscoViking/goBrains/entity"
-	"github.com/DiscoViking/goBrains/food"
-	"github.com/DiscoViking/goBrains/locationmanager"
 	"image/color"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/DiscoViking/goBrains/creature"
+	"github.com/DiscoViking/goBrains/entity"
+	"github.com/DiscoViking/goBrains/food"
+	"github.com/DiscoViking/goBrains/locationmanager"
 )
+
+// Test we safely deal with unlocatable entities.
+// i.e. by not drawing them.
+func TestUnlocateable(t *testing.T) {
+	in := make(chan entity.Entity)
+	out := make(chan Primitive)
+	defer close(in)
+
+	lm := locationmanager.New()
+
+	go Interpret(lm, in, out)
+
+	e := &entity.TestEntity{}
+
+	// Send in unlocatable entity.
+	in <- e
+
+	// Should be no output.
+	// Give some time just in case.
+	timeout := time.After(1 * time.Second)
+loop:
+	for {
+		select {
+		case p := <-out:
+			t.Errorf("Got output from unlocatable creature: %#v", p)
+		case <-timeout:
+			break loop
+		}
+	}
+}
 
 // Test that the interpreter does what we expect when it's given an
 // entity it doesn't recognise.

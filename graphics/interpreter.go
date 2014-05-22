@@ -7,46 +7,46 @@
 package graphics
 
 import (
+	"image/color"
+	"math"
+
 	"github.com/DiscoViking/goBrains/creature"
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/food"
 	"github.com/DiscoViking/goBrains/locationmanager"
-	"image/color"
-	"math"
 )
 
 func Interpret(lm locationmanager.Location, in chan entity.Entity, out chan Primitive) {
 	defer close(out)
 	for e := range in {
-		switch e := e.(type) {
+		ok, comb := lm.GetLocation(e)
+		if !ok {
+			continue
+		}
+
+		spec := drawSpec{e, comb}
+
+		switch e.(type) {
 		case *creature.Creature:
-			breakCreature(lm, e, out)
+			breakCreature(spec, out)
 		case *food.Food:
-			breakFood(lm, e, out)
+			breakFood(spec, out)
 		default:
-			breakEntity(lm, e, out)
+			breakEntity(spec, out)
 		}
 	}
 }
 
-func breakEntity(lm locationmanager.Location, e entity.Entity, out chan Primitive) {
-	ok, comb := lm.GetLocation(e)
-	if !ok {
-		return
-	}
-	x, y := comb.X, comb.Y
+func breakEntity(spec drawSpec, out chan Primitive) {
+	x, y := spec.loc.X, spec.loc.Y
 
-	out <- Circle{int16(x), int16(y), uint16(e.Radius()), 0, e.Color()}
+	out <- Circle{int16(x), int16(y), uint16(spec.e.Radius()), 0, spec.e.Color()}
 }
 
-func breakCreature(lm locationmanager.Location, c *creature.Creature, out chan Primitive) {
-	ok, comb := lm.GetLocation(c)
-	if !ok {
-		return
-	}
+func breakCreature(spec drawSpec, out chan Primitive) {
 	var dx, dy float64
 
-	x, y, o := comb.X, comb.Y, comb.Orient
+	x, y, o := spec.loc.X, spec.loc.Y, spec.loc.Orient
 	cosO := math.Cos(o)
 	sinO := math.Sin(o)
 
@@ -59,7 +59,7 @@ func breakCreature(lm locationmanager.Location, c *creature.Creature, out chan P
 	out <- Line{int16(x), int16(y), int16(x + dx), int16(y + dy), color.RGBA{170, 170, 170, 255}}
 
 	// Body
-	col := c.Color()
+	col := spec.e.Color()
 	out <- Circle{int16(x), int16(y), uint16(8), 0, col}
 	dx = cosO * 6
 	dy = sinO * 6
@@ -82,11 +82,7 @@ func breakCreature(lm locationmanager.Location, c *creature.Creature, out chan P
 	out <- Circle{int16(x + dx), int16(y + dy), uint16(2), 0, color.RGBA{200, 200, 50, 255}}
 }
 
-func breakFood(lm locationmanager.Location, f *food.Food, out chan Primitive) {
-	ok, comb := lm.GetLocation(f)
-	if !ok {
-		return
-	}
-	x, y := comb.X, comb.Y
-	out <- Circle{int16(x), int16(y), uint16(f.Radius()), 0, f.Color()}
+func breakFood(spec drawSpec, out chan Primitive) {
+	x, y := spec.loc.X, spec.loc.Y
+	out <- Circle{int16(x), int16(y), uint16(spec.e.Radius()), 0, spec.e.Color()}
 }
