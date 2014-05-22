@@ -43,10 +43,6 @@ type LM interface {
 // Locatable defines the ability to calculate if you can be located.
 type locatable interface {
 
-	// Get/Set whether the the interface in use or not.
-	getActive() bool
-	setActive(state bool)
-
 	// Method to check if a coordinate lies within the entity.
 	isInside(loc coord) bool
 
@@ -58,7 +54,4 @@ type locatable interface {
 	getEntity() entity.Entity
 	getCoord() coord
 	getOrient() float64
-
-	// Miscellaneous.
-	printDebug()
 }

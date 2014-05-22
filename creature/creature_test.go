@@ -13,6 +13,22 @@ import (
 	"testing"
 )
 
+// Dummy detection method
+type testInput struct {
+	triggered int
+}
+
+func (ti *testInput) detect() {
+	ti.triggered++
+}
+
+func CheckVelocity(t *testing.T, id int, c *Creature, actual velocity) {
+	if c.movement.move != actual.move || c.movement.rotate != actual.rotate {
+		t.Errorf("[%v] Expected movement (%v, %v), got (%v, %v).",
+			id, c.movement.move, c.movement.rotate, actual.move, actual.rotate)
+	}
+}
+
 // Verify that a movement structure is as expected for a booster.
 func CheckMove(t *testing.T, tb *booster, actual velocity, expected float64) {
 	if (tb.btype == BoosterLinear) && (!testutils.FloatsAreEqual(actual.move, expected)) {
@@ -128,7 +144,6 @@ func TestMouth(t *testing.T) {
 
 	mot.detect()
 	if creature.vitality != InitialVitality+1 {
-		lm.PrintDebug()
 		t.Errorf(errorStrHost, 3, InitialVitality+1, creature.vitality)
 	}
 	if fd.GetContent() != 9 {
@@ -176,12 +191,10 @@ func TestMouth(t *testing.T) {
 		if muchFood[ii].GetContent() != 9 {
 			t.Errorf("[%v] Failed on food number %v", 9, ii)
 			t.Errorf(errorStrFood, 9, 9, muchFood[ii].GetContent())
-			lm.PrintDebug()
 		}
 	}
 	if creature.vitality != 110 {
 		t.Errorf(errorStrHost, 10, 110, creature.vitality)
-		lm.PrintDebug()
 	}
 }
 
@@ -249,8 +262,61 @@ func TestBoosters(t *testing.T) {
 	CheckMove(t, angBoost, host.movement, -MaxLinVel)
 }
 
-// High-level creature verification.
-func TestCreature(t *testing.T) {
+// Test creature movement.
+func TestMovement(t *testing.T) {
+	c := New(locationmanager.New())
+
+	// Creatures start with no velocity.
+	CheckVelocity(t, 1, c, velocity{0, 0})
+
+	// Add velocity.  Get the immediate result.
+	vel := velocity{0.5, 0.5}
+	c.movement = vel
+	CheckVelocity(t, 2, c, vel)
+
+	// Setup some speeds.  Ensure that they degrade after work.
+	vel.move, vel.rotate = vel.move*SpeedDegredation, vel.rotate*SpeedDegredation
+	c.Work()
+	CheckVelocity(t, 3, c, vel)
+
+	// Degrade some more.
+	vel.move, vel.rotate = vel.move*SpeedDegredation, vel.rotate*SpeedDegredation
+	c.Work()
+	CheckVelocity(t, 4, c, vel)
+}
+
+func checkDetection(t *testing.T, id, expected int, ti *testInput) {
+	if ti.triggered != expected {
+		t.Errorf("[%v] Expected %v triggerings, got %v.",
+			id, expected, ti.triggered)
+	}
+}
+
+// Test that inputs are called to detect things.
+func TestDetection(t *testing.T) {
+	c := New(locationmanager.New())
+	ti := &testInput{}
+
+	// No inputs, nothing going.
+	c.Work()
+	checkDetection(t, 0, 0, ti)
+
+	// All for one, and one for all.
+	c.inputs = append(c.inputs, ti)
+	c.Work()
+	checkDetection(t, 1, 1, ti)
+
+	// Getting a bit crowded in here.
+	ti.triggered = 0
+	for ii := 0; ii < 99; ii++ {
+		c.inputs = append(c.inputs, ti)
+	}
+	c.Work()
+	checkDetection(t, 2, 100, ti)
+}
+
+// All things must die, eventually.
+func TestMortality(t *testing.T) {
 	errorStrLm := "[%v] Expected %v entities in LM, found %v."
 	errorStrDead := "[%v] Creature expected %v, actually %v."
 
