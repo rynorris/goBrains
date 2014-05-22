@@ -21,6 +21,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/DiscoViking/goBrains/testutils"
 	"github.com/banthar/Go-SDL/sdl"
 )
 
@@ -150,6 +151,7 @@ func TestLine(t *testing.T) {
 		Line{10, 70, 30, 20, color.RGBA{28, 12, 231, 255}}, // Steep upwards.
 		Line{10, 30, 10, 80, color.RGBA{28, 12, 231, 255}}, // Vertical.
 		Line{10, 20, 60, 20, color.RGBA{28, 12, 231, 255}}, // Horizontal.
+		Line{60, 20, 10, 20, color.RGBA{28, 12, 231, 255}}, // Horizontal, right-to-left.
 	}
 
 	for i, l := range lines {
@@ -162,5 +164,19 @@ func TestLine(t *testing.T) {
 		s.SaveBMP("test_output/" + testname + "_got.bmp")
 
 		CompareOutput(testname, t)
+	}
+}
+
+func CompareOutput(testname string, t *testing.T) {
+	match, err := testutils.FilesAreEqual(
+		"test_output/"+testname+"_got.bmp",
+		"test_output/"+testname+"_exp.bmp")
+	if err != nil {
+		t.Errorf(err.Error())
+	} else if !match {
+		t.Errorf(testname + ": Expected and actual outputs differ. Check files manually.")
+	} else {
+		//Pass, so remove _got file so we dont clog the output directory.
+		os.Remove("test_output/" + testname + "_got.bmp")
 	}
 }
