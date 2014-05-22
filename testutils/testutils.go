@@ -1,6 +1,10 @@
 package testutils
 
-import "math"
+import (
+	"math"
+	"os"
+	"testing"
+)
 import "io/ioutil"
 import "crypto/md5"
 
@@ -36,4 +40,20 @@ func FilesAreEqual(a, b string) (bool, error) {
 	sum2 := md5.Sum(f2)
 
 	return sum1 == sum2, nil
+}
+
+// CompareOutputImages is a utility method used by the graphics modules
+// to compare output of tests with expected output.
+func CompareOutputImages(testname string, t *testing.T) {
+	match, err := FilesAreEqual(
+		"test_output/"+testname+"_got.bmp",
+		"test_output/"+testname+"_exp.bmp")
+	if err != nil {
+		t.Errorf(err.Error())
+	} else if !match {
+		t.Errorf(testname + ": Expected and actual outputs differ. Check files manually.")
+	} else {
+		//Pass, so remove _got file so we dont clog the output directory.
+		os.Remove("test_output/" + testname + "_got.bmp")
+	}
 }

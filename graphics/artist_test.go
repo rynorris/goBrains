@@ -4,6 +4,7 @@ import (
 	"image/color"
 	"testing"
 
+	"github.com/DiscoViking/goBrains/testutils"
 	"github.com/banthar/Go-SDL/sdl"
 )
 
@@ -21,5 +22,5 @@ func TestArtist(t *testing.T) {
 	<-done
 
 	s.SaveBMP("test_output/TestArtist_got.bmp")
-	CompareOutput("TestArtist", t)
+	testutils.CompareOutputImages("TestArtist", t)
 }
