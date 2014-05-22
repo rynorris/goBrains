@@ -17,7 +17,6 @@ package graphics
 
 import (
 	"image/color"
-	"os"
 	"strconv"
 	"testing"
 
@@ -26,21 +25,7 @@ import (
 )
 
 func TestPoint(t *testing.T) {
-	// This test does not run in Travis.
-	if os.Getenv("TRAVIS") == "true" {
-		t.Log("This test does not work in the Travis VMs. Passing by default.")
-		return
-	}
-
 	testname := "TestPoint"
-
-	// Initialise SDL
-	if sdl.Init(sdl.INIT_VIDEO) != 0 {
-		panic(sdl.GetError())
-	}
-
-	// Ensure that SDL will exit gracefully when we're done.
-	defer sdl.Quit()
 
 	s := sdl.CreateRGBSurface(0, 100, 100, 16, 0, 0, 0, 0)
 
@@ -53,20 +38,6 @@ func TestPoint(t *testing.T) {
 }
 
 func TestRectangle(t *testing.T) {
-	// This test does not run in Travis.
-	if os.Getenv("TRAVIS") == "true" {
-		t.Log("This test does not work in the Travis VMs. Passing by default.")
-		return
-	}
-
-	// Initialise SDL
-	if sdl.Init(sdl.INIT_VIDEO) != 0 {
-		panic(sdl.GetError())
-	}
-
-	// Ensure that SDL will exit gracefully when we're done.
-	defer sdl.Quit()
-
 	// Set up some circles to test
 	rects := []Rectangle{
 		Rectangle{50, 50, 30, 20, color.RGBA{28, 12, 231, 255}}, // Basic filled rectangle
@@ -90,20 +61,6 @@ func TestRectangle(t *testing.T) {
 }
 
 func TestCircle(t *testing.T) {
-	// This test does not run in Travis.
-	if os.Getenv("TRAVIS") == "true" {
-		t.Log("This test does not work in the Travis VMs. Passing by default.")
-		return
-	}
-
-	// Initialise SDL
-	if sdl.Init(sdl.INIT_VIDEO) != 0 {
-		panic(sdl.GetError())
-	}
-
-	// Ensure that SDL will exit gracefully when we're done.
-	defer sdl.Quit()
-
 	// Set up some circles to test
 	circles := []Circle{
 		Circle{50, 50, 30, 0, color.RGBA{28, 12, 231, 255}}, // Basic filled circle
@@ -129,20 +86,6 @@ func TestCircle(t *testing.T) {
 }
 
 func TestLine(t *testing.T) {
-	// This test does not run in Travis.
-	if os.Getenv("TRAVIS") == "true" {
-		t.Log("This test does not work in the Travis VMs. Passing by default.")
-		return
-	}
-
-	// Initialise SDL
-	if sdl.Init(sdl.INIT_VIDEO) != 0 {
-		panic(sdl.GetError())
-	}
-
-	// Ensure that SDL will exit gracefully when we're done.
-	defer sdl.Quit()
-
 	// Set up some lines to test
 	lines := []Line{
 		Line{10, 10, 20, 80, color.RGBA{28, 12, 231, 255}}, // Steep downwards.
