@@ -5,6 +5,7 @@
 package locationmanager
 
 import (
+	"fmt"
 	"github.com/DiscoViking/goBrains/entity"
 	"math"
 	"testing"
@@ -25,12 +26,10 @@ func HitboxCheck(t *testing.T, expected, actual int) {
 }
 
 // Verify that the entries in the location manager are as expected.
-func StoreCheck(t *testing.T, lm *LocationManager, entries int, actives int) {
-	if (entries != len(lm.hitboxes)) || (actives != lm.NumberOwned()) {
-		t.Errorf("Expected %v entries in LM (%v active), found %v entries (%v active).",
+func StoreCheck(t *testing.T, lm *LocationManager, entries int) {
+	if entries != lm.NumberOwned() {
+		t.Errorf("Expected %v entries in LM, found %v entries.",
 			entries,
-			actives,
-			len(lm.hitboxes),
 			lm.NumberOwned())
 	}
 }
@@ -55,7 +54,6 @@ func TestCircleHitbox(t *testing.T) {
 
 	// Update the location of the hitbox.
 	hb := &circleHitbox{
-		active:      true,
 		centre:      coord{0, 0},
 		orientation: 0,
 		radius:      10,
@@ -67,7 +65,7 @@ func TestCircleHitbox(t *testing.T) {
 
 	if hb.centre.locX != 1 {
 		t.Errorf("Expected x-location update to %v, got %v.", 1, hb.centre.locX)
-		hb.printDebug()
+		fmt.Printf("  Hitbox: %v\n", hb)
 	}
 
 	move = CoordDelta{0, math.Pi / 2}
@@ -75,7 +73,7 @@ func TestCircleHitbox(t *testing.T) {
 
 	if hb.orientation != (math.Pi / 2) {
 		t.Errorf("Expected orientation update to %v, got %v.", (math.Pi / 2), hb.orientation)
-		hb.printDebug()
+		fmt.Printf("  Hitbox: %v\n", hb)
 	}
 
 	move = CoordDelta{2, 0}
@@ -83,12 +81,11 @@ func TestCircleHitbox(t *testing.T) {
 
 	if hb.centre.locY != 2 {
 		t.Errorf("Expected y-location update to %v, got %v.", 2, hb.centre.locY)
-		hb.printDebug()
+		fmt.Printf("  Hitbox: %v\n", hb)
 	}
 
 	// Run checks on points inside and outside the hitbox.
 	hb = &circleHitbox{
-		active:      true,
 		centre:      coord{0, 0},
 		orientation: (math.Pi * 2 / 6),
 		radius:      10,
@@ -234,24 +231,22 @@ func TestStorage(t *testing.T) {
 	cm.AddEntity(ent1)
 	cm.AddEntity(ent2)
 
-	StoreCheck(t, cm, 2, 2)
+	StoreCheck(t, cm, 2)
 
 	// Remove the entities from the CM.
-	// This doesn't reduce the length of the internal list, as the entries are re-used.
 	cm.RemoveEntity(ent1)
 	cm.RemoveEntity(ent2)
-	StoreCheck(t, cm, 2, 0)
+	StoreCheck(t, cm, 0)
 
 	// Add a new entry.
-	// This re-uses the entries from earlier, so the list is not extended.
 	cm.AddEntity(ent1)
-	StoreCheck(t, cm, 2, 1)
+	StoreCheck(t, cm, 1)
 
 	// Extend the list again.
 	ent3 := &entity.TestEntity{TeRadius: 5}
 	cm.AddEntity(ent2)
 	cm.AddEntity(ent3)
-	StoreCheck(t, cm, 3, 3)
+	StoreCheck(t, cm, 3)
 }
 
 // Test error cases.
@@ -325,4 +320,14 @@ func TestTank(t *testing.T) {
 		// Attempt to reach max range.
 		tankLimit(t, limit)
 	}
+}
+
+// Debug functions.
+func (cm *LocationManager) PrintDebug() {
+	fmt.Printf("Location Manager: %v\n", cm)
+	for ii, hb := range cm.hitboxes {
+		fmt.Printf("  Hitbox %v\n", ii)
+		fmt.Printf("    %v\n", hb)
+	}
+	fmt.Printf("\n")
 }

@@ -128,7 +128,6 @@ func TestMouth(t *testing.T) {
 
 	mot.detect()
 	if creature.vitality != InitialVitality+1 {
-		lm.PrintDebug()
 		t.Errorf(errorStrHost, 3, InitialVitality+1, creature.vitality)
 	}
 	if fd.GetContent() != 9 {
@@ -176,12 +175,10 @@ func TestMouth(t *testing.T) {
 		if muchFood[ii].GetContent() != 9 {
 			t.Errorf("[%v] Failed on food number %v", 9, ii)
 			t.Errorf(errorStrFood, 9, 9, muchFood[ii].GetContent())
-			lm.PrintDebug()
 		}
 	}
 	if creature.vitality != 110 {
 		t.Errorf(errorStrHost, 10, 110, creature.vitality)
-		lm.PrintDebug()
 	}
 }
 

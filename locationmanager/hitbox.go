@@ -8,21 +8,10 @@
 package locationmanager
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/DiscoViking/goBrains/entity"
 )
-
-// Get whether the hitbox is active or not.
-func (hb *circleHitbox) getActive() bool {
-	return hb.active
-}
-
-// Set whether the hitbox is active or not.
-func (hb *circleHitbox) setActive(state bool) {
-	hb.active = state
-}
 
 // Calculation of whether a co-ordinate is within a circular hitbox.
 func (hb *circleHitbox) isInside(loc coord) bool {
@@ -69,13 +58,4 @@ func (hb *circleHitbox) getCoord() coord {
 // Get the orientation of the hitbox.
 func (hb *circleHitbox) getOrient() float64 {
 	return hb.orientation
-}
-
-// Print debug information.
-func (hb *circleHitbox) printDebug() {
-	fmt.Printf("    Active: %v\n", hb.active)
-	fmt.Printf("    Orient: %v\n", hb.orientation)
-	fmt.Printf("    Centre: (%v, %v)\n", hb.centre.locX, hb.centre.locY)
-	fmt.Printf("    Radius: %v\n", hb.radius)
-	fmt.Printf("    Entity: %v\n", hb.entity)
 }
