@@ -1,8 +1,9 @@
 package entitymanager
 
 import (
-	"github.com/DiscoViking/goBrains/entity"
 	"testing"
+
+	"github.com/DiscoViking/goBrains/entity"
 )
 
 func TestNewList(t *testing.T) {
@@ -35,6 +36,23 @@ func TestAdd(t *testing.T) {
 	}
 	if len(l) != 6 {
 		t.Errorf("Expected 6 entity in list, got %v.", len(l))
+	}
+}
+
+func TestClear(t *testing.T) {
+	l := NewList()
+
+	l.Add(&entity.TestEntity{})
+	l.Add(&entity.TestEntity{})
+
+	if len(l) != 2 {
+		t.Errorf("Added 2 entities to list, but length is %v.", len(l))
+	}
+
+	l.Clear()
+
+	if len(l) != 0 {
+		t.Errorf("After clearing list, still contained %v entities.\nList contents: %#v", len(l), l)
 	}
 }
 

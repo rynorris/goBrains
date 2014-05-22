@@ -47,18 +47,14 @@ func (m *em) Reset() {
 	m.lm = locationmanager.New()
 
 	// Reset creatures.
-	for c, _ := range m.creatures {
-		delete(m.creatures, c)
-	}
+	m.creatures.Clear()
 	for i := 0; i < initial_creatures; i++ {
 		newCreature := creature.NewSimple(m.lm)
 		m.creatures[newCreature] = struct{}{}
 	}
 
 	// Reset food
-	for f, _ := range m.food {
-		delete(m.food, f)
-	}
+	m.food.Clear()
 	for i := 0; i < initial_food; i++ {
 		f := food.New(m.lm, food_size)
 		m.food[f] = struct{}{}
