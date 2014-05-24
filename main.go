@@ -11,8 +11,7 @@ import (
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/entitymanager"
 	"github.com/DiscoViking/goBrains/events"
-	"github.com/DiscoViking/goBrains/iomanager"
-	"github.com/banthar/Go-SDL/sdl"
+	"github.com/DiscoViking/goBrains/iomanager/sdl"
 )
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
@@ -35,21 +34,22 @@ func main() {
 
 	rand.Seed(time.Now().UnixNano())
 
-	data := make(chan []entity.Entity)
 	done := make(chan struct{})
-	event := make(chan sdl.Event)
+	event := make(chan events.Event)
 	defer close(event)
-	defer close(data)
 	defer close(done)
 
 	em := entitymanager.New()
 	em.Reset()
 
-	iomanager.Start(em.LocationManager(), data, done, event)
+	outputs := make([]chan []entity.Entity, 0, 1)
+	data := sdl.Start(em.LocationManager(), done, event)
+	outputs = append(outputs, data)
+	defer close(data)
 
 	go func() {
 		for e := range event {
-			events.Handle(e)
+			events.Global.Broadcast(e)
 		}
 
 	}()
@@ -64,12 +64,14 @@ func main() {
 		func(e events.Event) { rateLimit = !rateLimit })
 
 	drawFunc := func() {
-		if drawing {
-			data <- em.Entities()
-		} else {
-			data <- []entity.Entity{}
+		for _, data := range outputs {
+			if drawing {
+				data <- em.Entities()
+			} else {
+				data <- []entity.Entity{}
+			}
+			<-done
 		}
-		<-done
 	}
 
 	frames := 0

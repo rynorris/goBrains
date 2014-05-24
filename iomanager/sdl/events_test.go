@@ -1,4 +1,4 @@
-package events
+package sdl
 
 import "github.com/banthar/Go-SDL/sdl"
 import "testing"

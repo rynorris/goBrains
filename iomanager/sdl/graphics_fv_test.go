@@ -1,4 +1,4 @@
-package iomanager
+package sdl
 
 import (
 	"fmt"
@@ -20,12 +20,8 @@ func TestGraphicsFV(t *testing.T) {
 		return
 	}
 
-	data := make(chan []entity.Entity)
 	done := make(chan struct{})
 	event := make(chan sdl.Event)
-
-	events.Global.Register(events.TERMINATE,
-		func(events.Event) { close(data) })
 
 	go func() {
 		for e := range event {
@@ -41,7 +37,10 @@ func TestGraphicsFV(t *testing.T) {
 		food.New(lm, 1000),
 	}
 
-	go Start(lm, data, done, event)
+	data := Start(lm, done, event)
+
+	events.Global.Register(events.TERMINATE,
+		func(events.Event) { close(data) })
 
 	// Get graphicsManager to draw them to the screen
 	data <- entities
