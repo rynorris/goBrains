@@ -56,3 +56,23 @@ func TestNodeOutput(t *testing.T) {
 		t.Errorf("m should have 0.8 ChargeCarrier after n fires. Got %v instead.", m.currentCharge)
 	}
 }
+
+func TestNegativeCharge(t *testing.T) {
+	n := NewNode()
+	m := NewNode()
+	n.AddOutput(m)
+
+	// Charge n negatively.
+	n.Charge(-100)
+
+	// Do work, n shouldn't charge m, and should have reset itself to 0.
+	n.Work()
+
+	if !testutils.FloatsAreEqual(m.currentCharge, 0) {
+		t.Errorf("n had negative charge, but still charged m to %v", m.currentCharge)
+	}
+
+	if !testutils.FloatsAreEqual(n.currentCharge, 0) {
+		t.Errorf("n should have capped its charge at 0, but it has %v", n.currentCharge)
+	}
+}

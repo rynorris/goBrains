@@ -17,29 +17,15 @@ package graphics
 
 import (
 	"image/color"
-	"os"
 	"strconv"
 	"testing"
 
+	"github.com/DiscoViking/goBrains/testutils"
 	"github.com/banthar/Go-SDL/sdl"
 )
 
 func TestPoint(t *testing.T) {
-	// This test does not run in Travis.
-	if os.Getenv("TRAVIS") == "true" {
-		t.Log("This test does not work in the Travis VMs. Passing by default.")
-		return
-	}
-
 	testname := "TestPoint"
-
-	// Initialise SDL
-	if sdl.Init(sdl.INIT_VIDEO) != 0 {
-		panic(sdl.GetError())
-	}
-
-	// Ensure that SDL will exit gracefully when we're done.
-	defer sdl.Quit()
 
 	s := sdl.CreateRGBSurface(0, 100, 100, 16, 0, 0, 0, 0)
 
@@ -48,24 +34,10 @@ func TestPoint(t *testing.T) {
 
 	s.SaveBMP("test_output/" + testname + "_got.bmp")
 
-	CompareOutput(testname, t)
+	testutils.CompareOutputImages(testname, t)
 }
 
 func TestRectangle(t *testing.T) {
-	// This test does not run in Travis.
-	if os.Getenv("TRAVIS") == "true" {
-		t.Log("This test does not work in the Travis VMs. Passing by default.")
-		return
-	}
-
-	// Initialise SDL
-	if sdl.Init(sdl.INIT_VIDEO) != 0 {
-		panic(sdl.GetError())
-	}
-
-	// Ensure that SDL will exit gracefully when we're done.
-	defer sdl.Quit()
-
 	// Set up some circles to test
 	rects := []Rectangle{
 		Rectangle{50, 50, 30, 20, color.RGBA{28, 12, 231, 255}}, // Basic filled rectangle
@@ -82,27 +54,13 @@ func TestRectangle(t *testing.T) {
 
 		s.SaveBMP("test_output/" + testname + "_got.bmp")
 
-		CompareOutput(testname, t)
+		testutils.CompareOutputImages(testname, t)
 
 		ii++
 	}
 }
 
 func TestCircle(t *testing.T) {
-	// This test does not run in Travis.
-	if os.Getenv("TRAVIS") == "true" {
-		t.Log("This test does not work in the Travis VMs. Passing by default.")
-		return
-	}
-
-	// Initialise SDL
-	if sdl.Init(sdl.INIT_VIDEO) != 0 {
-		panic(sdl.GetError())
-	}
-
-	// Ensure that SDL will exit gracefully when we're done.
-	defer sdl.Quit()
-
 	// Set up some circles to test
 	circles := []Circle{
 		Circle{50, 50, 30, 0, color.RGBA{28, 12, 231, 255}}, // Basic filled circle
@@ -121,27 +79,13 @@ func TestCircle(t *testing.T) {
 
 		s.SaveBMP("test_output/" + testname + "_got.bmp")
 
-		CompareOutput(testname, t)
+		testutils.CompareOutputImages(testname, t)
 
 		ii++
 	}
 }
 
 func TestLine(t *testing.T) {
-	// This test does not run in Travis.
-	if os.Getenv("TRAVIS") == "true" {
-		t.Log("This test does not work in the Travis VMs. Passing by default.")
-		return
-	}
-
-	// Initialise SDL
-	if sdl.Init(sdl.INIT_VIDEO) != 0 {
-		panic(sdl.GetError())
-	}
-
-	// Ensure that SDL will exit gracefully when we're done.
-	defer sdl.Quit()
-
 	// Set up some lines to test
 	lines := []Line{
 		Line{10, 10, 20, 80, color.RGBA{28, 12, 231, 255}}, // Steep downwards.
@@ -150,6 +94,7 @@ func TestLine(t *testing.T) {
 		Line{10, 70, 30, 20, color.RGBA{28, 12, 231, 255}}, // Steep upwards.
 		Line{10, 30, 10, 80, color.RGBA{28, 12, 231, 255}}, // Vertical.
 		Line{10, 20, 60, 20, color.RGBA{28, 12, 231, 255}}, // Horizontal.
+		Line{60, 20, 10, 20, color.RGBA{28, 12, 231, 255}}, // Horizontal, right-to-left.
 	}
 
 	for i, l := range lines {
@@ -161,6 +106,6 @@ func TestLine(t *testing.T) {
 
 		s.SaveBMP("test_output/" + testname + "_got.bmp")
 
-		CompareOutput(testname, t)
+		testutils.CompareOutputImages(testname, t)
 	}
 }

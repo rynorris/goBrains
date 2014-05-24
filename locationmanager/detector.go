@@ -8,7 +8,6 @@
 package locationmanager
 
 import (
-	"fmt"
 	"github.com/DiscoViking/goBrains/entity"
 	"math"
 	"math/rand"
@@ -31,29 +30,23 @@ func (cm *LocationManager) AddEntity(ent entity.Entity) {
 // Add an entity at a specific position and orientation.
 func (cm *LocationManager) AddEntAtLocation(ent entity.Entity, comb Combination) {
 	newHitbox := circleHitbox{
-		active:      true,
 		centre:      coord{comb.X, comb.Y},
 		orientation: comb.Orient,
 		radius:      ent.Radius(),
 		entity:      ent,
 	}
 
-	inserted := cm.replaceEmptyHitbox(&newHitbox)
-
-	if !inserted {
-		cm.hitboxes = append(cm.hitboxes, &newHitbox)
-	}
+	cm.hitboxes[ent] = &newHitbox
 }
 
 // Remove an entity.
 func (cm *LocationManager) RemoveEntity(ent entity.Entity) {
-	hb := cm.findHitbox(ent)
-	hb.setActive(false)
+	delete(cm.hitboxes, ent)
 }
 
 // Update the location of an entity.
 func (cm *LocationManager) ChangeLocation(move CoordDelta, ent entity.Entity) {
-	hb := cm.findHitbox(ent)
+	hb := cm.hitboxes[ent]
 	if hb == nil {
 		return
 	}
@@ -62,7 +55,7 @@ func (cm *LocationManager) ChangeLocation(move CoordDelta, ent entity.Entity) {
 
 // Update the radius of an entity.
 func (cm *LocationManager) ChangeRadius(radius float64, ent entity.Entity) {
-	hb := cm.findHitbox(ent)
+	hb := cm.hitboxes[ent]
 	if hb == nil {
 		return
 	}
@@ -73,7 +66,7 @@ func (cm *LocationManager) ChangeRadius(radius float64, ent entity.Entity) {
 func (cm *LocationManager) GetCollisions(offset CoordDelta, ent entity.Entity) []entity.Entity {
 	collisions := make([]entity.Entity, 0)
 
-	searcher := cm.findHitbox(ent)
+	searcher := cm.hitboxes[ent]
 	absLoc := searcher.getCoord()
 
 	dX := offset.Distance * math.Cos(searcher.getOrient()+offset.Rotation)
@@ -91,7 +84,7 @@ func (cm *LocationManager) GetCollisions(offset CoordDelta, ent entity.Entity) [
 
 // Get the location and orientation of a specific entity.
 func (cm *LocationManager) GetLocation(ent entity.Entity) (bool, Combination) {
-	hb := cm.findHitbox(ent)
+	hb := cm.hitboxes[ent]
 
 	if hb == nil {
 		return false, Combination{0, 0, 0}
@@ -103,47 +96,9 @@ func (cm *LocationManager) GetLocation(ent entity.Entity) (bool, Combination) {
 	return true, Combination{coordinate.locX, coordinate.locY, orientation}
 }
 
-// Find the hitbox associated with an entity.
-func (cm *LocationManager) findHitbox(ent entity.Entity) locatable {
-	for _, hb := range cm.hitboxes {
-		if hb.getActive() && (hb.getEntity() == ent) {
-			return hb
-		}
-	}
-	return nil
-}
-
-// Replace the first unused hitbox structure.  Return a boolean for whether the operation was successful.
-func (cm *LocationManager) replaceEmptyHitbox(loc locatable) bool {
-	for ii := range cm.hitboxes {
-		hb := cm.hitboxes[ii]
-		if !hb.getActive() {
-			cm.hitboxes[ii] = loc
-			return true
-		}
-	}
-	return false
-}
-
 // Returns the number of hitboxes currently owned by the LocationManager.
 func (cm *LocationManager) NumberOwned() int {
-	ii := 0
-	for _, hb := range cm.hitboxes {
-		if hb.getActive() {
-			ii++
-		}
-	}
-	return ii
-}
-
-// Print debug information about information stored in the LocationManager.
-func (cm *LocationManager) PrintDebug() {
-	fmt.Printf("Location Manager: %v\n", cm)
-	for ii, hb := range cm.hitboxes {
-		fmt.Printf("  Hitbox %v\n", ii)
-		hb.printDebug()
-	}
-	fmt.Printf("\n")
+	return len(cm.hitboxes)
 }
 
 // Set LM to spawn all new entities at the origin.  For testing purposes.
@@ -156,7 +111,7 @@ func (lm *LocationManager) StartAtOrigin() {
 func NewLocationManager(x, y float64) *LocationManager {
 	return &LocationManager{
 		spawnOrigin: false,
-		hitboxes:    make([]locatable, 0),
+		hitboxes:    make(map[entity.Entity]locatable),
 		maxPoint:    coord{x, y},
 	}
 }
