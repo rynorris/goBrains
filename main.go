@@ -53,11 +53,10 @@ func main() {
 
 	drawFunc := func() {
 		if drawing {
-			io.In <- em.Entities()
+			io.Distribute(em.Entities())
 		} else {
-			io.In <- []entity.Entity{}
+			io.Distribute([]entity.Entity{})
 		}
-		<-io.Done
 	}
 
 	frames := 0

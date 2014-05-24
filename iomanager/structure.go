@@ -11,9 +11,16 @@ type DrawSpec struct {
 	Loc locationmanager.Combination
 }
 
-type IoManager struct {
-	In     chan []entity.Entity
+type ioManager struct {
+	lm     locationmanager.Location
 	Out    map[IoType]chan []DrawSpec
 	Events chan events.Event
 	Done   chan struct{}
+}
+
+type Manager interface {
+	Shutdown()
+	Add(t IoType, out chan []DrawSpec)
+	Distribute(data []entity.Entity)
+	Handle(e events.Event)
 }

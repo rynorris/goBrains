@@ -16,7 +16,6 @@ package sdl
 import (
 	"fmt"
 
-	"github.com/DiscoViking/goBrains/events"
 	"github.com/DiscoViking/goBrains/graphics"
 	"github.com/DiscoViking/goBrains/iomanager"
 
@@ -29,17 +28,14 @@ const (
 )
 
 // Starts the graphics engine up.
-// Once called, pass a slice of Entities into the passed in channel
-// once per frame for drawing.
-// Then wait on the done channel for drawing to finish before continuing.
-func Start(io *iomanager.IoManager) {
+// Registers it with the IoManager.
+func Start(io iomanager.Manager) {
 	data := make(chan []iomanager.DrawSpec, 1)
-	go mainLoop(data, io.Events)
-	io.Out[iomanager.SDL] = data
+	go mainLoop(data, io)
+	io.Add(iomanager.SDL, data)
 }
 
-func mainLoop(data chan []iomanager.DrawSpec, handle chan events.Event) {
-
+func mainLoop(data chan []iomanager.DrawSpec, io iomanager.Manager) {
 	// Initialise SDL
 	fmt.Printf("Initialising SDL.")
 	if sdl.Init(sdl.INIT_VIDEO) != 0 {
@@ -60,7 +56,7 @@ func mainLoop(data chan []iomanager.DrawSpec, handle chan events.Event) {
 
 	// We loop every time we are passed in an array of entities to draw.
 	for entities := range data {
-
+		// Draw background.
 		canvas.FillRect(&sdl.Rect{0, 0, WIDTH, HEIGHT}, background)
 
 		// Construct the graphics pipeline.
@@ -83,10 +79,10 @@ func mainLoop(data chan []iomanager.DrawSpec, handle chan events.Event) {
 		close(interpret)
 
 		// Whilst the drawing is potentially still going, pull any events off the SDL
-		// event queue and send them to the event manager.
+		// event queue, convert them to game events, and let iomanager deal with them.
 		for e := sdl.PollEvent(); e != nil; e = sdl.PollEvent() {
 			if ev := convert(e); ev != nil {
-				handle <- ev
+				io.Handle(ev)
 			}
 		}
 

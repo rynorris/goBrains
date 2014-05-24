@@ -6,13 +6,11 @@ import (
 	lm "github.com/DiscoViking/goBrains/locationmanager"
 )
 
-func New(lm lm.Location) *IoManager {
-	data := make(chan []entity.Entity)
+func New(lm lm.Location) *ioManager {
 	out := make(map[IoType]chan []DrawSpec)
 	event := make(chan events.Event, 5)
 	done := make(chan struct{})
-	io := &IoManager{data, out, event, done}
-	go io.Distribute(lm, done)
+	io := &ioManager{lm, out, event, done}
 
 	go func() {
 		for e := range io.Events {
@@ -23,31 +21,34 @@ func New(lm lm.Location) *IoManager {
 	return io
 }
 
-func (io *IoManager) Distribute(
-	lm lm.Location,
-	done chan struct{}) {
+func (io *ioManager) Handle(e events.Event) {
+	io.Events <- e
+}
 
-	for entities := range io.In {
-		specs := make([]DrawSpec, 0, len(entities))
-		for _, e := range entities {
-			spec, ok := Locate(lm, e)
-			if !ok {
-				continue
-			}
-			specs = append(specs, spec)
+func (io *ioManager) Distribute(entities []entity.Entity) {
+	specs := make([]DrawSpec, 0, len(entities))
+	for _, e := range entities {
+		spec, ok := Locate(io.lm, e)
+		if !ok {
+			continue
 		}
+		specs = append(specs, spec)
+	}
 
-		for _, out := range io.Out {
-			select {
-			case out <- specs:
-			default:
-			}
+	for _, out := range io.Out {
+		select {
+		case out <- specs:
+		default:
 		}
-		done <- struct{}{}
 	}
 }
 
-func (io *IoManager) Stop(t IoType) {
+func (io *ioManager) Add(t IoType, out chan []DrawSpec) {
+	io.Stop(t)
+	io.Out[t] = out
+}
+
+func (io *ioManager) Stop(t IoType) {
 	out, ok := io.Out[t]
 	if !ok {
 		return
@@ -57,7 +58,7 @@ func (io *IoManager) Stop(t IoType) {
 	close(out)
 }
 
-func (io *IoManager) Shutdown() {
+func (io *ioManager) Shutdown() {
 	for _, out := range io.Out {
 		close(out)
 	}

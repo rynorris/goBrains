@@ -1,13 +1,12 @@
 package sdl
 
 import (
-	"fmt"
 	"os"
 	"testing"
+	"time"
 
-	"github.com/DiscoViking/goBrains/entity"
-	"github.com/DiscoViking/goBrains/events"
 	"github.com/DiscoViking/goBrains/food"
+	"github.com/DiscoViking/goBrains/iomanager"
 	"github.com/DiscoViking/goBrains/locationmanager"
 	"github.com/DiscoViking/goBrains/testutils"
 	"github.com/banthar/Go-SDL/sdl"
@@ -20,32 +19,27 @@ func TestGraphicsFV(t *testing.T) {
 		return
 	}
 
-	done := make(chan struct{})
-	event := make(chan sdl.Event)
-
-	go func() {
-		for e := range event {
-			fmt.Println("Got event!")
-			events.Handle(e)
-		}
-	}()
-
 	lm := locationmanager.New()
 
 	// Create some entities
-	entities := []entity.Entity{
-		food.New(lm, 1000),
+	entities := []iomanager.DrawSpec{
+		{food.New(lm, 1000), locationmanager.Combination{40, 40, 0}},
 	}
 
-	data := Start(lm, done, event)
+	io := iomanager.New(lm)
 
-	events.Global.Register(events.TERMINATE,
-		func(events.Event) { close(data) })
+	// We call mainLoop directly, since we need to be able
+	// to access SDL later, and it can only run in one thread.
+	data := make(chan []iomanager.DrawSpec, 1)
 
-	// Get graphicsManager to draw them to the screen
+	// Send in the entities, close the channel.
+	// Then when we call mainloop we should exit after one run.
 	data <- entities
-	<-done
 
+	go mainLoop(data, io)
+
+	// Wait for drawing to finish
+	<-time.After(1 * time.Second)
 	// Get the screen, save it to an image and compare.
 	s := sdl.GetVideoSurface()
 	s.SaveBMP("test_output/TestGraphicsFV_got.bmp")
