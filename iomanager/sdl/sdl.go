@@ -16,10 +16,9 @@ package sdl
 import (
 	"fmt"
 
-	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/events"
 	"github.com/DiscoViking/goBrains/graphics"
-	"github.com/DiscoViking/goBrains/locationmanager"
+	"github.com/DiscoViking/goBrains/iomanager"
 
 	"github.com/banthar/Go-SDL/sdl"
 )
@@ -33,13 +32,13 @@ const (
 // Once called, pass a slice of Entities into the passed in channel
 // once per frame for drawing.
 // Then wait on the done channel for drawing to finish before continuing.
-func Start(lm locationmanager.Location, done chan struct{}, handle chan events.Event) chan []entity.Entity {
-	data := make(chan []entity.Entity, 1)
-	go mainLoop(lm, data, done, handle)
-	return data
+func Start(io *iomanager.IoManager) {
+	data := make(chan []iomanager.DrawSpec, 1)
+	go mainLoop(data, io.Events)
+	io.Out[iomanager.SDL] = data
 }
 
-func mainLoop(lm locationmanager.Location, data chan []entity.Entity, done chan struct{}, handle chan events.Event) {
+func mainLoop(data chan []iomanager.DrawSpec, handle chan events.Event) {
 
 	// Initialise SDL
 	fmt.Printf("Initialising SDL.")
@@ -65,12 +64,12 @@ func mainLoop(lm locationmanager.Location, data chan []entity.Entity, done chan 
 		canvas.FillRect(&sdl.Rect{0, 0, WIDTH, HEIGHT}, background)
 
 		// Construct the graphics pipeline.
-		interpret := make(chan entity.Entity)
+		interpret := make(chan iomanager.DrawSpec)
 		draw := make(chan graphics.Primitive)
 		drawn := make(chan struct{})
 
 		// Set off the interpreter and artist goroutines.
-		go graphics.Interpret(lm, interpret, draw)
+		go graphics.Interpret(interpret, draw)
 		go graphics.Draw(draw, canvas, drawn)
 
 		for _, e := range entities {
@@ -97,6 +96,5 @@ func mainLoop(lm locationmanager.Location, data chan []entity.Entity, done chan 
 		// Finally flip the surface to paint to the screen.
 		screen.Blit(nil, canvas, nil)
 		screen.Flip()
-		done <- struct{}{}
 	}
 }

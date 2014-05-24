@@ -11,6 +11,7 @@ import (
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/entitymanager"
 	"github.com/DiscoViking/goBrains/events"
+	"github.com/DiscoViking/goBrains/iomanager"
 	"github.com/DiscoViking/goBrains/iomanager/sdl"
 )
 
@@ -34,25 +35,12 @@ func main() {
 
 	rand.Seed(time.Now().UnixNano())
 
-	done := make(chan struct{})
-	event := make(chan events.Event)
-	defer close(event)
-	defer close(done)
-
 	em := entitymanager.New()
 	em.Reset()
 
-	outputs := make([]chan []entity.Entity, 0, 1)
-	data := sdl.Start(em.LocationManager(), done, event)
-	outputs = append(outputs, data)
-	defer close(data)
-
-	go func() {
-		for e := range event {
-			events.Global.Broadcast(e)
-		}
-
-	}()
+	io := iomanager.New(em.LocationManager())
+	sdl.Start(io)
+	defer io.Shutdown()
 
 	timer := time.Tick(16 * time.Millisecond)
 
@@ -64,14 +52,12 @@ func main() {
 		func(e events.Event) { rateLimit = !rateLimit })
 
 	drawFunc := func() {
-		for _, data := range outputs {
-			if drawing {
-				data <- em.Entities()
-			} else {
-				data <- []entity.Entity{}
-			}
-			<-done
+		if drawing {
+			io.In <- em.Entities()
+		} else {
+			io.In <- []entity.Entity{}
 		}
+		<-io.Done
 	}
 
 	frames := 0
