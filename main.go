@@ -16,10 +16,11 @@ import (
 )
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
+var headless = flag.Bool("headless", false, "run in headless mode")
 var (
 	drawing   = true
 	running   = true
-	rateLimit = true
+	rateLimit = false
 )
 
 func main() {
@@ -39,10 +40,14 @@ func main() {
 	em.Reset()
 
 	io := iomanager.New(em.LocationManager())
-	sdl.Start(io)
 	defer io.Shutdown()
 
-	timer := time.Tick(16 * time.Millisecond)
+	if !*headless {
+		sdl.Start(io)
+		rateLimit = true
+	}
+
+	timer := time.Tick(8 * time.Millisecond)
 
 	events.Global.Register(events.TERMINATE,
 		func(e events.Event) { running = false })
