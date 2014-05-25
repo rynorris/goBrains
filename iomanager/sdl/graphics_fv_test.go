@@ -28,18 +28,14 @@ func TestGraphicsFV(t *testing.T) {
 
 	io := iomanager.New(lm)
 
-	// We call mainLoop directly, since we need to be able
-	// to access SDL later, and it can only run in one thread.
-	data := make(chan []iomanager.DrawSpec, 1)
+	Start(io)
 
-	// Send in the entities, close the channel.
-	// Then when we call mainloop we should exit after one run.
-	data <- entities
-
-	go mainLoop(data, io)
+	// Send in some entities to test drawing.
+	io.Out[iomanager.SDL] <- entities
 
 	// Wait for drawing to finish
 	<-time.After(1 * time.Second)
+
 	// Get the screen, save it to an image and compare.
 	s := sdl.GetVideoSurface()
 	s.SaveBMP("test_output/TestGraphicsFV_got.bmp")

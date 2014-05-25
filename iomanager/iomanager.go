@@ -9,8 +9,7 @@ import (
 func New(lm lm.Location) *ioManager {
 	out := make(map[IoType]chan []DrawSpec)
 	event := make(chan events.Event, 5)
-	done := make(chan struct{})
-	io := &ioManager{lm, out, event, done}
+	io := &ioManager{lm, out, event}
 
 	go func() {
 		for e := range io.Events {
@@ -62,4 +61,5 @@ func (io *ioManager) Shutdown() {
 	for _, out := range io.Out {
 		close(out)
 	}
+	close(io.Events)
 }
