@@ -48,6 +48,7 @@ func (cm *LocationManager) AddEntAtLocation(ent entity.Entity, comb Combination)
 
 // Remove an entity.
 func (cm *LocationManager) RemoveEntity(ent entity.Entity) {
+	cm.removeFromZones(cm.hitboxes[ent])
 	delete(cm.hitboxes, ent)
 }
 

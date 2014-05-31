@@ -16,7 +16,7 @@ func (lm *LocationManager) spacialHash(c coord) (int, int) {
 	return x, y
 }
 
-func (lm *LocationManager) findZone(c coord) spacialZone {
+func (lm *LocationManager) findZone(c coord) *spacialZone {
 	x, y := lm.spacialHash(c)
 	if x < 0 {
 		x = 0
@@ -30,13 +30,23 @@ func (lm *LocationManager) findZone(c coord) spacialZone {
 	if y >= len(lm.spacialZones[x]) {
 		y = len(lm.spacialZones[x]) - 1
 	}
-	return lm.spacialZones[x][y]
+	return &lm.spacialZones[x][y]
 }
 
-func (lm *LocationManager) findZones(hb locatable) []spacialZone {
-	zones := make([]spacialZone, 0, 0)
+func (lm *LocationManager) findZones(hb locatable) []*spacialZone {
+	zones := make([]*spacialZone, 0, 0)
 	for _, coord := range hb.boundingBox() {
-		zones = append(zones, lm.findZone(coord))
+		have := false
+		zone := lm.findZone(coord)
+		for _, z := range zones {
+			if z == zone {
+				have = true
+				break
+			}
+		}
+		if !have {
+			zones = append(zones, lm.findZone(coord))
+		}
 	}
 
 	return zones
@@ -51,7 +61,7 @@ func (lm *LocationManager) resetZones() {
 	for i := 0; i < zonesx; i++ {
 		col := make([]spacialZone, 0, zonesy)
 		for j := 0; j < zonesy; j++ {
-			zone := make(spacialZone, 0, 1)
+			zone := make(spacialZone, 0, 20)
 			col = append(col, zone)
 		}
 		lm.spacialZones = append(lm.spacialZones, col)
@@ -62,7 +72,7 @@ func (lm *LocationManager) addToZones(hb locatable) {
 	zones := lm.findZones(hb)
 
 	for _, z := range zones {
-		z = append(z, hb)
+		*z = append(*z, hb)
 	}
 }
 
@@ -71,12 +81,12 @@ func (lm *LocationManager) possibleCollisions(hb locatable) []locatable {
 
 	num := 0
 	for _, z := range zones {
-		num += len(z)
+		num += len(*z)
 	}
 	possibles := make([]locatable, 0, num)
 
 	for _, z := range zones {
-		possibles = append(possibles, z...)
+		possibles = append(possibles, *z...)
 	}
 
 	return possibles
@@ -90,11 +100,11 @@ func (lm *LocationManager) removeFromZones(hb locatable) {
 	}
 }
 
-func (z spacialZone) remove(hb locatable) {
-	for i := 0; i < len(z); i++ {
-		if z[i] == hb {
+func (z *spacialZone) remove(hb locatable) {
+	for i := 0; i < len(*z); i++ {
+		if (*z)[i] == hb {
 			// OMG MAGIC
-			z[i], z[len(z)-1], z = z[len(z)-1], nil, z[:len(z)-1]
+			(*z)[i], (*z)[len(*z)-1], *z = (*z)[len(*z)-1], nil, (*z)[:len(*z)-1]
 		}
 	}
 }
