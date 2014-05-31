@@ -59,3 +59,19 @@ func (hb *circleHitbox) getCoord() coord {
 func (hb *circleHitbox) getOrient() float64 {
 	return hb.orientation
 }
+
+// Get the corners of a box bounding this hitbox.
+func (hb *circleHitbox) boundingBox() []coord {
+	corners := make([]coord, 0, 4)
+
+	c := coord{hb.centre.locX + hb.radius, hb.centre.locX + hb.radius}
+	corners = append(corners, c)
+	c = coord{hb.centre.locX + hb.radius, hb.centre.locX - hb.radius}
+	corners = append(corners, c)
+	c = coord{hb.centre.locX - hb.radius, hb.centre.locX + hb.radius}
+	corners = append(corners, c)
+	c = coord{hb.centre.locX - hb.radius, hb.centre.locX - hb.radius}
+	corners = append(corners, c)
+
+	return corners
+}

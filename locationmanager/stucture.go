@@ -50,4 +50,7 @@ type LocationManager struct {
 
 	// The maximum point that objects can exist at in LM.
 	maxPoint coord
+
+	// The 2-D array of buckets used for collisions.
+	spacialZones [][]spacialZone
 }

@@ -8,9 +8,10 @@
 package locationmanager
 
 import (
-	"github.com/DiscoViking/goBrains/entity"
 	"math"
 	"math/rand"
+
+	"github.com/DiscoViking/goBrains/entity"
 )
 
 const (
@@ -42,6 +43,7 @@ func (cm *LocationManager) AddEntAtLocation(ent entity.Entity, comb Combination)
 	}
 
 	cm.hitboxes[ent] = &newHitbox
+	cm.addToZones(&newHitbox)
 }
 
 // Remove an entity.
@@ -55,7 +57,9 @@ func (cm *LocationManager) ChangeLocation(move CoordDelta, ent entity.Entity) {
 	if hb == nil {
 		return
 	}
+	cm.removeFromZones(hb)
 	hb.update(move, cm.maxPoint)
+	cm.addToZones(hb)
 }
 
 // Update the radius of an entity.
@@ -78,7 +82,7 @@ func (cm *LocationManager) GetCollisions(offset CoordDelta, ent entity.Entity) [
 	dY := offset.Distance * math.Sin(searcher.getOrient()+offset.Rotation)
 	absLoc.update(dX, dY)
 
-	for _, hb := range cm.hitboxes {
+	for _, hb := range cm.possibleCollisions(searcher) {
 		if hb.isInside(absLoc) {
 			collisions = append(collisions, hb.getEntity())
 		}
@@ -114,11 +118,13 @@ func (lm *LocationManager) StartAtOrigin() {
 // Initialise the LocationManager.
 // Accepts the x- and y-sizes of the tank the creatures' live in.
 func NewLocationManager(x, y float64) *LocationManager {
-	return &LocationManager{
+	lm := &LocationManager{
 		spawnOrigin: false,
 		hitboxes:    make(map[entity.Entity]locatable),
 		maxPoint:    coord{x, y},
 	}
+	lm.resetZones()
+	return lm
 }
 
 // Initialize a default locationmanager.
