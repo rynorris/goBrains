@@ -41,10 +41,13 @@ func (cm *LocationManager) AddEntAtLocation(ent entity.Entity, comb Combination)
 		radius:      ent.Radius(),
 		entity:      ent,
 	}
+	// Allocate memory for the zone store and bounding box.
 	newHitbox.mZones = make([]*spacialZone, 0, 4)
 	newHitbox.bb = make([]coord, 0, 4)
 
 	cm.hitboxes[ent] = &newHitbox
+
+	// Add the hitbox to all zones it belongs to.
 	cm.addToZones(&newHitbox)
 }
 

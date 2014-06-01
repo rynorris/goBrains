@@ -75,14 +75,17 @@ func (hb *circleHitbox) boundingBox() []coord {
 	return hb.bb
 }
 
+// zones returns a slice of the spacial zones this hitbox belongs to.
 func (hb *circleHitbox) zones() []*spacialZone {
 	return hb.mZones
 }
 
+// clearZones empties the zone store.
 func (hb *circleHitbox) clearZones() {
 	hb.mZones = hb.mZones[:0]
 }
 
+// addZone adds a zone to the zone store.
 func (hb *circleHitbox) addZone(z *spacialZone) {
 	hb.mZones = append(hb.mZones, z)
 }

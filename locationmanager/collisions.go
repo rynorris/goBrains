@@ -9,6 +9,8 @@ const (
 
 type spacialZone []locatable
 
+// Converts a location into two integers representing which spacial
+// zone it lies in.
 func (lm *LocationManager) spacialHash(c coord) (int, int) {
 	x := int(math.Floor(c.locX / zone_width))
 	y := int(math.Floor(c.locY / zone_height))
@@ -16,6 +18,7 @@ func (lm *LocationManager) spacialHash(c coord) (int, int) {
 	return x, y
 }
 
+// findZone returns the spacial zone the given point lies in.
 func (lm *LocationManager) findZone(c coord) *spacialZone {
 	x, y := lm.spacialHash(c)
 	if x < 0 {
@@ -33,6 +36,7 @@ func (lm *LocationManager) findZone(c coord) *spacialZone {
 	return &lm.spacialZones[x][y]
 }
 
+// findZones adds all the zones a hitbox lies in to it's zone store.
 func (lm *LocationManager) findZones(hb locatable) {
 	hb.clearZones()
 	for _, coord := range hb.boundingBox() {
@@ -50,6 +54,9 @@ func (lm *LocationManager) findZones(hb locatable) {
 	}
 }
 
+// resetZones clears all hitboxes out of all zones.
+// Note it does not remove all zones from all hitboxes. However this
+// shouldn't be an issue since this is only called once at start of day.
 func (lm *LocationManager) resetZones() {
 	zonesx := int(math.Ceil(TANKSIZEX / zone_width))
 	zonesy := int(math.Ceil(TANKSIZEY / zone_height))
@@ -66,6 +73,8 @@ func (lm *LocationManager) resetZones() {
 	}
 }
 
+// addToZones put a hitbox in all the zones it lies in, and adds
+// all those zones to it's zone store.
 func (lm *LocationManager) addToZones(hb locatable) {
 	lm.findZones(hb)
 
@@ -74,6 +83,8 @@ func (lm *LocationManager) addToZones(hb locatable) {
 	}
 }
 
+// possibleCollisions returns a slice of locatables which may possibly
+// collide with the given one.
 func (lm *LocationManager) possibleCollisions(hb locatable) []locatable {
 	num := 0
 	for _, z := range hb.zones() {
@@ -88,6 +99,8 @@ func (lm *LocationManager) possibleCollisions(hb locatable) []locatable {
 	return possibles
 }
 
+// removeFromZones removes a hitbox from all zones it was in,
+// and clears out it's zone store.
 func (lm *LocationManager) removeFromZones(hb locatable) {
 	for _, z := range hb.zones() {
 		z.remove(hb)
@@ -95,6 +108,7 @@ func (lm *LocationManager) removeFromZones(hb locatable) {
 	hb.clearZones()
 }
 
+// remove takes a hitbox out of the given zone.
 func (z *spacialZone) remove(hb locatable) {
 	for i := 0; i < len(*z); i++ {
 		if (*z)[i] == hb {
