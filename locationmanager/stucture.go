@@ -28,6 +28,9 @@ type circleHitbox struct {
 
 	// List of spacial zones this hitbox exists in.
 	mZones []*spacialZone
+
+	// Pre-allocated memory to hold the bounding box info.
+	bb []coord
 }
 
 // CoordDelta structs represent a position relative to an entity.

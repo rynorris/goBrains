@@ -62,18 +62,17 @@ func (hb *circleHitbox) getOrient() float64 {
 
 // Get the corners of a box bounding this hitbox.
 func (hb *circleHitbox) boundingBox() []coord {
-	corners := make([]coord, 0, 4)
-
+	hb.bb = hb.bb[:0]
 	c := coord{hb.centre.locX + hb.radius, hb.centre.locX + hb.radius}
-	corners = append(corners, c)
+	hb.bb = append(hb.bb, c)
 	c = coord{hb.centre.locX + hb.radius, hb.centre.locX - hb.radius}
-	corners = append(corners, c)
+	hb.bb = append(hb.bb, c)
 	c = coord{hb.centre.locX - hb.radius, hb.centre.locX + hb.radius}
-	corners = append(corners, c)
+	hb.bb = append(hb.bb, c)
 	c = coord{hb.centre.locX - hb.radius, hb.centre.locX - hb.radius}
-	corners = append(corners, c)
+	hb.bb = append(hb.bb, c)
 
-	return corners
+	return hb.bb
 }
 
 func (hb *circleHitbox) zones() []*spacialZone {
