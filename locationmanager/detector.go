@@ -41,6 +41,7 @@ func (cm *LocationManager) AddEntAtLocation(ent entity.Entity, comb Combination)
 		radius:      ent.Radius(),
 		entity:      ent,
 	}
+	newHitbox.mZones = make([]*spacialZone, 0, 4)
 
 	cm.hitboxes[ent] = &newHitbox
 	cm.addToZones(&newHitbox)

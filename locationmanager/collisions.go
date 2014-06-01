@@ -3,8 +3,8 @@ package locationmanager
 import "math"
 
 const (
-	zone_width  = 100
-	zone_height = 100
+	zone_width  = 50
+	zone_height = 50
 )
 
 type spacialZone []locatable
@@ -33,23 +33,21 @@ func (lm *LocationManager) findZone(c coord) *spacialZone {
 	return &lm.spacialZones[x][y]
 }
 
-func (lm *LocationManager) findZones(hb locatable) []*spacialZone {
-	zones := make([]*spacialZone, 0, 0)
+func (lm *LocationManager) findZones(hb locatable) {
+	hb.clearZones()
 	for _, coord := range hb.boundingBox() {
 		have := false
 		zone := lm.findZone(coord)
-		for _, z := range zones {
+		for _, z := range hb.zones() {
 			if z == zone {
 				have = true
 				break
 			}
 		}
 		if !have {
-			zones = append(zones, lm.findZone(coord))
+			hb.addZone(lm.findZone(coord))
 		}
 	}
-
-	return zones
 }
 
 func (lm *LocationManager) resetZones() {
@@ -69,23 +67,21 @@ func (lm *LocationManager) resetZones() {
 }
 
 func (lm *LocationManager) addToZones(hb locatable) {
-	zones := lm.findZones(hb)
+	lm.findZones(hb)
 
-	for _, z := range zones {
+	for _, z := range hb.zones() {
 		*z = append(*z, hb)
 	}
 }
 
 func (lm *LocationManager) possibleCollisions(hb locatable) []locatable {
-	zones := lm.findZones(hb)
-
 	num := 0
-	for _, z := range zones {
+	for _, z := range hb.zones() {
 		num += len(*z)
 	}
 	possibles := make([]locatable, 0, num)
 
-	for _, z := range zones {
+	for _, z := range hb.zones() {
 		possibles = append(possibles, *z...)
 	}
 
@@ -93,11 +89,10 @@ func (lm *LocationManager) possibleCollisions(hb locatable) []locatable {
 }
 
 func (lm *LocationManager) removeFromZones(hb locatable) {
-	zones := lm.findZones(hb)
-
-	for _, z := range zones {
+	for _, z := range hb.zones() {
 		z.remove(hb)
 	}
+	hb.clearZones()
 }
 
 func (z *spacialZone) remove(hb locatable) {

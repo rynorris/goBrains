@@ -75,3 +75,15 @@ func (hb *circleHitbox) boundingBox() []coord {
 
 	return corners
 }
+
+func (hb *circleHitbox) zones() []*spacialZone {
+	return hb.mZones
+}
+
+func (hb *circleHitbox) clearZones() {
+	hb.mZones = hb.mZones[:0]
+}
+
+func (hb *circleHitbox) addZone(z *spacialZone) {
+	hb.mZones = append(hb.mZones, z)
+}

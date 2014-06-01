@@ -57,4 +57,7 @@ type locatable interface {
 
 	// Method to get the 4 corners of a box bounding this hitbox.
 	boundingBox() []coord
+	zones() []*spacialZone
+	addZone(z *spacialZone)
+	clearZones()
 }

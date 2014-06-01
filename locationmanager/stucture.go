@@ -25,6 +25,9 @@ type circleHitbox struct {
 
 	// External reference, to the entity that the hitbox represents.
 	entity entity.Entity
+
+	// List of spacial zones this hitbox exists in.
+	mZones []*spacialZone
 }
 
 // CoordDelta structs represent a position relative to an entity.
