@@ -7,10 +7,11 @@
 package creature
 
 import (
+	"image/color"
+
 	"github.com/DiscoViking/goBrains/brain"
 	"github.com/DiscoViking/goBrains/genetics"
 	"github.com/DiscoViking/goBrains/locationmanager"
-	"image/color"
 )
 
 // Fixed values.
@@ -66,12 +67,6 @@ func (c *Creature) Work() {
 
 	// Update the brain one cycle.
 	c.brain.Work()
-
-	// Update LM with the distance we are moving this check.
-	c.lm.ChangeLocation(locationmanager.CoordDelta{c.movement.move,
-		c.movement.rotate},
-		c)
-	c.manageSpeed()
 }
 
 // Check the status of the creature and update LM appropriately.
@@ -81,6 +76,12 @@ func (c *Creature) Check() bool {
 	if death {
 		return true
 	}
+
+	// Update LM with the distance we are moving this check.
+	c.lm.ChangeLocation(locationmanager.CoordDelta{c.movement.move,
+		c.movement.rotate},
+		c)
+	c.manageSpeed()
 
 	return false
 }
