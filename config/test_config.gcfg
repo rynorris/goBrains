@@ -1,4 +1,4 @@
-; Test Configuration file for goBrains
+; Configuration file for goBrains
 
 [General]
 ScreenWidth = 800 ; Width of the screen

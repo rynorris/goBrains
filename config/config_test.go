@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	expected = &Config{
+	expected = Config{
 		General: struct {
 			ScreenWidth  int
 			ScreenHeight int
@@ -32,12 +32,26 @@ var (
 )
 
 func TestConfig(t *testing.T) {
-	cfg, err := Load("test/test_config.gcfg")
-	if err != nil {
-		t.Fatalf("Failed to load test config: %v.\n", err)
-	}
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("Failed to load test config: %v.\n", r)
+		}
+	}()
+	Load("test_config.gcfg")
 
-	if !reflect.DeepEqual(cfg, expected) {
-		t.Errorf("Loaded config did not match expected.\nGot: %v\nExpected: %v\n", cfg, expected)
+	if !reflect.DeepEqual(Global, expected) {
+		t.Errorf("Loaded config did not match expected.\nGot: %v\nExpected: %v\n", Global, expected)
 	}
+}
+
+func TestLoadError(t *testing.T) {
+	defer func() {
+		if r := recover(); r != nil {
+			t.Log("Correctly panicked when attempting to load non-existent config.")
+		}
+	}()
+
+	Load("doesnt_exist.gcfg")
+
+	t.Errorf("Didn't panic loading non-existent config.")
 }

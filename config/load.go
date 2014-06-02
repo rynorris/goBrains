@@ -1,10 +1,6 @@
 package config
 
-import (
-	"log"
-
-	"code.google.com/p/gcfg"
-)
+import "code.google.com/p/gcfg"
 
 var (
 	Global Config
@@ -16,6 +12,6 @@ func Load(filename string) {
 	err := gcfg.ReadFileInto(&Global, filename)
 
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
