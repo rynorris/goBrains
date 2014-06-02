@@ -8,7 +8,6 @@ import (
 	"runtime/pprof"
 	"time"
 
-	"github.com/DiscoViking/goBrains/brain"
 	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/entitymanager"
@@ -109,8 +108,6 @@ func main() {
 
 // Loads config into all modules which require it.
 func loadModules(cfg *config.Config) {
-	iomanager.LoadConfig(cfg)
 	locationmanager.LoadConfig(cfg)
-	brain.LoadConfig(cfg)
 	genetics.LoadConfig(cfg)
 }

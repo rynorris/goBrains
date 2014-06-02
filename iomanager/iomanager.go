@@ -16,6 +16,7 @@ package iomanager
 import (
 	"fmt"
 
+	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/graphics"
 	"github.com/DiscoViking/goBrains/locationmanager"
@@ -41,6 +42,10 @@ func mainLoop(lm locationmanager.Location, data chan []entity.Entity, done chan 
 
 	// Ensure that SDL will exit gracefully when we're done.
 	defer sdl.Quit()
+
+	// Load in screen width and height from config.
+	width := config.Global.General.ScreenWidth
+	height := config.Global.General.ScreenHeight
 
 	// Create the screen surface.
 	fmt.Printf("Creating screen\n")

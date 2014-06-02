@@ -1,5 +1,7 @@
 package brain
 
+import "github.com/DiscoViking/goBrains/config"
+
 // A Synapse is a channel for transferring ChargeCarrier between brain elements.
 // It has exactly one output, and should be pointed to by exactly one input.
 // Unlike Nodes, Synapses do not distribute ChargeCarrier in bursts, they slowly
@@ -21,12 +23,14 @@ type Synapse struct {
 // When a Synapse does work, it convey's ChargeCarrier to it's output
 // at a rate relative to the Synapse's currentCharge.
 func (s *Synapse) Work() {
-	if s.currentCharge > synapseMaxCharge {
-		s.currentCharge = synapseMaxCharge
+	if s.currentCharge > config.Global.Brain.SynapseMaxCharge {
+		s.currentCharge = config.Global.Brain.SynapseMaxCharge
 	}
 
 	if s.currentCharge != 0 {
-		s.output.Charge(s.currentCharge * s.permittivity * synapseOutputScale)
+		s.output.Charge(s.currentCharge *
+			s.permittivity *
+			config.Global.Brain.SynapseOutputScale)
 	}
 	s.Decay()
 }

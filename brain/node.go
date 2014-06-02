@@ -1,6 +1,8 @@
 // A real-time neural network implementation.
 package brain
 
+import "github.com/DiscoViking/goBrains/config"
+
 type Node struct {
 	ChargeCarrier
 	firingThreshold float64      // When currentCharge crosses this threshold, the node will Fire().
@@ -36,6 +38,6 @@ func (n *Node) AddOutput(out Chargeable) {
 
 // Creates a new node with default values.
 func NewNode() *Node {
-	return &Node{firingThreshold: defaultFiringThreshold,
-		firingStrength: defaultFiringStrength}
+	return &Node{firingThreshold: config.Global.Brain.NodeFiringThreshold,
+		firingStrength: config.Global.Brain.NodeFiringStrength}
 }
