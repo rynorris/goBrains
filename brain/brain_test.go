@@ -148,6 +148,8 @@ func TestBrainPropogation(t *testing.T) {
 }
 
 func BenchmarkBrain(b *testing.B) {
+	config.Load("../config/test_config.gcfg")
+
 	// Set up a large brain.
 	brain := NewBrain(10)
 
