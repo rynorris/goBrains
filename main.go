@@ -54,7 +54,9 @@ func main() {
 
 	}()
 
-	timer := time.Tick(16 * time.Millisecond)
+	drawTimer := time.Tick(16 * time.Millisecond)
+	ticktime := 16 * time.Millisecond
+	tickTimer := time.Tick(ticktime)
 
 	events.Global.Register(events.TERMINATE,
 		func(e events.Event) { running = false })
@@ -62,6 +64,16 @@ func main() {
 		func(e events.Event) { drawing = !drawing })
 	events.Global.Register(events.TOGGLE_FRAME_LIMIT,
 		func(e events.Event) { rateLimit = !rateLimit })
+	events.Global.Register(events.SPEED_UP,
+		func(e events.Event) {
+			ticktime /= 2
+			tickTimer = time.Tick(ticktime)
+		})
+	events.Global.Register(events.SPEED_DOWN,
+		func(e events.Event) {
+			ticktime *= 2
+			tickTimer = time.Tick(ticktime)
+		})
 
 	drawFunc := func() {
 		if drawing {
@@ -84,14 +96,12 @@ func main() {
 		}
 		em.Spin()
 		if rateLimit {
-			<-timer
+			<-tickTimer
+		}
+		select {
+		case <-drawTimer:
 			drawFunc()
-		} else {
-			select {
-			case <-timer:
-				drawFunc()
-			default:
-			}
+		default:
 		}
 	}
 }

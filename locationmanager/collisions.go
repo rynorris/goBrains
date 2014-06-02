@@ -49,7 +49,7 @@ func (lm *LocationManager) findZones(hb locatable) {
 			}
 		}
 		if !have {
-			hb.addZone(lm.findZone(coord))
+			hb.addZone(zone)
 		}
 	}
 }
@@ -93,7 +93,18 @@ func (lm *LocationManager) possibleCollisions(hb locatable) []locatable {
 	possibles := make([]locatable, 0, num)
 
 	for _, z := range hb.zones() {
-		possibles = append(possibles, *z...)
+		for _, h := range *z {
+			have := false
+			for _, a := range possibles {
+				if a == h {
+					have = true
+					break
+				}
+			}
+			if !have {
+				possibles = append(possibles, h)
+			}
+		}
 	}
 
 	return possibles

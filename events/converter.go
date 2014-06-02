@@ -8,6 +8,8 @@ var (
 		sdl.K_z:      TOGGLE_DRAW,
 		sdl.K_ESCAPE: TERMINATE,
 		sdl.K_x:      TOGGLE_FRAME_LIMIT,
+		sdl.K_EQUALS: SPEED_UP,
+		sdl.K_MINUS:  SPEED_DOWN,
 	}
 )
 
