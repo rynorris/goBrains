@@ -11,6 +11,8 @@ var (
 		sdl.K_z:      events.TOGGLE_DRAW,
 		sdl.K_ESCAPE: events.TERMINATE,
 		sdl.K_x:      events.TOGGLE_FRAME_LIMIT,
+		sdl.K_MINUS:  events.SPEED_DOWN,
+		sdl.K_EQUALS: events.SPEED_UP,
 	}
 )
 
