@@ -3,6 +3,7 @@ package entitymanager
 import (
 	"math/rand"
 
+	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/creature"
 	"github.com/DiscoViking/goBrains/food"
 )
@@ -10,7 +11,7 @@ import (
 // spawnFood creates a new blob of food in a random location
 // and adds it to the food list.
 func (m *em) spawnFood() {
-	f := food.New(m.lm, food_size)
+	f := food.New(m.lm, config.Global.Entity.FoodSize)
 	m.food[f] = struct{}{}
 }
 

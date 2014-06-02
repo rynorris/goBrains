@@ -109,7 +109,6 @@ func main() {
 
 // Loads config into all modules which require it.
 func loadModules(cfg *config.Config) {
-	entitymanager.LoadConfig(cfg)
 	iomanager.LoadConfig(cfg)
 	locationmanager.LoadConfig(cfg)
 	brain.LoadConfig(cfg)

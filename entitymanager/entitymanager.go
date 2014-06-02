@@ -8,6 +8,7 @@
 package entitymanager
 
 import (
+	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/creature"
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/food"
@@ -48,15 +49,15 @@ func (m *em) Reset() {
 
 	// Reset creatures.
 	m.creatures.Clear()
-	for i := 0; i < initial_creatures; i++ {
+	for i := 0; i < config.Global.Entity.InitialCreatures; i++ {
 		newCreature := creature.NewSimple(m.lm)
 		m.creatures[newCreature] = struct{}{}
 	}
 
 	// Reset food
 	m.food.Clear()
-	for i := 0; i < initial_food; i++ {
-		f := food.New(m.lm, food_size)
+	for i := 0; i < config.Global.Entity.InitialFood; i++ {
+		f := food.New(m.lm, config.Global.Entity.FoodSize)
 		m.food[f] = struct{}{}
 	}
 }
@@ -74,14 +75,14 @@ func (m *em) Spin() {
 
 	// Spawn new creatures if necessary.
 	m.breeding_timer++
-	if m.breeding_timer >= breeding_rate {
+	if m.breeding_timer >= config.Global.Entity.BreedingRate {
 		m.breedRandom()
 		m.breeding_timer = 0
 	}
 
 	// Spawn new food if necessary.
 	m.food_timer++
-	if m.food_timer >= food_replenish_rate {
+	if m.food_timer >= config.Global.Entity.FoodSpawnRate {
 		m.spawnFood()
 		m.food_timer = 0
 	}

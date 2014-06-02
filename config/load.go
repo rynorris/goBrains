@@ -2,10 +2,14 @@ package config
 
 import "code.google.com/p/gcfg"
 
+var (
+	Global Config
+)
+
 func Load(filename string) (*Config, error) {
-	cfg := &Config{}
+	Global = Config{}
 
-	err := gcfg.ReadFileInto(cfg, filename)
+	err := gcfg.ReadFileInto(&Global, filename)
 
-	return cfg, err
+	return &Global, err
 }
