@@ -9,6 +9,8 @@ package genetics
 import (
 	"math"
 	"testing"
+
+	"github.com/DiscoViking/goBrains/config"
 )
 
 // Generate a reasonable-length DNA sequence.
@@ -79,6 +81,7 @@ func TestSequences(t *testing.T) {
 
 // Do some basic kick-the-tires testing of generating new DNA sequences.
 func TestBreeding(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	d := NewTestDna()
 
 	// Inbreed a few generations.
@@ -106,6 +109,7 @@ func TestBreeding(t *testing.T) {
 
 // Ensure that cloning produces identical DNA.
 func TestCloning(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	d := NewTestDna()
 	newD := d.Clone()
 	if !CompareSequence(d, newD) {

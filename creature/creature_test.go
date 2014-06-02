@@ -5,12 +5,14 @@
 package creature
 
 import (
+	"testing"
+
+	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/food"
 	"github.com/DiscoViking/goBrains/genetics"
 	"github.com/DiscoViking/goBrains/locationmanager"
 	"github.com/DiscoViking/goBrains/testutils"
-	"testing"
 )
 
 // Dummy detection method
@@ -60,6 +62,7 @@ func checkDnaLen(t *testing.T, c *Creature) {
 
 // Verify collection of values from a creature.
 func TestValues(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	c := New(locationmanager.New())
 	c.Color()
 	c.Radius()
@@ -67,6 +70,7 @@ func TestValues(t *testing.T) {
 
 // Basic antenna verification.
 func TestAntenna(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	errorStr := "[%v] Expected test brain to have received %v firings, actually got %v."
 	lm := locationmanager.New()
 	lm.StartAtOrigin()
@@ -120,6 +124,7 @@ func TestAntenna(t *testing.T) {
 
 // Basic mouth verification.
 func TestMouth(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	errorStrHost := "[%v] Expected host vitality of %v, actually got %v."
 	errorStrFood := "[%v] Expected food content of %v, actually got %v."
 	lm := locationmanager.New()
@@ -200,6 +205,7 @@ func TestMouth(t *testing.T) {
 
 // Booster behaviour verification.
 func TestBoosters(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	host := New(locationmanager.New())
 	tBrain := newTestBrain()
 	host.brain = tBrain
@@ -264,6 +270,7 @@ func TestBoosters(t *testing.T) {
 
 // Test creature movement.
 func TestMovement(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	c := New(locationmanager.New())
 
 	// Creatures start with no velocity.
@@ -294,6 +301,7 @@ func checkDetection(t *testing.T, id, expected int, ti *testInput) {
 
 // Test that inputs are called to detect things.
 func TestDetection(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	c := New(locationmanager.New())
 	ti := &testInput{}
 
@@ -317,6 +325,7 @@ func TestDetection(t *testing.T) {
 
 // All things must die, eventually.
 func TestMortality(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	errorStrLm := "[%v] Expected %v entities in LM, found %v."
 	errorStrDead := "[%v] Creature expected %v, actually %v."
 
@@ -360,6 +369,7 @@ func TestMortality(t *testing.T) {
 
 // Cannibalism.  AKA. Hot creature-on-creature action.
 func TestCannibalism(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	lm := locationmanager.New()
 	creature := NewSimple(lm)
 
@@ -371,6 +381,7 @@ func TestCannibalism(t *testing.T) {
 
 // Creaturesmakecreatures.  <Insert unsuitable joke here.>
 func TestBreeding(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	lm := locationmanager.New()
 	mother := NewSimple(lm)
 	father := NewSimple(lm)
@@ -395,6 +406,7 @@ func TestBreeding(t *testing.T) {
 
 // Test the cloning facilities.
 func TestCloning(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	lm := locationmanager.New()
 	original := NewSimple(lm)
 	clone := original.Clone()
@@ -406,6 +418,7 @@ func TestCloning(t *testing.T) {
 
 // Test random DNA generation works.
 func TestPrepare(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	var c *Creature
 	lm := locationmanager.New()
 

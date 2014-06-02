@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/food"
 	"github.com/DiscoViking/goBrains/iomanager"
 	"github.com/DiscoViking/goBrains/locationmanager"
@@ -13,6 +14,10 @@ import (
 )
 
 func TestGraphicsFV(t *testing.T) {
+	config.Load("../../config/test_config.gcfg")
+	config.Global.General.ScreenWidth = 800
+	config.Global.General.ScreenHeight = 800
+
 	// This test does not run in Travis.
 	if os.Getenv("TRAVIS") == "true" {
 		t.Log("This test does not work in the Travis VMs. Passing by default.")

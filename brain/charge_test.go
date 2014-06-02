@@ -1,6 +1,10 @@
 package brain
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/DiscoViking/goBrains/config"
+)
 
 import "../testutils"
 
@@ -22,11 +26,13 @@ func TestCharge(t *testing.T) {
 }
 
 func TestDecay(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	c := ChargeCarrier{}
 	c.Charge(0.5)
 	c.Decay()
 
-	if !testutils.FloatsAreEqual(c.currentCharge, 0.48) {
-		t.Errorf("Should have had 0.48 ChargeCarrier after Decay. Got %v", c.currentCharge)
+	expected := 0.5 - config.Global.Brain.ChargeDecayRate
+	if !testutils.FloatsAreEqual(c.currentCharge, expected) {
+		t.Errorf("Should have had %v ChargeCarrier after Decay. Got %v", expected, c.currentCharge)
 	}
 }

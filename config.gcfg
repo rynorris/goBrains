@@ -1,0 +1,26 @@
+; Configuration file for goBrains
+
+[General]
+ScreenWidth = 800 ; Width of the screen
+ScreenHeight = 800 ; Height of the screen
+
+[Entity]
+InitialCreatures = 40 ; Number of creatures to start with
+InitialFood = 50 ; Number of food blobs to start with
+BreedingRate = 150 ; Spawn a new creature every this many ticks
+FoodSpawnRate = 200 ; Spawn a new food blob every this many ticks
+FoodSize = 1000 ; Spawn food blobs of this capacity
+
+[Genetics]
+MutationRate = 500 ; 1/n chance of a bit flipping during mutation phase of breeding
+
+
+;; The following settings are internal and technical.
+;; Here be dragons. Change these settings with care.
+
+[Brain]
+ChargeDecayRate = 0.02 ; Charge decays at this rate per tick
+synapseMaxCharge = 1.0 ; Synapses hold a maximum of this much charge
+SynapseOutputScale = 0.1 ; The proportion of a synapses charge given to it's output per tick
+NodeFiringThreshold = 1.0 ; The amount of charge a node needs before it will fire
+NodeFiringStrength = 0.8 ; The amount of charge a node will give to it's output when it fires

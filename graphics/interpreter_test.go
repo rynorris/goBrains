@@ -56,7 +56,7 @@ func TestInterpretFood(t *testing.T) {
 	out := make(chan Primitive)
 	defer close(in)
 
-	lm := locationmanager.New()
+	lm := locationmanager.NewLocationManager(800, 800)
 
 	go Interpret(in, out)
 
@@ -93,7 +93,8 @@ func TestInterpretCreature(t *testing.T) {
 	out := make(chan Primitive)
 	defer close(in)
 
-	lm := locationmanager.New()
+	lm := locationmanager.NewLocationManager(800, 800)
+	lm.StartAtOrigin()
 
 	go Interpret(in, out)
 

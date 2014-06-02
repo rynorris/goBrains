@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"../testutils"
+	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/genetics"
 )
 
@@ -41,7 +42,6 @@ func TestBrainNew(t *testing.T) {
 }
 
 func TestBrainRestore(t *testing.T) {
-
 	// Generate a new brain, and some DNA to match it.
 	b := setupTestBrain()
 	d := genetics.NewDna()
@@ -69,11 +69,19 @@ func TestBrainRestore(t *testing.T) {
 }
 
 func TestBrainPropogation(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
+
 	b := NewBrain(4)
 	in := NewNode()
 	b.AddInputNode(in)
 	out := testOutput{}
 	b.AddOutput(&out)
+
+	defaultFiringStrength := config.Global.Brain.NodeFiringStrength
+	defaultFiringThreshold := config.Global.Brain.NodeFiringThreshold
+	chargeDecayRate := config.Global.Brain.ChargeDecayRate
+	synapseMaxCharge := config.Global.Brain.SynapseMaxCharge
+	synapseOutputScale := config.Global.Brain.SynapseOutputScale
 
 	chargePerFire := float64(defaultFiringStrength - chargeDecayRate)
 	expectedCharge := float64(0)

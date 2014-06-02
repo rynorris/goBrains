@@ -8,6 +8,7 @@ import (
 	"runtime/pprof"
 	"time"
 
+	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/entitymanager"
 	"github.com/DiscoViking/goBrains/events"
@@ -35,6 +36,8 @@ func main() {
 	}
 
 	rand.Seed(time.Now().UnixNano())
+
+	config.Load("config.gcfg")
 
 	em := entitymanager.New()
 	em.Reset()
