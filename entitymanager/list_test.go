@@ -3,12 +3,10 @@ package entitymanager
 import (
 	"testing"
 
-	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/entity"
 )
 
 func TestNewList(t *testing.T) {
-	config.Load("../config/test_config.gcfg")
 	l := NewList()
 	if len(l) != 0 {
 		t.Errorf("Expected empty list, got %v entities.", len(l))
@@ -16,7 +14,6 @@ func TestNewList(t *testing.T) {
 }
 
 func TestAdd(t *testing.T) {
-	config.Load("../config/test_config.gcfg")
 	l := NewList()
 
 	e := &entity.TestEntity{}
@@ -43,7 +40,6 @@ func TestAdd(t *testing.T) {
 }
 
 func TestClear(t *testing.T) {
-	config.Load("../config/test_config.gcfg")
 	l := NewList()
 
 	l.Add(&entity.TestEntity{})
@@ -61,7 +57,6 @@ func TestClear(t *testing.T) {
 }
 
 func TestCheck(t *testing.T) {
-	config.Load("../config/test_config.gcfg")
 	l := NewList()
 
 	alive := &entity.TestEntity{}
