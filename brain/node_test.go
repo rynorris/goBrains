@@ -1,18 +1,23 @@
 package brain
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/DiscoViking/goBrains/config"
+)
 
 import "../testutils"
 
 func TestNodeNew(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	n := NewNode()
 
-	if n.firingThreshold != defaultFiringThreshold {
-		t.Errorf("Default firingThreshold was %v, expected %v.", n.firingThreshold, defaultFiringThreshold)
+	if n.firingThreshold != config.Global.Brain.NodeFiringThreshold {
+		t.Errorf("Default firingThreshold was %v, expected %v.", n.firingThreshold, config.Global.Brain.NodeFiringThreshold)
 	}
 
-	if n.firingStrength != defaultFiringStrength {
-		t.Errorf("Default firingStrength was %v, expected %v.", n.firingStrength, defaultFiringStrength)
+	if n.firingStrength != config.Global.Brain.NodeFiringStrength {
+		t.Errorf("Default firingStrength was %v, expected %v.", n.firingStrength, config.Global.Brain.NodeFiringStrength)
 	}
 
 	if n.currentCharge != 0 {
@@ -21,6 +26,7 @@ func TestNodeNew(t *testing.T) {
 }
 
 func TestNodeUpdate(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	n := NewNode()
 	n.Work()
 	if n.currentCharge > 0 {
@@ -35,6 +41,7 @@ func TestNodeUpdate(t *testing.T) {
 }
 
 func TestNodeFire(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	n := NewNode()
 	m := NewNode()
 	n.AddOutput(m)
@@ -46,6 +53,7 @@ func TestNodeFire(t *testing.T) {
 }
 
 func TestNodeOutput(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	n := NewNode()
 	m := NewNode()
 	n.AddOutput(m)
@@ -58,6 +66,7 @@ func TestNodeOutput(t *testing.T) {
 }
 
 func TestNegativeCharge(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	n := NewNode()
 	m := NewNode()
 	n.AddOutput(m)

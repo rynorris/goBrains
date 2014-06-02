@@ -1,10 +1,15 @@
 package brain
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/DiscoViking/goBrains/config"
+)
 
 import "../testutils"
 
 func TestSynapseNew(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	n := NewNode()
 	s := NewSynapse(n, 0)
 
@@ -18,6 +23,7 @@ func TestSynapseNew(t *testing.T) {
 }
 
 func TestSynapseWork(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	n := NewNode()
 	s := NewSynapse(n, 0)
 
@@ -38,7 +44,7 @@ func TestSynapseWork(t *testing.T) {
 
 	s.Work()
 
-	if !testutils.FloatsAreEqual(n.currentCharge, 0.48*s.permittivity*synapseOutputScale) {
+	if !testutils.FloatsAreEqual(n.currentCharge, 0.48*s.permittivity*config.Global.Brain.SynapseOutputScale) {
 		t.Errorf("Should have passed on all %v ChargeCarrier. Got %v",
 			0.5*s.permittivity,
 			n.currentCharge)
