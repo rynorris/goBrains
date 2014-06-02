@@ -12,9 +12,7 @@ import (
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/entitymanager"
 	"github.com/DiscoViking/goBrains/events"
-	"github.com/DiscoViking/goBrains/genetics"
 	"github.com/DiscoViking/goBrains/iomanager"
-	"github.com/DiscoViking/goBrains/locationmanager"
 	"github.com/banthar/Go-SDL/sdl"
 )
 
@@ -38,12 +36,7 @@ func main() {
 
 	rand.Seed(time.Now().UnixNano())
 
-	cfg, err := config.Load("config.gcfg")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	loadModules(cfg)
+	config.Load("config.gcfg")
 
 	data := make(chan []entity.Entity)
 	done := make(chan struct{})
@@ -104,10 +97,4 @@ func main() {
 			}
 		}
 	}
-}
-
-// Loads config into all modules which require it.
-func loadModules(cfg *config.Config) {
-	locationmanager.LoadConfig(cfg)
-	genetics.LoadConfig(cfg)
 }

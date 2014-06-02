@@ -8,9 +8,11 @@
 package locationmanager
 
 import (
-	"github.com/DiscoViking/goBrains/entity"
 	"math"
 	"math/rand"
+
+	"github.com/DiscoViking/goBrains/config"
+	"github.com/DiscoViking/goBrains/entity"
 )
 
 // Add a new entity to a random position in the tank.
@@ -118,6 +120,8 @@ func NewLocationManager(x, y float64) *LocationManager {
 
 // Initialize a default locationmanager.
 func New() *LocationManager {
-	lm := NewLocationManager(TANKSIZEX, TANKSIZEY)
+	lm := NewLocationManager(
+		float64(config.Global.General.ScreenWidth),
+		float64(config.Global.General.ScreenHeight))
 	return lm
 }

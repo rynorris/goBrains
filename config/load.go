@@ -1,15 +1,21 @@
 package config
 
-import "code.google.com/p/gcfg"
+import (
+	"log"
+
+	"code.google.com/p/gcfg"
+)
 
 var (
 	Global Config
 )
 
-func Load(filename string) (*Config, error) {
+func Load(filename string) {
 	Global = Config{}
 
 	err := gcfg.ReadFileInto(&Global, filename)
 
-	return &Global, err
+	if err != nil {
+		log.Fatal(err)
+	}
 }
