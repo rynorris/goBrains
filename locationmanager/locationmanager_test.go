@@ -6,14 +6,21 @@ package locationmanager
 
 import (
 	"fmt"
-	"github.com/DiscoViking/goBrains/entity"
 	"math"
 	"testing"
+
+	"github.com/DiscoViking/goBrains/config"
+	"github.com/DiscoViking/goBrains/entity"
+)
+
+const (
+	BASE_WIDTH  = 800
+	BASE_HEIGHT = 800
 )
 
 // Limit movement to the default tank size.
 func (c *circleHitbox) tUpdate(move CoordDelta) {
-	c.update(move, coord{TANKSIZEX, TANKSIZEY})
+	c.update(move, coord{BASE_WIDTH, BASE_HEIGHT})
 }
 
 // Verify that the number of hitboxes found were as expected.
@@ -107,7 +114,7 @@ func TestCircleHitbox(t *testing.T) {
 func TestLocation(t *testing.T) {
 
 	// Set up a new location manager.
-	lm := New()
+	lm := NewLocationManager(BASE_WIDTH, BASE_HEIGHT)
 
 	// The entity to query for.
 	ent := &entity.TestEntity{TeRadius: 5}
@@ -137,8 +144,8 @@ func TestLocation(t *testing.T) {
 // Test the testing function - where entities start at the origin.
 func TestOrigin(t *testing.T) {
 
-	lmn := New()
-	lmo := New()
+	lmn := NewLocationManager(BASE_WIDTH, BASE_HEIGHT)
+	lmo := NewLocationManager(BASE_WIDTH, BASE_HEIGHT)
 	lmo.StartAtOrigin()
 
 	entn := &entity.TestEntity{TeRadius: 5}
@@ -172,7 +179,7 @@ func TestDetection(t *testing.T) {
 	var col []entity.Entity
 
 	// Set up a new location manager.
-	cm := New()
+	cm := NewLocationManager(BASE_WIDTH, BASE_HEIGHT)
 
 	// Add two entities to be managed.
 	ent1 := &entity.TestEntity{TeRadius: 5}
@@ -222,7 +229,7 @@ func TestDetection(t *testing.T) {
 // Test object storage within LocationManager.
 func TestStorage(t *testing.T) {
 	// Set up a new location manager.
-	cm := New()
+	cm := NewLocationManager(BASE_WIDTH, BASE_HEIGHT)
 
 	// Add two entities to be managed.
 	ent1 := &entity.TestEntity{TeRadius: 5}
@@ -251,7 +258,7 @@ func TestStorage(t *testing.T) {
 
 // Test error cases.
 func TestErrors(t *testing.T) {
-	lm := New()
+	lm := NewLocationManager(BASE_WIDTH, BASE_HEIGHT)
 
 	// Two new entities, one of which is added to LM.
 	ent1 := &entity.TestEntity{TeRadius: 5}
@@ -277,7 +284,7 @@ func tankDirection(t *testing.T, s tankSize, angle float64, exp coord) {
 	cm := NewLocationManager(s.x, s.y)
 	ent := &entity.TestEntity{TeRadius: 5}
 	cm.AddEntAtLocation(ent, Combination{0.0, 0.0, angle})
-	move := CoordDelta{TANKSIZEX * 99, 0}
+	move := CoordDelta{s.x * 99, 0}
 	cm.ChangeLocation(move, ent)
 	res, comb := cm.GetLocation(ent)
 	locx, locy := comb.X, comb.Y
@@ -307,11 +314,11 @@ func TestTank(t *testing.T) {
 
 	// Test various tank sizes.
 	tankSizes := []tankSize{
-		tankSize{TANKSIZEX, TANKSIZEY},      // Normal size.
-		tankSize{TANKSIZEX, TANKSIZEX},      // Square.
-		tankSize{TANKSIZEX, 10 * TANKSIZEY}, // Lopsided.
-		tankSize{10 * TANKSIZEX, TANKSIZEY}, // Also lopsided.
-		tankSize{0.0, 0.0},                  // Tiny.
+		tankSize{BASE_WIDTH, BASE_HEIGHT},      // Normal size.
+		tankSize{BASE_WIDTH, BASE_HEIGHT},      // Square.
+		tankSize{BASE_WIDTH, 10 * BASE_HEIGHT}, // Lopsided.
+		tankSize{10 * BASE_WIDTH, BASE_HEIGHT}, // Also lopsided.
+		tankSize{0.0, 0.0},                     // Tiny.
 	}
 
 	for _, limit := range tankSizes {
@@ -330,4 +337,15 @@ func (cm *LocationManager) PrintDebug() {
 		fmt.Printf("    %v\n", hb)
 	}
 	fmt.Printf("\n")
+}
+
+// Tests we can load a new LM with settings from global config.
+func TestNew(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
+	lm := New()
+
+	exp := coord{800, 800}
+	if lm.maxPoint != exp {
+		t.Errorf("Wrong max point. Expected %v, got %v.", exp, lm.maxPoint)
+	}
 }
