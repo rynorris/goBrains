@@ -9,58 +9,25 @@ import (
 	"github.com/DiscoViking/goBrains/creature"
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/food"
+	"github.com/DiscoViking/goBrains/iomanager"
 	"github.com/DiscoViking/goBrains/locationmanager"
 )
-
-// Test we safely deal with unlocatable entities.
-// i.e. by not drawing them.
-func TestUnlocateable(t *testing.T) {
-	in := make(chan entity.Entity)
-	out := make(chan Primitive)
-	defer close(in)
-
-	lm := locationmanager.New()
-
-	go Interpret(lm, in, out)
-
-	e := &entity.TestEntity{}
-
-	// Send in unlocatable entity.
-	in <- e
-
-	// Should be no output.
-	// Give some time just in case.
-	timeout := time.After(1 * time.Second)
-loop:
-	for {
-		select {
-		case p := <-out:
-			t.Errorf("Got output from unlocatable creature: %#v", p)
-		case <-timeout:
-			break loop
-		}
-	}
-}
 
 // Test that the interpreter does what we expect when it's given an
 // entity it doesn't recognise.
 func TestInterpretDefault(t *testing.T) {
-	in := make(chan entity.Entity)
+	in := make(chan iomanager.DrawSpec)
 	out := make(chan Primitive)
 	defer close(in)
 
-	lm := locationmanager.New()
-
-	go Interpret(lm, in, out)
+	go Interpret(in, out)
 
 	e := &entity.TestEntity{}
 	e.TeRadius = 10
-	lm.AddEntity(e)
 
-	_, loc := lm.GetLocation(e)
-	expected := Circle{int16(loc.X), int16(loc.Y), 10, 0, color.RGBA{255, 255, 255, 255}}
+	expected := Circle{50, 50, 10, 0, color.RGBA{255, 255, 255, 255}}
 
-	in <- e
+	in <- iomanager.DrawSpec{e, locationmanager.Combination{50, 50, 0}}
 
 	output := <-out
 
@@ -85,20 +52,19 @@ func TestInterpretDefault(t *testing.T) {
 
 // Test the interpreter does what we expect when given food.
 func TestInterpretFood(t *testing.T) {
-	in := make(chan entity.Entity)
+	in := make(chan iomanager.DrawSpec)
 	out := make(chan Primitive)
 	defer close(in)
 
 	lm := locationmanager.New()
 
-	go Interpret(lm, in, out)
+	go Interpret(in, out)
 
 	f := food.New(lm, 100)
 
-	in <- f
+	in <- iomanager.DrawSpec{f, locationmanager.Combination{50, 50, 0}}
 
-	_, loc := lm.GetLocation(f)
-	expected := Circle{int16(loc.X), int16(loc.Y), 10, 0, color.RGBA{50, 200, 50, 255}}
+	expected := Circle{50, 50, 10, 0, color.RGBA{50, 200, 50, 255}}
 
 	output := <-out
 
@@ -123,18 +89,17 @@ func TestInterpretFood(t *testing.T) {
 
 // Test the interpreter does what we expect when given a creature.
 func TestInterpretCreature(t *testing.T) {
-	in := make(chan entity.Entity)
+	in := make(chan iomanager.DrawSpec)
 	out := make(chan Primitive)
 	defer close(in)
 
 	lm := locationmanager.New()
-	lm.StartAtOrigin()
 
-	go Interpret(lm, in, out)
+	go Interpret(in, out)
 
 	c := creature.NewSimple(lm)
 
-	in <- c
+	in <- iomanager.DrawSpec{c, locationmanager.Combination{0, 0, 0}}
 
 	expected := []Primitive{
 		Line{0, 0, 34, 20, color.RGBA{170, 170, 170, 255}},
