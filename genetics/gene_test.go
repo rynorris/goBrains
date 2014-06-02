@@ -9,6 +9,8 @@ package genetics
 import (
 	"math"
 	"testing"
+
+	"github.com/DiscoViking/goBrains/config"
 )
 
 func VerifyRepack(t *testing.T, value, expected float64) {
@@ -28,6 +30,7 @@ func VerifyRepack(t *testing.T, value, expected float64) {
 
 // Test random gene generation.
 func TestRandomGenes(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	for i := 0; i < 100; i++ {
 		d1 := NewRandomGene()
 		d2 := NewRandomGene()
@@ -39,6 +42,7 @@ func TestRandomGenes(t *testing.T) {
 
 // Verify that values are consistent across unpacking and repacking.
 func TestRepacking(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	VerifyRepack(t, 0.0, 0.0)
 	VerifyRepack(t, 0.45, 0.45)
 	VerifyRepack(t, -0.45, -0.45)
@@ -51,6 +55,7 @@ func TestRepacking(t *testing.T) {
 // Verify behaviour on gene copies.
 // We should see a mixture of identical copies and mutated copies.
 func TestCopy(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	g := NewGene(77)
 	identical := false
 	mutated := false

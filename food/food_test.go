@@ -13,9 +13,8 @@ import (
 
 // Basic food verification.
 func TestFood(t *testing.T) {
-
 	var food *Food
-	cm := locationmanager.New()
+	cm := locationmanager.NewLocationManager(800, 800)
 
 	testContents := []float64{
 		0, // Empty food object.

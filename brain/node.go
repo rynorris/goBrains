@@ -1,10 +1,7 @@
 // A real-time neural network implementation.
 package brain
 
-const (
-	defaultFiringThreshold = 1.0
-	defaultFiringStrength  = 0.8
-)
+import "github.com/DiscoViking/goBrains/config"
 
 type Node struct {
 	ChargeCarrier
@@ -41,6 +38,6 @@ func (n *Node) AddOutput(out Chargeable) {
 
 // Creates a new node with default values.
 func NewNode() *Node {
-	return &Node{firingThreshold: defaultFiringThreshold,
-		firingStrength: defaultFiringStrength}
+	return &Node{firingThreshold: config.Global.Brain.NodeFiringThreshold,
+		firingStrength: config.Global.Brain.NodeFiringStrength}
 }

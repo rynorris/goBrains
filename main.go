@@ -8,18 +8,20 @@ import (
 	"runtime/pprof"
 	"time"
 
+	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/entitymanager"
 	"github.com/DiscoViking/goBrains/events"
 	"github.com/DiscoViking/goBrains/iomanager"
-	"github.com/banthar/Go-SDL/sdl"
+	"github.com/DiscoViking/goBrains/iomanager/sdl"
 )
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
+var headless = flag.Bool("headless", false, "run in headless mode")
 var (
 	drawing   = true
 	running   = true
-	rateLimit = true
+	rateLimit = false
 )
 
 func main() {
@@ -35,26 +37,20 @@ func main() {
 
 	rand.Seed(time.Now().UnixNano())
 
-	data := make(chan []entity.Entity)
-	done := make(chan struct{})
-	event := make(chan sdl.Event)
-	defer close(event)
-	defer close(data)
-	defer close(done)
+	config.Load("config.gcfg")
 
 	em := entitymanager.New()
 	em.Reset()
 
-	iomanager.Start(em.LocationManager(), data, done, event)
+	io := iomanager.New(em.LocationManager())
+	defer io.Shutdown()
 
-	go func() {
-		for e := range event {
-			events.Handle(e)
-		}
+	if !*headless {
+		sdl.Start(io)
+		rateLimit = true
+	}
 
-	}()
-
-	timer := time.Tick(16 * time.Millisecond)
+	timer := time.Tick(8 * time.Millisecond)
 
 	events.Global.Register(events.TERMINATE,
 		func(e events.Event) { running = false })
@@ -65,11 +61,10 @@ func main() {
 
 	drawFunc := func() {
 		if drawing {
-			data <- em.Entities()
+			io.Distribute(em.Entities())
 		} else {
-			data <- []entity.Entity{}
+			io.Distribute([]entity.Entity{})
 		}
-		<-done
 	}
 
 	frames := 0

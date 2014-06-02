@@ -58,8 +58,8 @@ func (lm *LocationManager) findZones(hb locatable) {
 // Note it does not remove all zones from all hitboxes. However this
 // shouldn't be an issue since this is only called once at start of day.
 func (lm *LocationManager) resetZones() {
-	zonesx := int(math.Ceil(TANKSIZEX / zone_width))
-	zonesy := int(math.Ceil(TANKSIZEY / zone_height))
+	zonesx := int(math.Ceil(lm.maxPoint.locX / zone_width))
+	zonesy := int(math.Ceil(lm.maxPoint.locY / zone_height))
 
 	lm.spacialZones = make([][]spacialZone, 0, zonesx)
 

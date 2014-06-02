@@ -6,7 +6,11 @@
 
 package genetics
 
-import "math/rand"
+import (
+	"math/rand"
+
+	"github.com/DiscoViking/goBrains/config"
+)
 
 const (
 
@@ -45,7 +49,7 @@ func (g *gene) Copy() *gene {
 
 	for i := 0; i < (GENELEN * 8); i++ {
 		mutateMap <<= 1
-		if rand.Intn(499) == 34 {
+		if rand.Intn(config.Global.Genetics.MutationRate) == 0 {
 			mutateMap |= 1
 		}
 	}

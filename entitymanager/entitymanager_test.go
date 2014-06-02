@@ -1,16 +1,36 @@
 package entitymanager
 
-import "testing"
+import (
+	"testing"
 
-var initial_entities = initial_creatures + initial_food
+	"github.com/DiscoViking/goBrains/config"
+)
+
+var (
+	initial_creatures   = 40
+	initial_food        = 30
+	breeding_rate       = 150
+	food_replenish_rate = 200
+	initial_entities    = initial_creatures + initial_food
+)
+
+func loadTestConfig() {
+	config.Load("../config/test_config.gcfg")
+	config.Global.Entity.InitialCreatures = initial_creatures
+	config.Global.Entity.InitialFood = initial_food
+	config.Global.Entity.BreedingRate = breeding_rate
+	config.Global.Entity.FoodSpawnRate = food_replenish_rate
+}
 
 func TestGetLM(t *testing.T) {
+	loadTestConfig()
 	m := New()
 	lm := m.LocationManager()
 	t.Logf("Successfully got LM from EM.\nDetails: %#v", lm)
 }
 
 func TestReset(t *testing.T) {
+	loadTestConfig()
 	m := New()
 	m.Reset()
 	if len(m.Entities()) != initial_entities {
@@ -32,6 +52,7 @@ func TestReset(t *testing.T) {
 }
 
 func TestSpin(t *testing.T) {
+	loadTestConfig()
 	m := New()
 	m.Reset()
 

@@ -8,10 +8,12 @@ import (
 	"math"
 	"testing"
 
+	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/locationmanager"
 )
 
 func TestPulsers(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
 	host := New(locationmanager.New())
 	tBrain := newTestBrain()
 	host.brain = tBrain
