@@ -146,3 +146,26 @@ func TestBrainPropogation(t *testing.T) {
 		t.Errorf("Output should have %v total ChargeCarrier. Got %v", expectedCharge, out.currentCharge)
 	}
 }
+
+func BenchmarkBrain(b *testing.B) {
+	// Set up a large brain.
+	brain := NewBrain(10)
+
+	for i := 0; i < 10; i++ {
+		in := NewNode()
+		brain.AddInputNode(in)
+
+		out := &testOutput{}
+		brain.AddOutput(out)
+	}
+
+	b.ResetTimer()
+
+	// Work the brain with constant charge.
+	for i := 0; i < b.N; i++ {
+		for _, in := range brain.inputNodes {
+			in.Charge(0.1)
+		}
+		brain.Work()
+	}
+}
