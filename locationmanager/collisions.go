@@ -3,8 +3,8 @@ package locationmanager
 import "math"
 
 const (
-	zone_width  = 50
-	zone_height = 50
+	zone_width  = 100
+	zone_height = 100
 )
 
 type spacialZone []locatable

@@ -83,8 +83,9 @@ func (cm *LocationManager) GetCollisions(offset CoordDelta, ent entity.Entity) [
 	dX := offset.Distance * math.Cos(searcher.getOrient()+offset.Rotation)
 	dY := offset.Distance * math.Sin(searcher.getOrient()+offset.Rotation)
 	absLoc.update(dX, dY)
+	zone := cm.findZone(absLoc)
 
-	for _, hb := range cm.possibleCollisions(searcher) {
+	for _, hb := range *zone {
 		if hb.isInside(absLoc) {
 			collisions = append(collisions, hb.getEntity())
 		}

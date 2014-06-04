@@ -33,6 +33,14 @@ func main() {
 		}
 		pprof.StartCPUProfile(f)
 		defer pprof.StopCPUProfile()
+
+		// Run for 30 seconds and stop.
+		stop := time.After(30 * time.Second)
+		go func() {
+			<-stop
+			running = false
+		}()
+
 	}
 
 	rand.Seed(time.Now().UnixNano())
