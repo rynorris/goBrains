@@ -13,13 +13,14 @@ import (
 // entity types differently. However we use the json package to do some of the
 // work.
 func marshal(data []iomanager.DrawSpec) string {
-	output := `
-{"scene": {
-  "entities": [`
+	output := `{"scene":{"entities":[`
 
-	for _, spec := range data {
+	for i, spec := range data {
 		output += marshalOne(spec)
-		output += ","
+
+		if i < len(data)-1 {
+			output += ","
+		}
 	}
 
 	output += "]}}"
