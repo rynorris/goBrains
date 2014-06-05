@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/DiscoViking/goBrains/creature"
 	"github.com/DiscoViking/goBrains/food"
@@ -16,7 +17,14 @@ func marshal(data []iomanager.DrawSpec) string {
 	output := `{"scene":{"entities":[`
 
 	for i, spec := range data {
-		output += marshalOne(spec)
+		s, err := marshalOne(spec)
+
+		if err != nil {
+			log.Println("Failed to marshal entity!")
+			continue
+		}
+
+		output += s
 
 		if i < len(data)-1 {
 			output += ","
@@ -29,7 +37,7 @@ func marshal(data []iomanager.DrawSpec) string {
 }
 
 // Marshal a single DrawSpec into json.
-func marshalOne(spec iomanager.DrawSpec) string {
+func marshalOne(spec iomanager.DrawSpec) (string, error) {
 	var output []byte
 	var err error
 
@@ -54,9 +62,5 @@ func marshalOne(spec iomanager.DrawSpec) string {
 		output, err = json.Marshal(s)
 	}
 
-	if err != nil {
-		panic(err)
-	}
-
-	return string(output)
+	return string(output), err
 }

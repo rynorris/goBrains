@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/DiscoViking/goBrains/creature"
+	"github.com/DiscoViking/goBrains/entity"
 	"github.com/DiscoViking/goBrains/food"
 	io "github.com/DiscoViking/goBrains/iomanager"
 	lm "github.com/DiscoViking/goBrains/locationmanager"
@@ -19,10 +20,18 @@ func TestMarshalOne(t *testing.T) {
 		io.DrawSpec{
 			food.New(l, 100), lm.Combination{10, 20, 2.5},
 		}: `{"Type":"food","X":10,"Y":20,"Size":10}`,
+
+		io.DrawSpec{
+			&entity.TestEntity{}, lm.Combination{10, 20, 2.5},
+		}: `{"Type":"unknown","X":10,"Y":20}`,
 	}
 
 	for in, out := range testcases {
-		marshaled := marshalOne(in)
+		marshaled, err := marshalOne(in)
+
+		if err != nil {
+			t.Errorf("Error marshaling %v.\nMessage: %v.\n", in, err)
+		}
 
 		if marshaled != out {
 			t.Errorf("Expected: %v\nGot: %V\n", out, marshaled)
