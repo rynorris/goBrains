@@ -3,6 +3,7 @@ package web
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"code.google.com/p/go.net/websocket"
 
@@ -31,7 +32,7 @@ func Start(io iomanager.Manager) {
 
 		http.HandleFunc("/tank",
 			func(w http.ResponseWriter, req *http.Request) {
-				http.ServeFile(w, req, "test.html")
+				http.ServeFile(w, req, "iomanager/web/tank.html")
 			})
 		err := http.ListenAndServe(":8080", nil)
 		if err != nil {
@@ -40,17 +41,21 @@ func Start(io iomanager.Manager) {
 	}()
 
 	// The channel by which iomanager will send us stuff
-	data := make(chan []iomanager.DrawSpec, 1)
+	data := make(chan []iomanager.DrawSpec, 0)
 	go sendLoop(data, &sockets)
 	io.Add(iomanager.WEB, data)
 }
 
 // The loop which listens for data from IO, and sends it down the sockets.
 func sendLoop(in chan []iomanager.DrawSpec, sockets *[]chan string) {
+	// Use this timer to limit our sending to 30fps.
+	timer := time.Tick(32 * time.Millisecond)
+
 	for data := range in {
 		json := marshal(data)
 		for _, ws := range *sockets {
 			ws <- json
 		}
+		<-timer
 	}
 }
