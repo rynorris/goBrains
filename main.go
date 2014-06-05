@@ -14,6 +14,7 @@ import (
 	"github.com/DiscoViking/goBrains/events"
 	"github.com/DiscoViking/goBrains/iomanager"
 	"github.com/DiscoViking/goBrains/iomanager/sdl"
+	"github.com/DiscoViking/goBrains/iomanager/web"
 )
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
@@ -49,6 +50,8 @@ func main() {
 		sdl.Start(io)
 		rateLimit = true
 	}
+
+	web.Start(io)
 
 	timer := time.Tick(8 * time.Millisecond)
 

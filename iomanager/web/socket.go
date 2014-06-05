@@ -4,12 +4,13 @@ import (
 	"log"
 	"net/http"
 
+	"code.google.com/p/go.net/websocket"
+
 	"github.com/DiscoViking/goBrains/iomanager"
 )
 
 func Start(io iomanager.Manager) {
 	sockets := make([]chan string, 0, 0)
-	go sendLoop(io, &sockets)
 
 	// The function which handles sending messages down the sockets.
 	handler := func(ws *websocket.Conn) {
@@ -22,12 +23,17 @@ func Start(io iomanager.Manager) {
 
 	// Kick off the http server handling socket creation requests.
 	go func() {
-		http.HandleFunc("/tank",
+		http.HandleFunc("/data",
 			func(w http.ResponseWriter, req *http.Request) {
 				s := websocket.Server{Handler: websocket.Handler(handler)}
 				s.ServeHTTP(w, req)
 			})
-		err := http.ListenAndServe(":10000", nil)
+
+		http.HandleFunc("/tank",
+			func(w http.ResponseWriter, req *http.Request) {
+				http.ServeFile(w, req, "test.html")
+			})
+		err := http.ListenAndServe(":8080", nil)
 		if err != nil {
 			log.Println(err)
 		}
@@ -35,6 +41,7 @@ func Start(io iomanager.Manager) {
 
 	// The channel by which iomanager will send us stuff
 	data := make(chan []iomanager.DrawSpec, 1)
+	go sendLoop(data, &sockets)
 	io.Add(iomanager.WEB, data)
 }
 
