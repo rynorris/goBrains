@@ -2,9 +2,11 @@ package web
 
 import (
 	"testing"
+	"time"
 
 	"code.google.com/p/go.net/websocket"
 	"github.com/DiscoViking/goBrains/creature"
+	"github.com/DiscoViking/goBrains/events"
 	"github.com/DiscoViking/goBrains/iomanager"
 	"github.com/DiscoViking/goBrains/locationmanager"
 )
@@ -39,6 +41,32 @@ func TestSocketFV(t *testing.T) {
 	receiveAndCheck(t, ws, expected)
 	receiveAndCheck(t, ws2, expected)
 	receiveAndCheck(t, ws3, expected)
+
+	// Check that input works ok.
+	// Register us for events.
+	received := make(chan struct{})
+	timeout := time.After(1 * time.Second)
+	events.Global.Register(events.TOGGLE_FRAME_LIMIT, func(e events.Event) {
+		t.Logf("%v", e)
+		received <- struct{}{}
+	})
+
+	websocket.Message.Send(ws, `{"Type":"Key","Key":"Y"}`)
+	select {
+	case <-received:
+		t.Errorf("Received toggle frame limit event on Y keypress.")
+	case <-timeout:
+		t.Logf("Didn't receive toggle frame limit event on Y keypress.")
+	}
+
+	timeout = time.After(1 * time.Second)
+	websocket.Message.Send(ws, `{"Type":"Key","Key":"Z"}`)
+	select {
+	case <-received:
+		t.Logf("Received toggle frame limit event on Z keypress.")
+	case <-timeout:
+		t.Errorf("Didn't receive toggle frame limit event on Z keypress.")
+	}
 }
 
 func receiveAndCheck(t *testing.T, ws *websocket.Conn, expected string) {
@@ -57,13 +85,17 @@ func newClient(t *testing.T, origin string) *websocket.Conn {
 		ws, err = websocket.Dial("ws://localhost:9999/data", "", origin)
 		if err != nil {
 			t.Logf("Failed to connect to websocket from %v: %v\n", origin, err)
-			t.Logf("Retrying...")
+			if i < 2 {
+				t.Logf("Retrying...")
+			}
 		} else {
 			break
 		}
 	}
 	if err != nil {
 		t.Fatalf("Error connecting to websocket from %v: %v\n", origin, err)
+	} else {
+		t.Logf("Successfully connected client at %v", origin)
 	}
 
 	return ws

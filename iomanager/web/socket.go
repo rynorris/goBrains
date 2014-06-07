@@ -1,12 +1,14 @@
 package web
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
 
 	"code.google.com/p/go.net/websocket"
 
+	"github.com/DiscoViking/goBrains/events"
 	"github.com/DiscoViking/goBrains/iomanager"
 )
 
@@ -17,6 +19,7 @@ func Start(io iomanager.Manager, port string) {
 	handler := func(ws *websocket.Conn) {
 		in := make(chan string)
 		sockets = append(sockets, in)
+		go receiveLoop(ws)
 		for s := range in {
 			websocket.Message.Send(ws, s)
 		}
@@ -58,5 +61,17 @@ func sendLoop(in chan []iomanager.DrawSpec, sockets *[]chan string) {
 			ws <- json
 		}
 		<-timer
+	}
+}
+
+// The loop which listens for incoming events on a socket and sends them to the event handler.
+func receiveLoop(ws *websocket.Conn) {
+	e := event{}
+	for {
+		websocket.JSON.Receive(ws, &e)
+		fmt.Println("Got: %v", e)
+		if ev := convert(e); ev != nil {
+			events.Global.Broadcast(ev)
+		}
 	}
 }

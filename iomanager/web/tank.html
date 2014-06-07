@@ -78,7 +78,7 @@
         var path = '/data'
         var url = prefix.concat(host.concat(path));
         console.log("Connecting to: " + url);
-        var connection = new WebSocket(url);
+        connection = new WebSocket(url);
         connection.onopen = function(){
           console.log("Connection open!")
         }
@@ -102,9 +102,22 @@
           reconnectTimer = setTimeout(connect, 1000);
         }
       }
+
+      // Handle keyboard input
+      function handleKey(event) {
+        e = event || window.event;
+        var code = e.charCode || e.keyCode;
+
+        var ev = { };
+        ev.Type = "Key";
+        ev.Key = String.fromCharCode(code);
+        var json = JSON.stringify(ev);
+        console.log("Sending keypress: " + json);
+        connection.send(json);
+      }
     </script>
   </head>
-  <body onload="connect();">
+  <body onload="connect();" onkeyup="handleKey();">
     <canvas id="canvas" width="800" height="800">:</canvas>
   </body>
 </html>
