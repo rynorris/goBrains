@@ -10,7 +10,7 @@ import (
 	"github.com/DiscoViking/goBrains/iomanager"
 )
 
-func Start(io iomanager.Manager) {
+func Start(io iomanager.Manager, port string) {
 	sockets := make([]chan string, 0, 0)
 
 	// The function which handles sending messages down the sockets.
@@ -34,9 +34,10 @@ func Start(io iomanager.Manager) {
 			func(w http.ResponseWriter, req *http.Request) {
 				http.ServeFile(w, req, "iomanager/web/tank.html")
 			})
-		err := http.ListenAndServe(":8080", nil)
+		log.Printf("Listening on port %v.\n", port)
+		err := http.ListenAndServe(":"+port, nil)
 		if err != nil {
-			log.Println(err)
+			log.Printf("Failed to start HTTP server on port %v: %v.\n", port, err)
 		}
 	}()
 
