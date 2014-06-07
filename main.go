@@ -20,7 +20,7 @@ import (
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 var headless = flag.Bool("headless", false, "run in headless mode")
-var port = flag.Int("port", 8080, "port to listen on for web connections")
+var port = flag.Int("port", 9999, "port to listen on for web connections")
 var (
 	drawing   = true
 	running   = true
