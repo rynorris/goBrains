@@ -42,12 +42,18 @@ func TestSocketFV(t *testing.T) {
 	receiveAndCheck(t, ws2, expected)
 	receiveAndCheck(t, ws3, expected)
 
+	// Close a socket, ensure we still receive on the others.
+	ws2.Close()
+
+	io.Out[iomanager.WEB] <- input
+	receiveAndCheck(t, ws, expected)
+	receiveAndCheck(t, ws3, expected)
+
 	// Check that input works ok.
 	// Register us for events.
 	received := make(chan struct{})
 	timeout := time.After(1 * time.Second)
 	events.Global.Register(events.TOGGLE_FRAME_LIMIT, func(e events.Event) {
-		t.Logf("%v", e)
 		received <- struct{}{}
 	})
 
@@ -67,6 +73,10 @@ func TestSocketFV(t *testing.T) {
 	case <-timeout:
 		t.Errorf("Didn't receive toggle frame limit event on Z keypress.")
 	}
+
+	// Close all the sockets to test we don't fall over.
+	ws.Close()
+	ws3.Close()
 }
 
 func receiveAndCheck(t *testing.T, ws *websocket.Conn, expected string) {

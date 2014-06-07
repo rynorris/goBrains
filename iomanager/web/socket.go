@@ -1,7 +1,6 @@
 package web
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -13,15 +12,23 @@ import (
 )
 
 func Start(io iomanager.Manager, port string) {
-	sockets := make([]chan string, 0, 0)
+	sockets := map[chan string]struct{}{}
 
 	// The function which handles sending messages down the sockets.
 	handler := func(ws *websocket.Conn) {
+		log.Printf("Established connection to %v\n", ws.Request().RemoteAddr)
 		in := make(chan string)
-		sockets = append(sockets, in)
+		sockets[in] = struct{}{}
 		go receiveLoop(ws)
+	loop:
 		for s := range in {
-			websocket.Message.Send(ws, s)
+			err := websocket.Message.Send(ws, s)
+			if err != nil {
+				log.Printf("Lost connection to %v\n", ws.Request().RemoteAddr)
+				ws.Close()
+				delete(sockets, in)
+				break loop
+			}
 		}
 	}
 
@@ -46,18 +53,18 @@ func Start(io iomanager.Manager, port string) {
 
 	// The channel by which iomanager will send us stuff
 	data := make(chan []iomanager.DrawSpec, 0)
-	go sendLoop(data, &sockets)
+	go sendLoop(data, sockets)
 	io.Add(iomanager.WEB, data)
 }
 
 // The loop which listens for data from IO, and sends it down the sockets.
-func sendLoop(in chan []iomanager.DrawSpec, sockets *[]chan string) {
+func sendLoop(in chan []iomanager.DrawSpec, sockets map[chan string]struct{}) {
 	// Use this timer to limit our sending to 30fps.
 	timer := time.Tick(32 * time.Millisecond)
 
 	for data := range in {
 		json := marshal(data)
-		for _, ws := range *sockets {
+		for ws, _ := range sockets {
 			ws <- json
 		}
 		<-timer
@@ -68,8 +75,12 @@ func sendLoop(in chan []iomanager.DrawSpec, sockets *[]chan string) {
 func receiveLoop(ws *websocket.Conn) {
 	e := event{}
 	for {
-		websocket.JSON.Receive(ws, &e)
-		fmt.Println("Got: %v", e)
+		err := websocket.JSON.Receive(ws, &e)
+		if err != nil {
+			break
+		}
+
+		log.Printf("Received keypress %v from %v\n", e, ws.Request().RemoteAddr)
 		if ev := convert(e); ev != nil {
 			events.Global.Broadcast(ev)
 		}
