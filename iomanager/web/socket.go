@@ -65,7 +65,10 @@ func sendLoop(in chan []iomanager.DrawSpec, sockets map[chan string]struct{}) {
 	for data := range in {
 		json := marshal(data)
 		for ws, _ := range sockets {
-			ws <- json
+			select {
+			case ws <- json:
+			default:
+			}
 		}
 		<-timer
 	}
