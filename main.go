@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"runtime/pprof"
+	"strconv"
 	"time"
 
 	"github.com/DiscoViking/goBrains/config"
@@ -14,10 +15,12 @@ import (
 	"github.com/DiscoViking/goBrains/events"
 	"github.com/DiscoViking/goBrains/iomanager"
 	"github.com/DiscoViking/goBrains/iomanager/sdl"
+	"github.com/DiscoViking/goBrains/iomanager/web"
 )
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 var headless = flag.Bool("headless", false, "run in headless mode")
+var port = flag.Int("port", 9999, "port to listen on for web connections")
 var (
 	drawing   = true
 	running   = true
@@ -49,6 +52,8 @@ func main() {
 		sdl.Start(io)
 		rateLimit = true
 	}
+
+	web.Start(io, strconv.Itoa(*port))
 
 	timer := time.Tick(8 * time.Millisecond)
 
