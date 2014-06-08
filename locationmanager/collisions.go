@@ -83,6 +83,8 @@ func (lm *LocationManager) addToZones(hb locatable) {
 	}
 }
 
+/* Function commented out since not currently used.
+
 // possibleCollisions returns a slice of locatables which may possibly
 // collide with the given one.
 func (lm *LocationManager) possibleCollisions(hb locatable) []locatable {
@@ -109,6 +111,7 @@ func (lm *LocationManager) possibleCollisions(hb locatable) []locatable {
 
 	return possibles
 }
+*/
 
 // removeFromZones removes a hitbox from all zones it was in,
 // and clears out it's zone store.
