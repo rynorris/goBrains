@@ -7,6 +7,8 @@
         drawing = true;
 
         var canvas = document.getElementById("canvas");
+        canvas.width = scene.width;
+        canvas.height = scene.height;
         if (canvas.getContext) {
           var ctx = canvas.getContext("2d");
 

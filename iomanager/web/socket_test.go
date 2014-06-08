@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"code.google.com/p/go.net/websocket"
+	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/creature"
 	"github.com/DiscoViking/goBrains/events"
 	"github.com/DiscoViking/goBrains/iomanager"
@@ -13,14 +14,15 @@ import (
 
 func TestSocketFV(t *testing.T) {
 	// Set up the inputs/outputs for this test.
-	lm := locationmanager.NewLocationManager(400, 400)
+	config.Load("../../config/test_config.gcfg")
+	lm := locationmanager.New()
 	io := iomanager.New(lm)
 
 	c := creature.NewSimple(lm)
 	input := []iomanager.DrawSpec{
 		{c, locationmanager.Combination{20, 30, 0.5}},
 	}
-	expected := `{"scene":{"entities":[{"Type":"creature","X":20,"Y":30,"Colour":{"R":200,"G":50,"B":50,"A":255},"Angle":0.5}]}}`
+	expected := `{"scene":{"width":"800","height":"800","entities":[{"Type":"creature","X":20,"Y":30,"Colour":{"R":200,"G":50,"B":50,"A":255},"Angle":0.5}]}}`
 
 	// Start the websocket output.
 	Start(io, "9999")

@@ -2,8 +2,10 @@ package web
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
+	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/creature"
 	"github.com/DiscoViking/goBrains/food"
 	"github.com/DiscoViking/goBrains/iomanager"
@@ -14,7 +16,9 @@ import (
 // entity types differently. However we use the json package to do some of the
 // work.
 func marshal(data []iomanager.DrawSpec) string {
-	output := `{"scene":{"entities":[`
+	output := fmt.Sprintf(`{"scene":{"width":"%v","height":"%v","entities":[`,
+		config.Global.General.ScreenWidth,
+		config.Global.General.ScreenHeight)
 
 	for i, spec := range data {
 		s, err := marshalOne(spec)
