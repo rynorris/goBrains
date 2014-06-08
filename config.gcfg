@@ -1,8 +1,8 @@
 ; Configuration file for goBrains
 
 [General]
-ScreenWidth = 800 ; Width of the screen
-ScreenHeight = 800 ; Height of the screen
+ScreenWidth = 1920 ; Width of the screen
+ScreenHeight = 1080 ; Height of the screen
 
 [Entity]
 InitialCreatures = 40 ; Number of creatures to start with

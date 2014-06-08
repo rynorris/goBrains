@@ -11,6 +11,7 @@ before_install:
 
 install: 
   - go get code.google.com/p/gcfg
+  - go get code.google.com/p/go.net/websocket
   - go get code.google.com/p/go.tools/cmd/cover
 
 script: go test -cover ./...
