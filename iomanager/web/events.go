@@ -12,6 +12,8 @@ type event struct {
 
 var keyBindings = map[string]events.EventType{
 	"Z": events.TOGGLE_FRAME_LIMIT,
+	"Q": events.SPEED_DOWN,
+	"W": events.SPEED_UP,
 }
 
 func convert(e event) events.Event {
