@@ -284,11 +284,13 @@ func TestMovement(t *testing.T) {
 	// Setup some speeds.  Ensure that they degrade after work.
 	vel.move, vel.rotate = vel.move*SpeedDegredation, vel.rotate*SpeedDegredation
 	c.Work()
+	c.Check()
 	CheckVelocity(t, 3, c, vel)
 
 	// Degrade some more.
 	vel.move, vel.rotate = vel.move*SpeedDegredation, vel.rotate*SpeedDegredation
 	c.Work()
+	c.Check()
 	CheckVelocity(t, 4, c, vel)
 }
 

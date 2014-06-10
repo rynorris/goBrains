@@ -37,12 +37,19 @@ func (cm *LocationManager) AddEntAtLocation(ent entity.Entity, comb Combination)
 		radius:      ent.Radius(),
 		entity:      ent,
 	}
+	// Allocate memory for the zone store and bounding box.
+	newHitbox.mZones = make([]*spacialZone, 0, 4)
+	newHitbox.bb = make([]coord, 0, 4)
 
 	cm.hitboxes[ent] = &newHitbox
+
+	// Add the hitbox to all zones it belongs to.
+	cm.addToZones(&newHitbox)
 }
 
 // Remove an entity.
 func (cm *LocationManager) RemoveEntity(ent entity.Entity) {
+	cm.removeFromZones(cm.hitboxes[ent])
 	delete(cm.hitboxes, ent)
 }
 
@@ -52,7 +59,9 @@ func (cm *LocationManager) ChangeLocation(move CoordDelta, ent entity.Entity) {
 	if hb == nil {
 		return
 	}
+	cm.removeFromZones(hb)
 	hb.update(move, cm.maxPoint)
+	cm.addToZones(hb)
 }
 
 // Update the radius of an entity.
@@ -74,8 +83,9 @@ func (cm *LocationManager) GetCollisions(offset CoordDelta, ent entity.Entity) [
 	dX := offset.Distance * math.Cos(searcher.getOrient()+offset.Rotation)
 	dY := offset.Distance * math.Sin(searcher.getOrient()+offset.Rotation)
 	absLoc.update(dX, dY)
+	zone := cm.findZone(absLoc)
 
-	for _, hb := range cm.hitboxes {
+	for _, hb := range *zone {
 		if hb.isInside(absLoc) {
 			collisions = append(collisions, hb.getEntity())
 		}
@@ -111,11 +121,13 @@ func (lm *LocationManager) StartAtOrigin() {
 // Initialise the LocationManager.
 // Accepts the x- and y-sizes of the tank the creatures' live in.
 func NewLocationManager(x, y float64) *LocationManager {
-	return &LocationManager{
+	lm := &LocationManager{
 		spawnOrigin: false,
 		hitboxes:    make(map[entity.Entity]locatable),
 		maxPoint:    coord{x, y},
 	}
+	lm.resetZones()
+	return lm
 }
 
 // Initialize a default locationmanager.

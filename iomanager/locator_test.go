@@ -8,7 +8,7 @@ import (
 )
 
 func TestLocate(t *testing.T) {
-	lm := locationmanager.New()
+	lm := locationmanager.NewLocationManager(200, 200)
 
 	// Add an entity to LM.
 	e := &entity.TestEntity{}
