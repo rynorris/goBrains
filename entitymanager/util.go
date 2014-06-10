@@ -59,3 +59,26 @@ func (m *em) breedRandom() {
 
 	m.creatures[child] = struct{}{}
 }
+
+func (m *em) doBreeding() {
+	breedingChance := 9000
+	creatures := m.creatures.Slice()
+	for _, c := range creatures {
+		if rand.Intn(breedingChance) == 1 {
+			ix := rand.Intn(len(creatures))
+			other := creatures[ix].(*creature.Creature)
+			c := c.(*creature.Creature)
+
+			child := c.Breed(other)
+			m.creatures.Add(child)
+		}
+	}
+
+	// Also add a new random creature whenever the timer pops.
+	//m.breeding_timer++
+	if m.breeding_timer > config.Global.Entity.BreedingRate {
+		m.breeding_timer = 0
+		c := creature.NewSimple(m.lm)
+		m.creatures.Add(c)
+	}
+}

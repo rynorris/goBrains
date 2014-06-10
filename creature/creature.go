@@ -16,8 +16,8 @@ import (
 
 // Fixed values.
 const (
-	MaxVitality      = 600
-	InitialVitality  = 300
+	MaxVitality      = 1000
+	InitialVitality  = 400
 	SpeedDegredation = 0.9
 )
 
@@ -44,7 +44,7 @@ func (c *Creature) manageVitality() bool {
 	}
 
 	// Decrement and cap vitality.
-	c.vitality -= 0.1
+	c.vitality -= 0.07
 	if c.vitality > MaxVitality {
 		c.vitality = MaxVitality
 	}

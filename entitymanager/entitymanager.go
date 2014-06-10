@@ -74,11 +74,7 @@ func (m *em) Spin() {
 	m.food.Check()
 
 	// Spawn new creatures if necessary.
-	m.breeding_timer++
-	if m.breeding_timer >= config.Global.Entity.BreedingRate {
-		m.breedRandom()
-		m.breeding_timer = 0
-	}
+	m.doBreeding()
 
 	// Spawn new food if necessary.
 	m.food_timer++

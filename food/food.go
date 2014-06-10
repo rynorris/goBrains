@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	decay_rate = 0.1 // Amount of food that decays each tick.
+	decay_rate = 0.07 // Amount of food that decays each tick.
 )
 
 // Check the size of the food.  This is calculated from the amount of food represented by the instance.
