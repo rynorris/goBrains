@@ -1,0 +1,125 @@
+<html>
+  <head>
+    <script type="application/javascript">
+      var drawing = false;
+
+      function draw(scene) {
+        drawing = true;
+
+        var canvas = document.getElementById("canvas");
+        canvas.width = scene.width;
+        canvas.height = scene.height;
+        if (canvas.getContext) {
+          var ctx = canvas.getContext("2d");
+
+          ctx.fillStyle = "rgb(20,20,20)";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          for (var i = 0; i < scene.entities.length; i++) {
+            var entity = scene.entities[i];
+            switch (entity.Type) {
+              case "creature":
+                drawCreature(ctx, entity.X, entity.Y, 40, entity.Angle);
+              case "food":
+                drawFood(ctx, entity.X, entity.Y, entity.Size);
+            }
+          }
+        }
+        drawing = false;
+      }
+      
+      function drawCreature(ctx, x, y, l, o) {
+        ctx.save();
+
+        var cos = Math.cos(o);
+        var sin = Math.sin(o);
+        ctx.setTransform(cos, sin, -sin, cos, x, y);
+
+        // Antenna
+        var antennaLen = 40;
+        var antennaAngle = Math.PI/6;
+        cos = Math.cos(antennaAngle);
+        sin = Math.sin(antennaAngle);
+
+        ctx.strokeStyle = "rgba(255,255,255,200)";
+        ctx.beginPath();
+        ctx.moveTo(cos * antennaLen, sin * antennaLen);
+        ctx.lineTo(0,0);
+        ctx.lineTo(cos * antennaLen, -sin * antennaLen);
+        ctx.stroke();
+
+        // Creature Body
+        var tipX = -l * 0.75
+        var tipY = 0
+        var faceX = l * 0.25
+        var faceY = 0
+        var d = l * 0.4
+        
+        ctx.fillStyle = "rgb(200,20,20)";
+
+        ctx.beginPath();
+        ctx.moveTo(tipX, tipY);
+        ctx.quadraticCurveTo(faceX, faceY - d, faceX, faceY);
+        ctx.quadraticCurveTo(faceX, faceY + d, tipX, tipY);
+        ctx.fill();
+
+        ctx.restore();
+      }
+
+      function drawFood(ctx, x, y, r) {
+        ctx.fillStyle = "rgb(20,200,20)";
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI*2, false);
+        ctx.fill();
+      }
+
+      // Websocket connection
+      function connect() {
+        var prefix = 'ws://';
+        var host = window.location.host;
+        var path = '/data'
+        var url = prefix.concat(host.concat(path));
+        console.log("Connecting to: " + url);
+        connection = new WebSocket(url);
+        connection.onopen = function(){
+          console.log("Connection open!")
+        }
+
+        connection.onmessage = function(e){
+          if (!drawing) {
+            var message = e.data;
+            var data = JSON.parse(message);
+            if (data.scene) {
+              draw(data.scene);
+            }
+          }
+        }
+
+        connection.onerror = function(e){
+          console.log(e);
+        }
+
+        connection.onclose = function(e){
+          console.log("Connection closed. Will attempt reconnect in 1 second.");
+          reconnectTimer = setTimeout(connect, 1000);
+        }
+      }
+
+      // Handle keyboard input
+      function handleKey(event) {
+        e = event || window.event;
+        var code = e.charCode || e.keyCode;
+
+        var ev = { };
+        ev.Type = "Key";
+        ev.Key = String.fromCharCode(code);
+        var json = JSON.stringify(ev);
+        console.log("Sending keypress: " + json);
+        connection.send(json);
+      }
+    </script>
+  </head>
+  <body onload="connect();" onkeyup="handleKey();">
+    <canvas id="canvas" width="1920" height="1080">:</canvas>
+  </body>
+</html>
