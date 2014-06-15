@@ -54,4 +54,10 @@ type locatable interface {
 	getEntity() entity.Entity
 	getCoord() coord
 	getOrient() float64
+
+	// Method to get the 4 corners of a box bounding this hitbox.
+	boundingBox() []coord
+	zones() []*spacialZone
+	addZone(z *spacialZone)
+	clearZones()
 }

@@ -25,6 +25,12 @@ type circleHitbox struct {
 
 	// External reference, to the entity that the hitbox represents.
 	entity entity.Entity
+
+	// List of spacial zones this hitbox exists in.
+	mZones []*spacialZone
+
+	// Pre-allocated memory to hold the bounding box info.
+	bb []coord
 }
 
 // CoordDelta structs represent a position relative to an entity.
@@ -50,4 +56,7 @@ type LocationManager struct {
 
 	// The maximum point that objects can exist at in LM.
 	maxPoint coord
+
+	// The 2-D array of buckets used for collisions.
+	spacialZones [][]spacialZone
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func TestHandle(t *testing.T) {
-	lm := locationmanager.New()
+	lm := locationmanager.NewLocationManager(200, 200)
 	io := New(lm)
 	defer io.Shutdown()
 
@@ -31,7 +31,7 @@ func TestHandle(t *testing.T) {
 }
 
 func TestDistribute(t *testing.T) {
-	lm := locationmanager.New()
+	lm := locationmanager.NewLocationManager(200, 200)
 	io := New(lm)
 
 	out := make(chan []DrawSpec, 1)
@@ -65,7 +65,7 @@ func TestStop(t *testing.T) {
 	out := make(chan []DrawSpec)
 	done := make(chan struct{})
 
-	lm := locationmanager.New()
+	lm := locationmanager.NewLocationManager(200, 200)
 	io := New(lm)
 
 	// Send off a goroutine waiting on this channel.
@@ -87,7 +87,7 @@ func TestShutdown(t *testing.T) {
 	out := make(chan []DrawSpec)
 	done := make(chan struct{})
 
-	lm := locationmanager.New()
+	lm := locationmanager.NewLocationManager(200, 200)
 	io := New(lm)
 
 	// Send off a goroutine waiting on the two channels which should get closed.

@@ -318,7 +318,7 @@ func TestTank(t *testing.T) {
 		tankSize{BASE_WIDTH, BASE_HEIGHT},      // Square.
 		tankSize{BASE_WIDTH, 10 * BASE_HEIGHT}, // Lopsided.
 		tankSize{10 * BASE_WIDTH, BASE_HEIGHT}, // Also lopsided.
-		tankSize{0.0, 0.0},                     // Tiny.
+		tankSize{1.0, 1.0},                     // Tiny.
 	}
 
 	for _, limit := range tankSizes {

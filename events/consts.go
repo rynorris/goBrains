@@ -8,6 +8,8 @@ const (
 	TOGGLE_DRAW
 	SELECT
 	TOGGLE_FRAME_LIMIT
+	SPEED_UP
+	SPEED_DOWN
 )
 
 var (
