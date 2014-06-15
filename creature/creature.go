@@ -44,7 +44,7 @@ func (c *Creature) manageVitality() bool {
 	}
 
 	// Decrement and cap vitality.
-	c.vitality -= 0.07
+	c.vitality -= 0.04
 	if c.vitality > max {
 		c.vitality = max
 	}
