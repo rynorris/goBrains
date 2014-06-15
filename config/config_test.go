@@ -14,7 +14,7 @@ var (
 		Entity: struct {
 			InitialCreatures int
 			InitialFood      int
-			BreedingRate     int
+			BreedingChance   int
 			FoodSpawnRate    int
 			FoodSize         float64
 		}{40, 50, 150, 200, 1000},

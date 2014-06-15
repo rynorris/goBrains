@@ -7,7 +7,7 @@ ScreenHeight = 1920 ; Height of the screen
 [Entity]
 InitialCreatures = 50 ; Number of creatures to start with
 InitialFood = 30 ; Number of food blobs to start with
-BreedingRate = 900 ; Spawn a new creature every this many ticks
+BreedingChance = 900 ; 1/n chance for each creature to breed each tick.
 FoodSpawnRate = 600 ; Spawn a new food blob every this many ticks
 FoodSize = 2500 ; Spawn food blobs of this capacity
 
