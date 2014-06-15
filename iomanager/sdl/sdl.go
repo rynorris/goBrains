@@ -16,15 +16,11 @@ package sdl
 import (
 	"fmt"
 
+	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/graphics"
 	"github.com/DiscoViking/goBrains/iomanager"
 
 	"github.com/banthar/Go-SDL/sdl"
-)
-
-const (
-	WIDTH  = 800
-	HEIGHT = 800
 )
 
 // Starts the graphics engine up.
@@ -45,6 +41,10 @@ func mainLoop(data chan []iomanager.DrawSpec, io iomanager.Manager) {
 	// Ensure that SDL will exit gracefully when we're done.
 	defer sdl.Quit()
 
+	// Grab screen width and height from config.
+	WIDTH := config.Global.General.ScreenWidth
+	HEIGHT := config.Global.General.ScreenHeight
+
 	// Create the screen surface.
 	fmt.Printf("Creating screen\n")
 	screen := sdl.SetVideoMode(WIDTH, HEIGHT, 32, sdl.RESIZABLE|sdl.DOUBLEBUF|sdl.SWSURFACE)
@@ -57,7 +57,7 @@ func mainLoop(data chan []iomanager.DrawSpec, io iomanager.Manager) {
 	// We loop every time we are passed in an array of entities to draw.
 	for entities := range data {
 		// Draw background.
-		canvas.FillRect(&sdl.Rect{0, 0, WIDTH, HEIGHT}, background)
+		canvas.FillRect(&sdl.Rect{0, 0, uint16(WIDTH), uint16(HEIGHT)}, background)
 
 		// Construct the graphics pipeline.
 		interpret := make(chan iomanager.DrawSpec)
