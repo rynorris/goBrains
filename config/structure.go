@@ -13,6 +13,8 @@ type Config struct {
 		BreedingChance   int     // Chance for each creature to breed each tick is 1/n.
 		FoodSpawnRate    int     // Spawn a new food blob every this many ticks.
 		FoodSize         float64 // Size of food blobs to spawn.
+		MaxVitality      float64 // Maximum vitality a creature can have.
+		InitialVitality  float64 // Vitality creatures start with.
 	}
 
 	Brain struct {

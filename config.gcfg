@@ -10,6 +10,8 @@ InitialFood = 30 ; Number of food blobs to start with
 BreedingChance = 900 ; 1/n chance for each creature to breed each tick.
 FoodSpawnRate = 600 ; Spawn a new food blob every this many ticks
 FoodSize = 2500 ; Spawn food blobs of this capacity
+MaxVitality = 1000 ; Maximum vitality a creature can have
+InitialVitality = 400 ; Vitality creatures start with
 
 [Genetics]
 MutationRate = 500 ; 1/n chance of a bit flipping during mutation phase of breeding

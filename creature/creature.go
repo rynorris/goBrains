@@ -10,14 +10,13 @@ import (
 	"image/color"
 
 	"github.com/DiscoViking/goBrains/brain"
+	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/genetics"
 	"github.com/DiscoViking/goBrains/locationmanager"
 )
 
 // Fixed values.
 const (
-	MaxVitality      = 1000
-	InitialVitality  = 400
 	SpeedDegredation = 0.9
 )
 
@@ -38,6 +37,7 @@ func (c *Creature) Consume() float64 {
 
 // Manage vitality.
 func (c *Creature) manageVitality() bool {
+	max := config.Global.Entity.MaxVitality
 	if c.vitality <= 0 {
 		c.lm.RemoveEntity(c)
 		return true
@@ -45,8 +45,8 @@ func (c *Creature) manageVitality() bool {
 
 	// Decrement and cap vitality.
 	c.vitality -= 0.07
-	if c.vitality > MaxVitality {
-		c.vitality = MaxVitality
+	if c.vitality > max {
+		c.vitality = max
 	}
 
 	return false
@@ -133,7 +133,7 @@ func New(lm locationmanager.Detection) *Creature {
 		brain:    brain.NewBrain(4),
 		inputs:   make([]input, 0),
 		color:    color.RGBA{200, 50, 50, 255},
-		vitality: InitialVitality,
+		vitality: config.Global.Entity.InitialVitality,
 	}
 
 	// Add the new creature to the location manager.

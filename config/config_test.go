@@ -17,7 +17,9 @@ var (
 			BreedingChance   int
 			FoodSpawnRate    int
 			FoodSize         float64
-		}{40, 50, 150, 200, 1000},
+			MaxVitality      float64
+			InitialVitality  float64
+		}{40, 50, 150, 200, 1000, 1000, 400},
 		Brain: struct {
 			ChargeDecayRate     float64
 			SynapseMaxCharge    float64
