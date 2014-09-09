@@ -2,18 +2,31 @@
   <head>
     <script type="application/javascript">
       var drawing = false;
+      var scale = 1.0;
+      var x, y;
+      var camX = 0;
+      var camY = 0;
+      var mouseDown;
 
       function draw(scene) {
         drawing = true;
 
         var canvas = document.getElementById("canvas");
-        canvas.width = scene.width;
-        canvas.height = scene.height;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        wScale = canvas.width / scene.width;
+        hScale = canvas.height / scene.height;
         if (canvas.getContext) {
           var ctx = canvas.getContext("2d");
+          ctx.save();
 
+          ctx.translate(camX, camY);
+          ctx.scale(scale,scale);
+
+          ctx.globalCompositeOperation = "source-over";
           ctx.fillStyle = "rgb(20,20,20)";
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillRect(0, 0, scene.width, scene.height);
+          ctx.globalCompositeOperation = "source-atop";
 
           for (var i = 0; i < scene.entities.length; i++) {
             var entity = scene.entities[i];
@@ -25,6 +38,7 @@
             }
           }
         }
+        ctx.restore();
         drawing = false;
       }
       
@@ -33,7 +47,7 @@
 
         var cos = Math.cos(o);
         var sin = Math.sin(o);
-        ctx.setTransform(cos, sin, -sin, cos, x, y);
+        ctx.transform(cos, sin, -sin, cos, x, y);
 
         // Antenna
         var antennaLen = 40;
@@ -117,9 +131,35 @@
         console.log("Sending keypress: " + json);
         connection.send(json);
       }
+
+      //Handle mouse wheel
+      function handleWheel(e) {
+        e = event || window.event;
+        var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+        scale += delta / 30;
+      }
+
+      // Handle mouse drag
+      function handleMouseDown(e) {
+        mouseDown = true;
+      }
+      function handleMouseUp(e) {
+        mouseDown = false;
+      }
+      function handleMouseMove(e) {
+        e = e || window.event;
+        if (x && y) {
+          if (mouseDown) {
+            camX += e.clientX - x;
+            camY += e.clientY - y;
+          }
+        }
+        x = e.clientX;
+        y = e.clientY;
+      }
     </script>
   </head>
-  <body onload="connect();" onkeyup="handleKey();">
+  <body marginheight="0" marginwidth="0" onload="connect();" onkeyup="handleKey();" onmousedown="handleMouseDown();" onmouseup="handleMouseUp();" onmousemove="handleMouseMove();" onmousewheel="handleWheel();">
     <canvas id="canvas" width="1920" height="1080">:</canvas>
   </body>
 </html>
