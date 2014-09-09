@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	BASE_WIDTH  = 800
-	BASE_HEIGHT = 800
+	BASE_WIDTH  = zone_width * 2
+	BASE_HEIGHT = zone_height * 2
 )
 
 // Limit movement to the default tank size.
@@ -224,6 +224,27 @@ func TestDetection(t *testing.T) {
 	cm.ChangeRadius(0, ent1)
 	col = cm.GetCollisions(loc, ent1)
 	HitboxCheck(t, 0, len(col))
+
+	// Test we can detect entities in zones away from the origin.
+	cm.ChangeRadius(10, ent1)
+
+	// Move ent1 to overlap all 4 zones.
+	move = CoordDelta{zone_width, zone_height}
+	cm.ChangeLocation(move, ent1)
+
+	// Check we can detect it in all 4 zones.
+	loc = CoordDelta{-1, -1}
+	col = cm.GetCollisions(loc, ent1)
+	HitboxCheck(t, 1, len(col))
+	loc = CoordDelta{-1, 1}
+	col = cm.GetCollisions(loc, ent1)
+	HitboxCheck(t, 1, len(col))
+	loc = CoordDelta{1, -1}
+	col = cm.GetCollisions(loc, ent1)
+	HitboxCheck(t, 1, len(col))
+	loc = CoordDelta{1, 1}
+	col = cm.GetCollisions(loc, ent1)
+	HitboxCheck(t, 1, len(col))
 }
 
 // Test object storage within LocationManager.
