@@ -9,6 +9,7 @@ package creature
 import (
 	"github.com/DiscoViking/goBrains/brain"
 	"github.com/DiscoViking/goBrains/locationmanager"
+	"math"
 )
 
 // Fixed values.
@@ -19,7 +20,8 @@ const (
 
 // The pulser fires indiscriminately.
 func (p *pulser) detect() {
-	p.node.Charge(chargePulser)
+	charge := math.Min(0.1, p.host.Vitality()/3000)
+	p.node.Charge(charge)
 }
 
 // Add a new pulser to a creature.

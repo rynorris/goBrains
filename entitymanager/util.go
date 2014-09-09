@@ -61,7 +61,7 @@ func (m *em) breedRandom() {
 }
 
 func (m *em) doBreeding() {
-	breedingChance := 9000
+	breedingChance := 100000
 	creatures := m.creatures.Slice()
 	for _, c := range creatures {
 		if rand.Intn(breedingChance) == 1 {

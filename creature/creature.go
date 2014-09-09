@@ -36,6 +36,10 @@ func (c *Creature) Consume() float64 {
 	return 0
 }
 
+func (c *Creature) Vitality() float64 {
+	return c.vitality
+}
+
 // Manage vitality.
 func (c *Creature) manageVitality() bool {
 	if c.vitality <= 0 {
@@ -44,7 +48,7 @@ func (c *Creature) manageVitality() bool {
 	}
 
 	// Decrement and cap vitality.
-	c.vitality -= 0.07
+	c.vitality -= 0.02
 	if c.vitality > MaxVitality {
 		c.vitality = MaxVitality
 	}
