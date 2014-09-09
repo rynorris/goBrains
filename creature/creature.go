@@ -10,6 +10,7 @@ import (
 	"image/color"
 
 	"github.com/DiscoViking/goBrains/brain"
+	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/genetics"
 	"github.com/DiscoViking/goBrains/locationmanager"
 )
