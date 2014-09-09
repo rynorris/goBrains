@@ -7,9 +7,11 @@ ScreenHeight = 1920 ; Height of the screen
 [Entity]
 InitialCreatures = 50 ; Number of creatures to start with
 InitialFood = 30 ; Number of food blobs to start with
-BreedingRate = 5000 ; Spawn a new creature every this many ticks
-FoodSpawnRate = 1200 ; Spawn a new food blob every this many ticks
-FoodSize = 5000 ; Spawn food blobs of this capacity
+BreedingChance = 15000 ; 1/n chance for each creature to breed each tick.
+FoodSpawnRate = 1000 ; Spawn a new food blob every this many ticks
+FoodSize = 2500 ; Spawn food blobs of this capacity
+MaxVitality = 1000 ; Maximum vitality a creature can have
+InitialVitality = 400 ; Vitality creatures start with
 
 [Genetics]
 MutationRate = 500 ; 1/n chance of a bit flipping during mutation phase of breeding

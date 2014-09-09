@@ -10,9 +10,11 @@ type Config struct {
 	Entity struct {
 		InitialCreatures int     // The number of creatures to start with.
 		InitialFood      int     // The number of food blods to start with.
-		BreedingRate     int     // Spawn a new creatures every this many ticks.
+		BreedingChance   int     // Chance for each creature to breed each tick is 1/n.
 		FoodSpawnRate    int     // Spawn a new food blob every this many ticks.
 		FoodSize         float64 // Size of food blobs to spawn.
+		MaxVitality      float64 // Maximum vitality a creature can have.
+		InitialVitality  float64 // Vitality creatures start with.
 	}
 
 	Brain struct {

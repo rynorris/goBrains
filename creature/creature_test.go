@@ -132,6 +132,8 @@ func TestMouth(t *testing.T) {
 	creature := New(lm)
 	mot := creature.AddMouth()
 
+	InitialVitality := config.Global.Entity.InitialVitality
+
 	// This should be as expected, or this test will most definitely fail.
 	if creature.vitality != InitialVitality {
 		t.Errorf(errorStrHost, 1, InitialVitality, creature.vitality)
@@ -330,6 +332,8 @@ func TestMortality(t *testing.T) {
 	config.Load("../config/test_config.gcfg")
 	errorStrLm := "[%v] Expected %v entities in LM, found %v."
 	errorStrDead := "[%v] Creature expected %v, actually %v."
+
+	MaxVitality := config.Global.Entity.MaxVitality
 
 	lm := locationmanager.New()
 	if lm.NumberOwned() != 0 {

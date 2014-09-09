@@ -17,6 +17,7 @@ func (m *em) spawnFood() {
 
 // breedRandom breeds two random creatures and adds the resulting
 // creature to the creature list.
+// Note: Currently only used in UTs.
 func (m *em) breedRandom() {
 	// Do nothing if there are no creatures.
 	if len(m.creatures) == 0 {
@@ -61,10 +62,10 @@ func (m *em) breedRandom() {
 }
 
 func (m *em) doBreeding() {
-	breedingChance := 100000
+	breedingChance := config.Global.Entity.BreedingChance
 	creatures := m.creatures.Slice()
 	for _, c := range creatures {
-		if rand.Intn(breedingChance) == 1 {
+		if rand.Intn(breedingChance) == 0 {
 			ix := rand.Intn(len(creatures))
 			other := creatures[ix].(*creature.Creature)
 			c := c.(*creature.Creature)
@@ -72,13 +73,5 @@ func (m *em) doBreeding() {
 			child := c.Breed(other)
 			m.creatures.Add(child)
 		}
-	}
-
-	// Also add a new random creature whenever the timer pops.
-	//m.breeding_timer++
-	if m.breeding_timer > config.Global.Entity.BreedingRate {
-		m.breeding_timer = 0
-		c := creature.NewSimple(m.lm)
-		m.creatures.Add(c)
 	}
 }

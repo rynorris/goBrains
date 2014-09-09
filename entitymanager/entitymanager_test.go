@@ -9,7 +9,7 @@ import (
 var (
 	initial_creatures   = 40
 	initial_food        = 30
-	breeding_rate       = 150
+	breeding_chance     = 1 // Make breeding deterministic.
 	food_replenish_rate = 200
 	initial_entities    = initial_creatures + initial_food
 )
@@ -18,7 +18,7 @@ func loadTestConfig() {
 	config.Load("../config/test_config.gcfg")
 	config.Global.Entity.InitialCreatures = initial_creatures
 	config.Global.Entity.InitialFood = initial_food
-	config.Global.Entity.BreedingRate = breeding_rate
+	config.Global.Entity.BreedingChance = breeding_chance
 	config.Global.Entity.FoodSpawnRate = food_replenish_rate
 }
 
@@ -58,25 +58,17 @@ func TestSpin(t *testing.T) {
 	m := New()
 	m.Reset()
 
-	t.Log("m.Spinning one cycle. Number of creatures shouldn't change.")
-	m.Spin()
-	if len(m.Entities()) != initial_entities {
-		t.Errorf("Expected %v creatures, got %v.", initial_entities, len(m.Entities()))
-	}
-
-	t.Logf("Forcing breeding cycle.")
-	m.(*em).breeding_timer = breeding_rate
-	m.Spin()
-
-	if len(m.(*em).creatures) != initial_creatures+1 {
-		t.Errorf("Expected %v creatures, got %v.", initial_creatures+1, len(m.(*em).creatures))
-	}
-
 	t.Logf("Forcing food spawn cycle.")
 	m.(*em).food_timer = food_replenish_rate
 	m.Spin()
 
 	if len(m.(*em).food) != initial_food+1 {
 		t.Errorf("Expected %v food, got %v.", initial_food+1, len(m.(*em).food))
+	}
+
+	// Should have also bred a new creature for each existing one
+	// since we set breeding to certain.
+	if len(m.(*em).creatures) != initial_creatures*2 {
+		t.Errorf("Expected %v creatures, got %v.", initial_creatures*2, len(m.(*em).creatures))
 	}
 }
