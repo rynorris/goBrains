@@ -2,8 +2,10 @@ package entitymanager
 
 import (
 	"testing"
+	"time"
 
 	"github.com/DiscoViking/goBrains/config"
+	"github.com/DiscoViking/goBrains/events"
 )
 
 var (
@@ -74,7 +76,17 @@ func TestSpin(t *testing.T) {
 	m.(*em).food_timer = food_replenish_rate
 	m.Spin()
 
-	if len(m.(*em).food) != initial_food+1 {
-		t.Errorf("Expected %v food, got %v.", initial_food+1, len(m.(*em).food))
+	t.Logf("Forcing stats report cycle.")
+	success_chan := make(chan struct{}, 1)
+	events.Global.Register(events.POPULATION_STATE, func(ev events.Event) {
+		success_chan <- struct{}{}
+	})
+	m.(*em).stats_timer = 100
+	m.Spin()
+	select {
+	case <-time.After(100 * time.Millisecond):
+		t.Errorf("Timed out waiting for POPULATION_STATE event.")
+	case <-success_chan:
+		t.Logf("Received POPULATION_STATE_EVENT")
 	}
 }

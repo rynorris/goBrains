@@ -11,6 +11,7 @@ import (
 	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/creature"
 	"github.com/DiscoViking/goBrains/entity"
+	"github.com/DiscoViking/goBrains/events"
 	"github.com/DiscoViking/goBrains/food"
 	"github.com/DiscoViking/goBrains/locationmanager"
 )
@@ -21,6 +22,7 @@ type em struct {
 	lm             locationmanager.LM
 	breeding_timer int
 	food_timer     int
+	stats_timer    int
 }
 
 func (m *em) LocationManager() locationmanager.LM {
@@ -35,6 +37,7 @@ func New() Manager {
 		lm:             locationmanager.New(),
 		breeding_timer: 0,
 		food_timer:     0,
+		stats_timer:    0,
 	}
 }
 
@@ -43,6 +46,8 @@ func New() Manager {
 func (m *em) Reset() {
 	// Reset variables.
 	m.breeding_timer = 0
+	m.food_timer = 0
+	m.stats_timer = 0
 
 	// Construct LM.
 	m.lm = locationmanager.New()
@@ -86,10 +91,29 @@ func (m *em) Spin() {
 		m.spawnFood()
 		m.food_timer = 0
 	}
+
+	// Report state of simulation as events if necessary.
+	m.stats_timer++
+	if m.stats_timer >= 100 {
+		m.report()
+		m.stats_timer = 0
+	}
 }
 
 // Entities returns a slice containing all the entities
 // in the simulation.
 func (m *em) Entities() []entity.Entity {
 	return append(m.food.Slice(), m.creatures.Slice()...)
+}
+
+// Report state of entities as a global event.
+func (m *em) report() {
+	averageAge := 0
+	ev := events.PopulationEvent{
+		Id:         1,
+		Population: len(m.creatures),
+		AverageAge: averageAge,
+	}
+
+	events.Global.Broadcast(ev)
 }

@@ -32,3 +32,14 @@ func TestBroadcast(t *testing.T) {
 		t.Fatal("Listening function was called when a different event type was broadcase.")
 	}
 }
+
+func TestReset(t *testing.T) {
+	h := NewHandler()
+
+	l := func(Event) { t.Errorf("Event fired!") }
+	h.Register(TERMINATE, l)
+
+	h.Reset()
+
+	h.Broadcast(BasicEvent{TERMINATE})
+}

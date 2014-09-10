@@ -24,3 +24,10 @@ func (h Handler) Broadcast(e Event) {
 		l(e)
 	}
 }
+
+// Clear all listeners.
+func (h Handler) Reset() {
+	for k, _ := range h {
+		h[k] = []listener{}
+	}
+}

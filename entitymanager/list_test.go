@@ -1,9 +1,11 @@
 package entitymanager
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/DiscoViking/goBrains/entity"
+	"github.com/DiscoViking/goBrains/events"
 )
 
 func TestNewList(t *testing.T) {
@@ -17,6 +19,18 @@ func TestAdd(t *testing.T) {
 	l := NewList()
 
 	e := &entity.TestEntity{}
+
+	// Create function to report if entity event contains the wrong entity.
+	defer events.Global.Reset()
+	events.Global.Register(events.ENTITY_CREATE, func(ev events.Event) {
+		eev := ev.(events.EntityEvent)
+		if !reflect.DeepEqual(eev.E, e) {
+			t.Errorf("Received ENTITY_CREATE event for wrong entity. Expected: %v, Got: %v.\n", e, eev.E)
+		}
+	})
+	events.Global.Register(events.ENTITY_DESTROY, func(ev events.Event) {
+		t.Errorf("Received ENTITY_DESTROY.")
+	})
 
 	t.Log("Adding entity to list.")
 	l.Add(e)
@@ -65,6 +79,15 @@ func TestCheck(t *testing.T) {
 
 	l.Add(alive)
 	l.Add(dead)
+
+	// Create function to report if entity event contains the wrong entity.
+	defer events.Global.Reset()
+	events.Global.Register(events.ENTITY_DESTROY, func(ev events.Event) {
+		eev := ev.(events.EntityEvent)
+		if !reflect.DeepEqual(eev.E, dead) {
+			t.Errorf("Received ENTITY_DESTROY for %v instead of %v.", eev.E, dead)
+		}
+	})
 
 	l.Check()
 

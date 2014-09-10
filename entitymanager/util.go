@@ -12,7 +12,7 @@ import (
 // and adds it to the food list.
 func (m *em) spawnFood() {
 	f := food.New(m.lm, config.Global.Entity.FoodSize)
-	m.food[f] = struct{}{}
+	m.food.Add(f)
 }
 
 // breedRandom breeds two random creatures and adds the resulting
@@ -57,5 +57,5 @@ func (m *em) breedRandom() {
 	// Breed the creatures.
 	child := mother.Breed(father)
 
-	m.creatures[child] = struct{}{}
+	m.creatures.Add(child)
 }

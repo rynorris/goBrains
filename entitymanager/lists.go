@@ -1,6 +1,9 @@
 package entitymanager
 
-import "github.com/DiscoViking/goBrains/entity"
+import (
+	"github.com/DiscoViking/goBrains/entity"
+	"github.com/DiscoViking/goBrains/events"
+)
 
 type entityList map[entity.Entity]struct{}
 
@@ -32,6 +35,11 @@ func (l entityList) Work() {
 func (l entityList) Check() {
 	for e, _ := range l {
 		if e.Check() {
+			// Raise an entity destroy event.
+			events.Global.Broadcast(events.EntityEvent{
+				Type: events.ENTITY_DESTROY,
+				E:    e,
+			})
 			delete(l, e)
 		}
 	}
@@ -44,6 +52,11 @@ func (l entityList) Clear() {
 }
 
 func (l entityList) Add(e entity.Entity) {
+	// Raise an entity create event.
+	events.Global.Broadcast(events.EntityEvent{
+		Type: events.ENTITY_CREATE,
+		E:    e,
+	})
 	l[e] = struct{}{}
 }
 
