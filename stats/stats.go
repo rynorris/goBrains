@@ -2,6 +2,7 @@
 package stats
 
 import (
+	"fmt"
 	"github.com/DiscoViking/goBrains/creature"
 	"github.com/DiscoViking/goBrains/events"
 )
@@ -19,17 +20,22 @@ type stats struct {
 }
 
 var (
-	global stats
+	Global stats
 )
 
-// Function to update stats based on an Event.
-func (s *stats) Update(ev events.Event) {
-	switch ev.GetType() {
-	case events.POPULATION_STATE:
+// Starts up the global stats collector listening to global events.
+func Start() {
+	Global.Listen(events.Global)
+}
+
+// Listen to events from the given event handler.
+func (s *stats) Listen(h events.Handler) {
+	h.Register(events.POPULATION_STATE, func(ev events.Event) {
 		s.PopulationState(ev.(events.PopulationEvent))
-	case events.ENTITY_DESTROY:
+	})
+	h.Register(events.ENTITY_DESTROY, func(ev events.Event) {
 		s.EntityDestroy(ev.(events.EntityEvent))
-	}
+	})
 }
 
 // Function to update stats on creature death.
@@ -49,4 +55,5 @@ func (s *stats) EntityDestroy(ev events.EntityEvent) {
 func (s *stats) PopulationState(ev events.PopulationEvent) {
 	s.population = ev.Population
 	s.averageAge = ev.AverageAge
+	fmt.Printf("Population: %v\n", s.population)
 }

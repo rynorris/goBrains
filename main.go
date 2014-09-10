@@ -14,8 +14,8 @@ import (
 	"github.com/DiscoViking/goBrains/entitymanager"
 	"github.com/DiscoViking/goBrains/events"
 	"github.com/DiscoViking/goBrains/iomanager"
-	"github.com/DiscoViking/goBrains/iomanager/sdl"
 	"github.com/DiscoViking/goBrains/iomanager/web"
+	"github.com/DiscoViking/goBrains/stats"
 )
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
@@ -57,7 +57,6 @@ func main() {
 	defer io.Shutdown()
 
 	if !*headless {
-		sdl.Start(io)
 		rateLimit = true
 	}
 
@@ -66,6 +65,7 @@ func main() {
 	tickTimer := time.Tick(ticktime)
 
 	web.Start(io, strconv.Itoa(*port))
+	stats.Start()
 
 	events.Global.Register(events.TERMINATE,
 		func(e events.Event) { running = false })
