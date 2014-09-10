@@ -31,6 +31,11 @@ func (c *Creature) Color() color.RGBA {
 	return c.color
 }
 
+// Get the creature's age in ticks.
+func (c *Creature) Age() int {
+	return c.age
+}
+
 // Creatures cannot consume each other.
 func (c *Creature) Consume() float64 {
 	return 0
@@ -67,6 +72,9 @@ func (c *Creature) Work() {
 
 	// Update the brain one cycle.
 	c.brain.Work()
+
+	// Increment age.
+	c.age++
 }
 
 // Check the status of the creature and update LM appropriately.

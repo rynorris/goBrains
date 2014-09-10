@@ -433,3 +433,27 @@ func TestPrepare(t *testing.T) {
 	c = NewSimple(lm)
 	checkDnaLen(t, c)
 }
+
+// Test age works properly.
+func TestAge(t *testing.T) {
+	config.Load("../config/test_config.gcfg")
+	var c *Creature
+	lm := locationmanager.New()
+	c = New(lm)
+
+	if c.Age() != 0 {
+		t.Errorf("New creature started with age %v.\n", c.Age())
+	}
+
+	c.Work()
+	if c.Age() != 1 {
+		t.Errorf("Creature had age %v after 1 work cycle.\n", c.Age())
+	}
+
+	for i := 0; i < 9; i++ {
+		c.Work()
+	}
+	if c.Age() != 10 {
+		t.Errorf("Creature had age %v after 10 work cycles.\n", c.Age())
+	}
+}

@@ -37,6 +37,9 @@ type Creature struct {
 
 	// Movement information.
 	movement velocity
+
+	// Age in ticks.
+	age int
 }
 
 // Veloocity information stored by a creature.
