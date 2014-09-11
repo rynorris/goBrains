@@ -121,7 +121,7 @@ func (c *creature) Prepare() {
 
 // Generate a basic creature.
 func NewSimple(lm locationmanager.Detection) Creature {
-	c := New(lm).(*creature)
+	c := newRaw(lm)
 	c.AddPulser()
 	c.AddMouth()
 	c.AddAntenna(AntennaLeft)
@@ -133,6 +133,11 @@ func NewSimple(lm locationmanager.Detection) Creature {
 
 // Initialize a new creature object.
 func New(lm locationmanager.Detection) Creature {
+	return newRaw(lm)
+}
+
+// Initialise a new creature object.
+func newRaw(lm locationmanager.Detection) *creature {
 	newC := &creature{
 		lm:       lm,
 		dna:      genetics.NewDna(),

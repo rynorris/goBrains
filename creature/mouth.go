@@ -12,7 +12,7 @@ import (
 )
 
 // Yum.
-func (mt *mouth) detect() {
+func (mt *Mouth) detect() {
 	blips := mt.host.lm.GetCollisions(mt.location, mt.host)
 
 	// Attempt to consume all entities at this position.
@@ -25,7 +25,7 @@ func (mt *mouth) detect() {
 
 // Add a new mouth to a creature.
 // This is at the front of the creature.
-func (host *creature) AddMouth() *mouth {
+func (host *creature) AddMouth() *Mouth {
 	node := brain.NewNode()
 	host.brain.AddInputNode(node)
 
@@ -34,7 +34,7 @@ func (host *creature) AddMouth() *mouth {
 		node:      node,
 		location:  locationmanager.CoordDelta{host.Radius(), 0.0},
 	}
-	m := &mouth{input}
+	m := &Mouth{input}
 
 	host.inputs = append(host.inputs, m)
 	return m

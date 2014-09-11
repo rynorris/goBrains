@@ -20,6 +20,15 @@ type input interface {
 // Creature exposed methods.
 type Creature interface {
 	entity.Entity
+	Customizable
 	Breed(other Creature) (Creature, error)
 	Clone() Creature
+}
+
+type Customizable interface {
+	AddPulser() *Pulser
+	AddMouth() *Mouth
+	AddAntenna(int) *Antenna
+	AddBoosters() (*Booster, *Booster)
+	Prepare()
 }

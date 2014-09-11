@@ -21,12 +21,12 @@ const (
 )
 
 // Outputs are chargeable.  This means they accept accept charge from nodes in the brain.
-func (b *booster) Charge(strength float64) {
+func (b *Booster) Charge(strength float64) {
 	b.charge += strength
 }
 
 // Outputs are workers.  This means that the brain will trigger them during processing to perform their actions.
-func (b *booster) Work() {
+func (b *Booster) Work() {
 
 	if b.btype == BoosterLinear {
 		b.host.movement.move += b.charge * 0.2
@@ -51,9 +51,9 @@ func (b *booster) Work() {
 }
 
 // Initialize a new generic booster object.
-func (host *creature) newGenBooster(btype int) *booster {
+func (host *creature) newGenBooster(btype int) *Booster {
 
-	newBoost := booster{
+	newBoost := Booster{
 		outputStruct: outputStruct{
 			putStruct: putStruct{host: host},
 			charge:    0,
@@ -69,7 +69,7 @@ func (host *creature) newGenBooster(btype int) *booster {
 }
 
 // Add a standard set of boosters to a host; one angular and one linear.
-func (host *creature) AddBoosters() (*booster, *booster) {
+func (host *creature) AddBoosters() (*Booster, *Booster) {
 	l := host.newGenBooster(BoosterLinear)
 	a := host.newGenBooster(BoosterAngular)
 	return l, a

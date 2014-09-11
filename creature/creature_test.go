@@ -32,7 +32,7 @@ func CheckVelocity(t *testing.T, id int, c *creature, actual velocity) {
 }
 
 // Verify that a movement structure is as expected for a booster.
-func CheckMove(t *testing.T, tb *booster, actual velocity, expected float64) {
+func CheckMove(t *testing.T, tb *Booster, actual velocity, expected float64) {
 	if (tb.btype == BoosterLinear) && (!testutils.FloatsAreEqual(actual.move, expected)) {
 		t.Errorf("Expected linear velocity %v, got %v",
 			expected,
@@ -212,7 +212,7 @@ func TestBoosters(t *testing.T) {
 
 	linBoost, angBoost := host.AddBoosters()
 
-	testBoosters := []*booster{
+	testBoosters := []*Booster{
 		linBoost,
 		angBoost,
 	}

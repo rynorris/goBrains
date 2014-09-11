@@ -42,7 +42,7 @@ func anCharge(n *brain.Node, colorVal, alpha uint8) {
 }
 
 // The antenna twitches, and attempts to detect nearby entities.
-func (an *antenna) detect() {
+func (an *Antenna) detect() {
 	// Charge nodes for each colour detected.
 	for _, blip := range an.host.lm.GetCollisions(an.location, an.host) {
 		c := blip.Color()
@@ -53,7 +53,7 @@ func (an *antenna) detect() {
 }
 
 // Add a new antenna object to a creature.
-func (host *creature) AddAntenna(antType int) *antenna {
+func (host *creature) AddAntenna(antType int) *Antenna {
 	thisArc := 0.0
 	if antType == AntennaLeft {
 		thisArc = arc
@@ -66,7 +66,7 @@ func (host *creature) AddAntenna(antType int) *antenna {
 		node:      nil,
 		location:  locationmanager.CoordDelta{length, thisArc},
 	}
-	a := &antenna{input, make([]*brain.Node, 0)}
+	a := &Antenna{input, make([]*brain.Node, 0)}
 
 	// Creatures detect colours independently.  Add a node for each colour detected.
 	for ii := 0; ii < colorNum; ii++ {

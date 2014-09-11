@@ -18,12 +18,12 @@ const (
 )
 
 // The pulser fires indiscriminately.
-func (p *pulser) detect() {
+func (p *Pulser) detect() {
 	p.node.Charge(chargePulser)
 }
 
 // Add a new pulser to a creature.
-func (host *creature) AddPulser() *pulser {
+func (host *creature) AddPulser() *Pulser {
 
 	// Link the pulser to the host's brain.
 	node := brain.NewNode()
@@ -34,7 +34,7 @@ func (host *creature) AddPulser() *pulser {
 		node:      node,
 		location:  locationmanager.CoordDelta{0, 0},
 	}
-	p := &pulser{input}
+	p := &Pulser{input}
 
 	// Add the pulser to the hosts' list of inputs.
 	host.inputs = append(host.inputs, p)

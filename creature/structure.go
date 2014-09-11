@@ -79,20 +79,20 @@ type outputStruct struct {
 	charge float64
 }
 
-type pulser struct {
+type Pulser struct {
 	inputStruct
 }
 
-type antenna struct {
+type Antenna struct {
 	inputStruct
 	colorNodes []*brain.Node
 }
 
-type mouth struct {
+type Mouth struct {
 	inputStruct
 }
 
-type booster struct {
+type Booster struct {
 	outputStruct
 
 	// Type of booster.
