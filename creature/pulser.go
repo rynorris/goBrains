@@ -23,7 +23,7 @@ func (p *pulser) detect() {
 }
 
 // Add a new pulser to a creature.
-func (host *Creature) AddPulser() *pulser {
+func (host *creature) AddPulser() *pulser {
 
 	// Link the pulser to the host's brain.
 	node := brain.NewNode()

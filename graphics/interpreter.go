@@ -19,7 +19,7 @@ func Interpret(in chan iomanager.DrawSpec, out chan Primitive) {
 	defer close(out)
 	for spec := range in {
 		switch spec.E.(type) {
-		case *creature.Creature:
+		case creature.Creature:
 			breakCreature(spec, out)
 		case *food.Food:
 			breakFood(spec, out)

@@ -24,7 +24,7 @@ func (ti *testInput) detect() {
 	ti.triggered++
 }
 
-func CheckVelocity(t *testing.T, id int, c *Creature, actual velocity) {
+func CheckVelocity(t *testing.T, id int, c *creature, actual velocity) {
 	if c.movement.move != actual.move || c.movement.rotate != actual.rotate {
 		t.Errorf("[%v] Expected movement (%v, %v), got (%v, %v).",
 			id, c.movement.move, c.movement.rotate, actual.move, actual.rotate)
@@ -46,7 +46,7 @@ func CheckMove(t *testing.T, tb *booster, actual velocity, expected float64) {
 }
 
 // Verify that DNA matches the creature.
-func checkDnaLen(t *testing.T, c *Creature) {
+func checkDnaLen(t *testing.T, c *creature) {
 	gn := c.brain.GenesNeeded()
 	cv := c.dna.GetValues()
 	ga := 0
@@ -63,7 +63,7 @@ func checkDnaLen(t *testing.T, c *Creature) {
 // Verify collection of values from a creature.
 func TestValues(t *testing.T) {
 	config.Load("../config/test_config.gcfg")
-	c := New(locationmanager.New())
+	c := New(locationmanager.New()).(*creature)
 	c.Color()
 	c.Radius()
 }
@@ -74,7 +74,7 @@ func TestAntenna(t *testing.T) {
 	errorStr := "[%v] Expected test brain to have received %v firings, actually got %v."
 	lm := locationmanager.New()
 	lm.StartAtOrigin()
-	creature := New(lm)
+	creature := New(lm).(*creature)
 	tBrain := newTestBrain()
 	creature.brain = tBrain
 
@@ -129,7 +129,7 @@ func TestMouth(t *testing.T) {
 	errorStrFood := "[%v] Expected food content of %v, actually got %v."
 	lm := locationmanager.New()
 	lm.StartAtOrigin()
-	creature := New(lm)
+	creature := New(lm).(*creature)
 	mot := creature.AddMouth()
 
 	// This should be as expected, or this test will most definitely fail.
@@ -206,7 +206,7 @@ func TestMouth(t *testing.T) {
 // Booster behaviour verification.
 func TestBoosters(t *testing.T) {
 	config.Load("../config/test_config.gcfg")
-	host := New(locationmanager.New())
+	host := New(locationmanager.New()).(*creature)
 	tBrain := newTestBrain()
 	host.brain = tBrain
 
@@ -271,7 +271,7 @@ func TestBoosters(t *testing.T) {
 // Test creature movement.
 func TestMovement(t *testing.T) {
 	config.Load("../config/test_config.gcfg")
-	c := New(locationmanager.New())
+	c := New(locationmanager.New()).(*creature)
 
 	// Creatures start with no velocity.
 	CheckVelocity(t, 1, c, velocity{0, 0})
@@ -304,7 +304,7 @@ func checkDetection(t *testing.T, id, expected int, ti *testInput) {
 // Test that inputs are called to detect things.
 func TestDetection(t *testing.T) {
 	config.Load("../config/test_config.gcfg")
-	c := New(locationmanager.New())
+	c := New(locationmanager.New()).(*creature)
 	ti := &testInput{}
 
 	// No inputs, nothing going.
@@ -337,7 +337,7 @@ func TestMortality(t *testing.T) {
 	}
 
 	// The new creature should have registered with the LM.
-	creature := NewSimple(lm)
+	creature := NewSimple(lm).(*creature)
 	if lm.NumberOwned() != 1 {
 		t.Errorf(errorStrLm, 2, 1, lm.NumberOwned())
 	}
@@ -373,7 +373,7 @@ func TestMortality(t *testing.T) {
 func TestCannibalism(t *testing.T) {
 	config.Load("../config/test_config.gcfg")
 	lm := locationmanager.New()
-	creature := NewSimple(lm)
+	creature := NewSimple(lm).(*creature)
 
 	// Creatures cannot eat other creatures (yet).  Attempts to eat other creatures results in a no-op.
 	if creature.Consume() != 0 {
@@ -385,14 +385,18 @@ func TestCannibalism(t *testing.T) {
 func TestBreeding(t *testing.T) {
 	config.Load("../config/test_config.gcfg")
 	lm := locationmanager.New()
-	mother := NewSimple(lm)
-	father := NewSimple(lm)
+	mother := NewSimple(lm).(*creature)
+	father := NewSimple(lm).(*creature)
 	newChild := false
 
 	// New child should be a mixture of the parents.
 	// Test twice, as there is a small but finite chance it's a clone.
 	for i := 0; i < 2; i++ {
-		child := mother.Breed(father)
+		c, err := mother.Breed(father)
+		child := c.(*creature)
+		if err != nil {
+			t.Errorf("Error whilst breeding: %v\n", err)
+		}
 		if !genetics.CompareSequence(mother.dna, child.dna) {
 			newChild = true
 		}
@@ -410,8 +414,8 @@ func TestBreeding(t *testing.T) {
 func TestCloning(t *testing.T) {
 	config.Load("../config/test_config.gcfg")
 	lm := locationmanager.New()
-	original := NewSimple(lm)
-	clone := original.Clone()
+	original := NewSimple(lm).(*creature)
+	clone := original.Clone().(*creature)
 
 	if !genetics.CompareSequence(original.dna, clone.dna) {
 		t.Errorf("Clone does not match original creature.")
@@ -421,15 +425,15 @@ func TestCloning(t *testing.T) {
 // Test random DNA generation works.
 func TestPrepare(t *testing.T) {
 	config.Load("../config/test_config.gcfg")
-	var c *Creature
+	var c *creature
 	lm := locationmanager.New()
 
 	// Verify that an empty creature has the correct DNA.
-	c = New(lm)
+	c = New(lm).(*creature)
 	c.Prepare()
 	checkDnaLen(t, c)
 
 	// Verify that a simple creature has the correct DNA.
-	c = NewSimple(lm)
+	c = NewSimple(lm).(*creature)
 	checkDnaLen(t, c)
 }

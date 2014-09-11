@@ -14,7 +14,7 @@ import (
 
 func TestPulsers(t *testing.T) {
 	config.Load("../config/test_config.gcfg")
-	host := New(locationmanager.New())
+	host := New(locationmanager.New()).(*creature)
 	tBrain := newTestBrain()
 	host.brain = tBrain
 	var expected int

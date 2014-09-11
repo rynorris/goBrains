@@ -14,7 +14,7 @@ import (
 )
 
 // The high-level creature struct.
-type Creature struct {
+type creature struct {
 
 	// The CollisionManager that this instance is managed by.
 	lm locationmanager.Detection
@@ -53,7 +53,7 @@ type velocity struct {
 type putStruct struct {
 
 	// The host of this antenna.
-	host *Creature
+	host *creature
 }
 
 // Generic input structure.

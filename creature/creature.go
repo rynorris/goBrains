@@ -7,6 +7,7 @@
 package creature
 
 import (
+	"errors"
 	"image/color"
 
 	"github.com/DiscoViking/goBrains/brain"
@@ -22,22 +23,22 @@ const (
 )
 
 // Creatures always report a radius of zero, as they cannot be detected.
-func (c *Creature) Radius() float64 {
+func (c *creature) Radius() float64 {
 	return 10
 }
 
 // Get the colour of the creature.
-func (c *Creature) Color() color.RGBA {
+func (c *creature) Color() color.RGBA {
 	return c.color
 }
 
 // Creatures cannot consume each other.
-func (c *Creature) Consume() float64 {
+func (c *creature) Consume() float64 {
 	return 0
 }
 
 // Manage vitality.
-func (c *Creature) manageVitality() bool {
+func (c *creature) manageVitality() bool {
 	if c.vitality <= 0 {
 		c.lm.RemoveEntity(c)
 		return true
@@ -53,13 +54,13 @@ func (c *Creature) manageVitality() bool {
 }
 
 // Manage velocities.  Velocity must degrade, so that creatures can stop.
-func (c *Creature) manageSpeed() {
+func (c *creature) manageSpeed() {
 	c.movement.move *= SpeedDegredation
 	c.movement.rotate *= SpeedDegredation
 }
 
 // Do all updating and moving of a creature.
-func (c *Creature) Work() {
+func (c *creature) Work() {
 	// Get all our inputs to charge appropriately.
 	for _, in := range c.inputs {
 		in.detect()
@@ -71,7 +72,7 @@ func (c *Creature) Work() {
 
 // Check the status of the creature and update LM appropriately.
 // Returns a boolean for whether teardown occured.
-func (c *Creature) Check() bool {
+func (c *creature) Check() bool {
 	death := c.manageVitality()
 	if death {
 		return true
@@ -87,16 +88,21 @@ func (c *Creature) Check() bool {
 }
 
 // Breed a new creature from two existing ones.
-func (cx *Creature) Breed(cy *Creature) *Creature {
-	newC := NewSimple(cx.lm)
+func (cx *creature) Breed(other Creature) (Creature, error) {
+	cy, ok := other.(*creature)
+	if !ok {
+		return nil, errors.New("Can't breed with different implemtation of Creature interface.")
+	}
+
+	newC := NewSimple(cx.lm).(*creature)
 	newC.dna = cx.dna.Breed(cy.dna)
 	newC.brain.Restore(newC.dna)
-	return newC
+	return newC, nil
 }
 
 // Clone an existing creature.
-func (c *Creature) Clone() *Creature {
-	newC := NewSimple(c.lm)
+func (c *creature) Clone() Creature {
+	newC := NewSimple(c.lm).(*creature)
 	newC.dna = c.dna.Clone()
 	newC.brain.Restore(newC.dna)
 	return newC
@@ -104,7 +110,7 @@ func (c *Creature) Clone() *Creature {
 
 // Generates a new random DNA string for a creature and injects it into the brain.
 // Must be called AFTER all outputs and inputs have been added.
-func (c *Creature) Prepare() {
+func (c *creature) Prepare() {
 	n := c.brain.GenesNeeded()
 	c.dna = genetics.NewDna()
 	for i := 0; i < n; i++ {
@@ -114,8 +120,8 @@ func (c *Creature) Prepare() {
 }
 
 // Generate a basic creature.
-func NewSimple(lm locationmanager.Detection) *Creature {
-	c := New(lm)
+func NewSimple(lm locationmanager.Detection) Creature {
+	c := New(lm).(*creature)
 	c.AddPulser()
 	c.AddMouth()
 	c.AddAntenna(AntennaLeft)
@@ -126,8 +132,8 @@ func NewSimple(lm locationmanager.Detection) *Creature {
 }
 
 // Initialize a new creature object.
-func New(lm locationmanager.Detection) *Creature {
-	newC := &Creature{
+func New(lm locationmanager.Detection) Creature {
+	newC := &creature{
 		lm:       lm,
 		dna:      genetics.NewDna(),
 		brain:    brain.NewBrain(4),

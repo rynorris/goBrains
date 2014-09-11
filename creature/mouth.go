@@ -25,7 +25,7 @@ func (mt *mouth) detect() {
 
 // Add a new mouth to a creature.
 // This is at the front of the creature.
-func (host *Creature) AddMouth() *mouth {
+func (host *creature) AddMouth() *mouth {
 	node := brain.NewNode()
 	host.brain.AddInputNode(node)
 

@@ -1,6 +1,7 @@
 package entitymanager
 
 import (
+	"log"
 	"math/rand"
 
 	"github.com/DiscoViking/goBrains/config"
@@ -41,21 +42,25 @@ func (m *em) breedRandom() {
 	// A particular index will not map to the same creature
 	// each time. However we don't really care, so long as
 	// it's random, and we get 2 different creatures to breed.
-	var mother, father *creature.Creature
+	var mother, father creature.Creature
 	ii := 0
 	for c, _ := range m.creatures {
 		switch ii {
 		case ix1:
-			mother = c.(*creature.Creature)
+			mother = c.(creature.Creature)
 		case ix2:
-			father = c.(*creature.Creature)
+			father = c.(creature.Creature)
 			break
 		}
 		ii++
 	}
 
 	// Breed the creatures.
-	child := mother.Breed(father)
+	child, err := mother.Breed(father)
+	if err != nil {
+		log.Printf("Error breeding: %v\n", err)
+		return
+	}
 
 	m.creatures[child] = struct{}{}
 }

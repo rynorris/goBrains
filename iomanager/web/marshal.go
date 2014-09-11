@@ -46,7 +46,7 @@ func marshalOne(spec iomanager.DrawSpec) (string, error) {
 	var err error
 
 	switch e := spec.E.(type) {
-	case *creature.Creature:
+	case creature.Creature:
 		s := creatureSpec{
 			entitySpec{"creature", int(spec.Loc.X), int(spec.Loc.Y)},
 			e.Color(),
