@@ -2,7 +2,6 @@
 package stats
 
 import (
-	"fmt"
 	"github.com/DiscoViking/goBrains/creature"
 	"github.com/DiscoViking/goBrains/events"
 )
@@ -55,5 +54,17 @@ func (s *stats) EntityDestroy(ev events.EntityEvent) {
 func (s *stats) PopulationState(ev events.PopulationEvent) {
 	s.population = ev.Population
 	s.averageAge = ev.AverageAge
-	fmt.Printf("Population: %v\n", s.population)
+}
+
+// Getter Methods
+func (s *stats) Population() int {
+	return s.population
+}
+
+func (s *stats) Oldest() (int, *creature.Creature) {
+	return s.largestAge, s.oldestCreature
+}
+
+func (s *stats) AverageAge() int {
+	return s.averageAge
 }

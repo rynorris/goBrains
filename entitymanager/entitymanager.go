@@ -108,7 +108,13 @@ func (m *em) Entities() []entity.Entity {
 
 // Report state of entities as a global event.
 func (m *em) report() {
-	averageAge := 0
+	totalAge := 0
+
+	for c, _ := range m.creatures {
+		totalAge += c.(*creature.Creature).Age()
+	}
+	averageAge := totalAge / len(m.creatures)
+
 	ev := events.PopulationEvent{
 		Id:         1,
 		Population: len(m.creatures),

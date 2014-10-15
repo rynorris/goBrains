@@ -99,7 +99,9 @@ func main() {
 		frames += 1
 		if time.Since(before) > 2*time.Second {
 			before = time.Now()
-			log.Printf("FPS: %v\n", frames/2)
+			oldest, _ := stats.Global.Oldest()
+			log.Printf("Stats:\n FPS: %v\n Population: %v\n Average: %v\n Oldest: %v\n\n",
+				frames/2, stats.Global.Population(), stats.Global.AverageAge(), oldest)
 			frames = 0
 		}
 		em.Spin()
