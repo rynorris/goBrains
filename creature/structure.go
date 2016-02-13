@@ -97,4 +97,7 @@ type booster struct {
 
 	// Type of booster.
 	btype int
+
+	// Scale factor.
+	scale float64
 }

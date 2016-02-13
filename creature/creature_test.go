@@ -210,7 +210,7 @@ func TestBoosters(t *testing.T) {
 	tBrain := newTestBrain()
 	host.brain = tBrain
 
-	linBoost, angBoost := host.AddBoosters()
+	linBoost, _, angBoost, _ := host.AddBoosters()
 
 	testBoosters := []*booster{
 		linBoost,

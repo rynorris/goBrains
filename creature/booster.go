@@ -27,11 +27,14 @@ func (b *booster) Charge(strength float64) {
 
 // Outputs are workers.  This means that the brain will trigger them during processing to perform their actions.
 func (b *booster) Work() {
+	if b.charge < 0 {
+		b.charge = 0
+	}
 
 	if b.btype == BoosterLinear {
-		b.host.movement.move += b.charge * 0.2
+		b.host.movement.move += b.charge * 0.2 * b.scale
 	} else if b.btype == BoosterAngular {
-		b.host.movement.rotate += b.charge * 0.2 / LinPerAng
+		b.host.movement.rotate += b.charge * 0.2 / LinPerAng * b.scale
 	}
 
 	// Cap movement speeds
@@ -51,7 +54,7 @@ func (b *booster) Work() {
 }
 
 // Initialize a new generic booster object.
-func (host *Creature) newGenBooster(btype int) *booster {
+func (host *Creature) newGenBooster(btype int, scale float64) *booster {
 
 	newBoost := booster{
 		outputStruct: outputStruct{
@@ -59,6 +62,7 @@ func (host *Creature) newGenBooster(btype int) *booster {
 			charge:    0,
 		},
 		btype: btype,
+		scale: scale,
 	}
 	b := &newBoost
 
@@ -69,8 +73,10 @@ func (host *Creature) newGenBooster(btype int) *booster {
 }
 
 // Add a standard set of boosters to a host; one angular and one linear.
-func (host *Creature) AddBoosters() (*booster, *booster) {
-	l := host.newGenBooster(BoosterLinear)
-	a := host.newGenBooster(BoosterAngular)
-	return l, a
+func (host *Creature) AddBoosters() (*booster, *booster, *booster, *booster) {
+	l1 := host.newGenBooster(BoosterLinear, 1.0)
+	l2 := host.newGenBooster(BoosterLinear, -1.0)
+	a1 := host.newGenBooster(BoosterAngular, 1.0)
+	a2 := host.newGenBooster(BoosterAngular, -1.0)
+	return l1, l2, a1, a2
 }
