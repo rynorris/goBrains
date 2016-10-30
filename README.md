@@ -21,7 +21,7 @@ Then use Q and W to adjust the speed of the simulation.  Or Z to toggle the fram
 
 ##Dependencies
 goSDL is used to visulize creatures in their native habitat (your computer).
-code.google.com/p/go.net/websocket is used to stream the data for viewing in a browser.
+golang.org/x/net/websocket is used to stream the data for viewing in a browser.
 
 ##Additional disclaimers
 In the possibility that the basic creatures become intelligent enough to escape the confines of the simulation the developers would like to congratulate you on your discovery and will retreat to a safe distance.
