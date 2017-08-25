@@ -4,9 +4,8 @@ import (
 	"testing"
 
 	"github.com/DiscoViking/goBrains/config"
+	"github.com/DiscoViking/goBrains/testutils"
 )
-
-import "../testutils"
 
 func TestDefault(t *testing.T) {
 	c := ChargeCarrier{}
