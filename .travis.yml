@@ -1,17 +1,19 @@
 language: go
 
 go:
-  - 1.2
+  - 1.5
+  - 1.6
+  - 1.7
   - tip
 
 before_install:
+  - sudo apt-get -qq update
   - sudo apt-get install -qq -y libsdl1.2debian
   - sudo apt-get install -qq -y libsdl-image1.2-dev
   - ./install_go_sdl.sh
 
 install: 
-  - go get code.google.com/p/gcfg
-  - go get code.google.com/p/go.net/websocket
-  - go get code.google.com/p/go.tools/cmd/cover
+  - go get
+  - go get golang.org/x/tools/cmd/cover
 
 script: go test -cover ./...

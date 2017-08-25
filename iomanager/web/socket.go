@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"code.google.com/p/go.net/websocket"
+	"golang.org/x/net/websocket"
 
 	"github.com/DiscoViking/goBrains/events"
 	"github.com/DiscoViking/goBrains/iomanager"

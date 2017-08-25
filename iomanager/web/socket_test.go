@@ -4,12 +4,12 @@ import (
 	"testing"
 	"time"
 
-	"code.google.com/p/go.net/websocket"
 	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/creature"
 	"github.com/DiscoViking/goBrains/events"
 	"github.com/DiscoViking/goBrains/iomanager"
 	"github.com/DiscoViking/goBrains/locationmanager"
+	"golang.org/x/net/websocket"
 )
 
 func TestSocketFV(t *testing.T) {

@@ -1,6 +1,6 @@
 package config
 
-import "code.google.com/p/gcfg"
+import "gopkg.in/gcfg.v1"
 
 var (
 	Global Config
