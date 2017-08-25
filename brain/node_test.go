@@ -4,9 +4,8 @@ import (
 	"testing"
 
 	"github.com/DiscoViking/goBrains/config"
+	"github.com/DiscoViking/goBrains/testutils"
 )
-
-import "../testutils"
 
 func TestNodeNew(t *testing.T) {
 	config.Load("../config/test_config.gcfg")
