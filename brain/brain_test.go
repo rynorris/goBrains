@@ -4,9 +4,9 @@ import (
 	"math"
 	"testing"
 
-	"../testutils"
 	"github.com/DiscoViking/goBrains/config"
 	"github.com/DiscoViking/goBrains/genetics"
+	"github.com/DiscoViking/goBrains/testutils"
 )
 
 type testOutput struct {
